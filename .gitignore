@@ -1,0 +1,28 @@
+# --- Poids et sorties volumineuses (S3 est la source de vérité) ---
+weights/
+samples/
+fid/
+dataset/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# --- Checkpoint MDLM téléchargé (679 Mo, refait par hf download) ---
+mdlm_hf/*.safetensors
+mdlm_hf/*.bin
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venvs/
+venv/
+.env
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Divers ---
+.DS_Store
+*.log
+wandb/
