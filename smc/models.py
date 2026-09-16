@@ -5,6 +5,10 @@ from smc.rng import check_generator
 
 
 class DiffusionModel(ABC):
+    @property
+    @abstractmethod
+    def T(self): ...
+
     @abstractmethod
     def initial_state(self, k, generator): ...
 
@@ -16,6 +20,10 @@ class DiffusionModel(ABC):
 
 
 class CifarDDPM(DiffusionModel):
+    @property
+    def T(self):
+        return self.scheduler.timesteps
+
     def __init__(self, unet, scheduler, device):
         self.unet = unet
         self.scheduler = scheduler
