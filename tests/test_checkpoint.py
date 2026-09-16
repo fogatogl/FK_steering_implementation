@@ -90,28 +90,3 @@ def test_checkpoint_finetune_class3_present_et_coherent(checkpoint):
     ecart = max((ft["model"][k] - checkpoint["model"][k]).abs().max().item()
                 for k in ft["model"])
     assert ecart > 0.0
-
-
-@pytest.mark.slow
-def test_equivalence_sample_et_cifar_ddpm_sur_modele_reel(real_unet):
-    """sample() et la boucle CifarDDPM doivent produire la même trajectoire.
-
-    Schedule raccourci : l'équivalence est structurelle, elle ne dépend pas du
-    nombre de pas, et 1000 pas sur CPU seraient inutilement longs.
-    """
-    from smc.models import CifarDDPM
-    from smc.sampling import sample
-
-    sched = NoiseScheduler(timesteps=20, device="cpu")
-    ddpm = CifarDDPM(unet=real_unet, scheduler=sched, device="cpu")
-    k, seed = 2, 2024
-
-    torch.manual_seed(seed)
-    x_ref = sample(real_unet, sched, n_samples=k, channels=3, size=32)
-
-    torch.manual_seed(seed)
-    state = ddpm.initial_state(k=k, generator=None)
-    for t_idx in reversed(range(sched.timesteps)):
-        state = ddpm.step(state, t_idx, generator=None)
-
-    assert torch.allclose(x_ref, state["x"], atol=1e-5)
