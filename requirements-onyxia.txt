@@ -1,0 +1,34 @@
+# requirements-onyxia.txt — dépendances installées DANS le service Onyxia.
+#
+# Différence avec requirements.txt : ni torch ni torchvision.
+# L'image du Datalab fournit déjà un PyTorch appairé à sa version de CUDA ;
+# le venv est créé avec --system-site-packages pour en hériter. Réinstaller
+# torch ici, c'est 2-3 Go de téléchargement ET l'appairage CUDA cassé.
+#
+# On suit l'image plutôt que d'épingler (seule exception : numpy, voir plus
+# bas). Les versions exactes qui ont servi à produire les figures sont dans
+# requirements.txt (dépôt public).
+
+# outillage
+ipykernel
+pytest
+
+# Module 0 — SMC
+particles          # oracle de test pour les resamplers (exercice 0.4)
+scipy
+
+# numpy est épinglé, et c'est le seul paquet qui l'est.
+# particles 0.4 déclare numpy<2 dans ses métadonnées (métadonnées périmées :
+# resampling.multinomial et .systematic tournent sans rien casser en 2.x,
+# vérifié). Sans l'épingle, pip rétrograde en 1.26.4 tout le venv, alors que le
+# torch de l'image est construit contre numpy 2.x : on garde donc 2.3 pour
+# rester aligné sur l'image (2.5.3) sans dépasser ce que numba accepte.
+# pip affichera un avertissement de conflit sur particles : il est attendu.
+numpy==2.3.*
+
+# figures et boucles
+matplotlib
+tqdm
+
+# suivi d'expériences
+wandb

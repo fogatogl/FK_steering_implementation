@@ -11,7 +11,9 @@
 # service (les données du bucket, elles, ne bougent pas).
 set -uo pipefail
 
-BUCKET="${BUCKET:-${USERNAME:-$(whoami)}}"
+# Le bucket porte le nom d'utilisateur *Datalab* (gfogato). $USERNAME vaut
+# "onyxia" à l'intérieur du service : ne pas s'en servir comme défaut.
+BUCKET="${BUCKET:-gfogato}"
 PROJ="${PROJ:-/home/onyxia/work/ddpm}"
 REMOTE="s3/${BUCKET}/ddpm"
 ACTION="${1:-push}"
@@ -33,6 +35,8 @@ case "${ACTION}" in
     mc mirror --overwrite "${REMOTE}/dataset" "${PROJ}/dataset"
     ;;
   status)
+    # Toujours viser le bucket explicitement : "mc ls s3/" tout court reste
+    # bloqué, la politique stsonly n'autorise pas ListBuckets.
     mc ls -r "${REMOTE}" 2>/dev/null || echo "rien dans ${REMOTE}"
     mc du "${REMOTE}" 2>/dev/null
     ;;
