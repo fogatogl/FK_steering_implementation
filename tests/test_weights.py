@@ -1,5 +1,5 @@
 import torch
-from smc.weights import normalize_logw
+from smc.weights import normalize_logw, ess, should_resample
 
 
 def test_normalize_logw_numerical_stability():
@@ -28,3 +28,16 @@ def test_normalize_logw_inf():
 
     assert not torch.isnan(w).any()
     assert torch.allclose(w, attendu, atol=1e-6)
+
+
+def test_ess_uniform():
+    assert abs(ess(torch.full((8,), 1 / 8)) - 8.0) < 1e-5
+
+
+def test_ess_degenerate():
+    assert abs(ess(torch.tensor([1.0, 0.0, 0.0, 0.0])) - 1.0) < 1e-5
+
+
+def test_should_resample():
+    assert not should_resample(torch.full((8,), 1 / 8), threshold=0.5)
+    assert should_resample(torch.tensor([1.0, 0.0, 0.0, 0.0]), threshold=0.5)
