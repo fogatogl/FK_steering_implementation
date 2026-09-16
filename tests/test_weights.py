@@ -39,5 +39,30 @@ def test_ess_degenerate():
 
 
 def test_should_resample():
-    assert not should_resample(torch.full((8,), 1 / 8), threshold=0.5)
-    assert should_resample(torch.tensor([1.0, 0.0, 0.0, 0.0]), threshold=0.5)
+    w_uniform = torch.full((8,), 1.0 / 8.0)
+    w_degenerate = torch.tensor([1.0, 0.0, 0.0, 0.0])
+
+    assert not should_resample(w_uniform, threshold=0.5)
+    assert should_resample(w_degenerate, threshold=0.5)
+
+
+def test_normalize_logw_invariant_par_translation():
+    """Les poids normalisés ne dépendent pas d'une constante additive ;
+    log_ell, lui, se décale exactement de cette constante."""
+    logw = torch.tensor([0.0, 1.0, 2.0])
+
+    w, log_ell = normalize_logw(logw)
+    w_decale, log_ell_decale = normalize_logw(logw + 5.0)
+
+    assert torch.allclose(w, w_decale, atol=1e-6)
+    assert torch.isclose(log_ell_decale, log_ell + 5.0, atol=1e-5)
+
+
+def test_normalize_logw_tous_les_poids_nuls_donne_nan():
+    """Limite connue : si toutes les particules sont mortes (logW = -inf),
+    la normalisation produit des NaN. L'appelant doit détecter log_ell = -inf
+    avant de se servir de w."""
+    w, log_ell = normalize_logw(torch.full((3,), -float("inf")))
+
+    assert torch.isnan(w).all()
+    assert log_ell == -float("inf")
