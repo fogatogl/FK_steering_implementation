@@ -1,122 +1,122 @@
 {
   "runs": [
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 1,
       "seed": 2024,
-      "seed_effectif": 2024001,
+      "effective_seed": 2024001,
       "r_best": 1.7354780435562134,
       "n_model_calls": 1000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 2,
       "seed": 2024,
-      "seed_effectif": 2024002,
+      "effective_seed": 2024002,
       "r_best": 1.4566184282302856,
       "n_model_calls": 2000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 4,
       "seed": 2024,
-      "seed_effectif": 2024004,
+      "effective_seed": 2024004,
       "r_best": 2.5358285903930664,
       "n_model_calls": 4000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 8,
       "seed": 2024,
-      "seed_effectif": 2024008,
+      "effective_seed": 2024008,
       "r_best": 1.3434721231460571,
       "n_model_calls": 8000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 16,
       "seed": 2024,
-      "seed_effectif": 2024016,
+      "effective_seed": 2024016,
       "r_best": 4.203284740447998,
       "n_model_calls": 16000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 1,
       "seed": 2025,
-      "seed_effectif": 2025001,
+      "effective_seed": 2025001,
       "r_best": 0.3822405934333801,
       "n_model_calls": 1000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 2,
       "seed": 2025,
-      "seed_effectif": 2025002,
+      "effective_seed": 2025002,
       "r_best": 1.717404842376709,
       "n_model_calls": 2000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 4,
       "seed": 2025,
-      "seed_effectif": 2025004,
+      "effective_seed": 2025004,
       "r_best": 2.75219464302063,
       "n_model_calls": 4000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 8,
       "seed": 2025,
-      "seed_effectif": 2025008,
+      "effective_seed": 2025008,
       "r_best": 3.764627695083618,
       "n_model_calls": 8000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 16,
       "seed": 2025,
-      "seed_effectif": 2025016,
+      "effective_seed": 2025016,
       "r_best": 2.957183599472046,
       "n_model_calls": 16000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 1,
       "seed": 2026,
-      "seed_effectif": 2026001,
+      "effective_seed": 2026001,
       "r_best": 2.6423146724700928,
       "n_model_calls": 1000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 2,
       "seed": 2026,
-      "seed_effectif": 2026002,
+      "effective_seed": 2026002,
       "r_best": 0.8843881487846375,
       "n_model_calls": 2000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 4,
       "seed": 2026,
-      "seed_effectif": 2026004,
+      "effective_seed": 2026004,
       "r_best": 2.464698314666748,
       "n_model_calls": 4000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 8,
       "seed": 2026,
-      "seed_effectif": 2026008,
+      "effective_seed": 2026008,
       "r_best": 1.3814506530761719,
       "n_model_calls": 8000
     },
     {
-      "methode": "best_of_n",
+      "method": "best_of_n",
       "n": 16,
       "seed": 2026,
-      "seed_effectif": 2026016,
+      "effective_seed": 2026016,
       "r_best": 2.3323512077331543,
       "n_model_calls": 16000
     }

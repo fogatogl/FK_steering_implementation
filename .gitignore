@@ -27,3 +27,6 @@ venv/
 *.log
 wandb/
 .claude/
+
+# --- Editable install ---
+*.egg-info/
