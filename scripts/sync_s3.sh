@@ -1,24 +1,22 @@
 #!/bin/bash
-# Sauvegarde / restauration du projet DDPM sur le bucket MinIO personnel.
+# Back up / restore the heavy artefacts on the personal MinIO bucket.
 #
-#   ./sync_s3.sh push    -> envoie dataset + poids + samples vers S3
-#   ./sync_s3.sh pull    -> récupère depuis S3
-#   ./sync_s3.sh status  -> ce qu'il y a dans le bucket
+#   ./sync_s3.sh push    -> send dataset + weights + samples + fid to S3
+#   ./sync_s3.sh pull    -> fetch them back
+#   ./sync_s3.sh status  -> what the bucket holds
 #
-# Le bucket personnel porte le nom d'utilisateur. Le jeton d'accès est valide
-# 7 jours et régénéré automatiquement : si le service devient "rouge" dans
-# "Mes services", c'est que le jeton a expiré côté service -> relancer le
-# service (les données du bucket, elles, ne bougent pas).
+# The bucket is named after the *Datalab* user (gfogato). $USERNAME is "onyxia"
+# inside the service: do not use it as a default. The access token lives 7 days
+# and is regenerated on launch: a "red" service in "My services" means the token
+# expired on the service side -> relaunch it (the bucket itself is untouched).
 set -uo pipefail
 
-# Le bucket porte le nom d'utilisateur *Datalab* (gfogato). $USERNAME vaut
-# "onyxia" à l'intérieur du service : ne pas s'en servir comme défaut.
 BUCKET="${BUCKET:-gfogato}"
 PROJ="${PROJ:-/home/onyxia/work/ddpm}"
 REMOTE="s3/${BUCKET}/ddpm"
 ACTION="${1:-push}"
 
-command -v mc >/dev/null || { echo "mc introuvable"; exit 1; }
+command -v mc >/dev/null || { echo "mc not found"; exit 1; }
 
 case "${ACTION}" in
   push)
@@ -26,18 +24,20 @@ case "${ACTION}" in
     mc mirror --overwrite "${PROJ}/weights"  "${REMOTE}/weights"
     mc mirror --overwrite "${PROJ}/samples"  "${REMOTE}/samples"
     mc mirror --overwrite "${PROJ}/dataset"  "${REMOTE}/dataset"
+    mc mirror --overwrite "${PROJ}/fid"      "${REMOTE}/fid"
     ;;
   pull)
     echo "<- ${REMOTE}"
-    mkdir -p "${PROJ}"/{weights,samples,dataset}
+    mkdir -p "${PROJ}"/{weights,samples,dataset,fid}
     mc mirror --overwrite "${REMOTE}/weights" "${PROJ}/weights"
     mc mirror --overwrite "${REMOTE}/samples" "${PROJ}/samples"
     mc mirror --overwrite "${REMOTE}/dataset" "${PROJ}/dataset"
+    mc mirror --overwrite "${REMOTE}/fid"     "${PROJ}/fid"
     ;;
   status)
-    # Toujours viser le bucket explicitement : "mc ls s3/" tout court reste
-    # bloqué, la politique stsonly n'autorise pas ListBuckets.
-    mc ls -r "${REMOTE}" 2>/dev/null || echo "rien dans ${REMOTE}"
+    # Always name the bucket: a bare "mc ls s3/" hangs, the stsonly policy
+    # does not allow ListBuckets.
+    mc ls -r "${REMOTE}" 2>/dev/null || echo "nothing in ${REMOTE}"
     mc du "${REMOTE}" 2>/dev/null
     ;;
   *)

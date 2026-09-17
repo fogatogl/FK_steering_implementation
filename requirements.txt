@@ -1,16 +1,15 @@
-# requirements.txt — reproduction complète depuis zéro, hors Onyxia.
+# requirements.txt — full reproduction from scratch, outside Onyxia.
 #
-# Celui-ci est épinglé et inclut torch/torchvision : c'est le fichier du dépôt
-# public, un lecteur doit pouvoir refaire les figures sans rien deviner
-# (checklist ML Code Completeness).
+# Pinned and including torch/torchvision: this is the public repo's file, a
+# reader must be able to redo the figures without guessing.
 #
-# Dans le service Onyxia, on installe requirements-onyxia.txt à la place :
-# le PyTorch de l'image est déjà appairé au CUDA de la machine, et le
-# réinstaller casse l'appairage.
+# Inside the Onyxia service, install requirements-onyxia.txt instead: the
+# image's PyTorch is already paired with the machine's CUDA, and reinstalling
+# it breaks that pairing.
 #
-# Versions relevées le 16/09/2026 sur l'image Datalab (Python 3.13, CPU).
-# Sur une machine GPU, remplacer les deux roues +cpu par la roue CUDA
-# correspondante : https://pytorch.org/get-started/locally/
+# Versions recorded on 16/09/2026 on the Datalab image (Python 3.13, CPU).
+# On a GPU machine, replace the two +cpu wheels with the matching CUDA wheel:
+# https://pytorch.org/get-started/locally/
 
 torch==2.14.0+cpu
 torchvision==0.29.0+cpu
@@ -21,3 +20,4 @@ matplotlib==3.11.2
 tqdm==4.70.1
 pytest==9.1.1
 wandb==0.30.0
+pytorch-fid==0.3.0

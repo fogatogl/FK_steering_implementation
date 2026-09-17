@@ -1,34 +1,33 @@
-# requirements-onyxia.txt — dépendances installées DANS le service Onyxia.
+# requirements-onyxia.txt — dependencies installed INSIDE the Onyxia service.
 #
-# Différence avec requirements.txt : ni torch ni torchvision.
-# L'image du Datalab fournit déjà un PyTorch appairé à sa version de CUDA ;
-# le venv est créé avec --system-site-packages pour en hériter. Réinstaller
-# torch ici, c'est 2-3 Go de téléchargement ET l'appairage CUDA cassé.
+# Difference with requirements.txt: no torch, no torchvision. The Datalab image
+# already provides a PyTorch paired with its CUDA version; the venv is created
+# with --system-site-packages to inherit it. Reinstalling torch here means a
+# 2-3 GB download AND a broken CUDA pairing.
 #
-# On suit l'image plutôt que d'épingler (seule exception : numpy, voir plus
-# bas). Les versions exactes qui ont servi à produire les figures sont dans
-# requirements.txt (dépôt public).
+# We follow the image rather than pin (single exception: numpy, see below).
+# The exact versions that produced the figures are in requirements.txt.
 
-# outillage
+# tooling
 ipykernel
 pytest
 
-# Module 0 — SMC
-particles          # oracle de test pour les resamplers (exercice 0.4)
+# SMC
+particles          # test oracle for the resamplers
 scipy
 
-# numpy est épinglé, et c'est le seul paquet qui l'est.
-# particles 0.4 déclare numpy<2 dans ses métadonnées (métadonnées périmées :
-# resampling.multinomial et .systematic tournent sans rien casser en 2.x,
-# vérifié). Sans l'épingle, pip rétrograde en 1.26.4 tout le venv, alors que le
-# torch de l'image est construit contre numpy 2.x : on garde donc 2.3 pour
-# rester aligné sur l'image (2.5.3) sans dépasser ce que numba accepte.
-# pip affichera un avertissement de conflit sur particles : il est attendu.
+# numpy is pinned, and it is the only pinned package. particles 0.4 declares
+# numpy<2 in its metadata (stale: resampling.multinomial and .systematic run
+# fine on 2.x, checked). Without the pin, pip downgrades the whole venv to
+# 1.26.4 while the image's torch is built against numpy 2.x: keep 2.3 to stay
+# aligned with the image (2.5.3) without exceeding what numba accepts. pip
+# prints a conflict warning about particles: expected.
 numpy==2.3.*
 
-# figures et boucles
+# figures and loops
 matplotlib
 tqdm
 
-# suivi d'expériences
+# experiment tracking and evaluation
 wandb
+pytorch-fid
