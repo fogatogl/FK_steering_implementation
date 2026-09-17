@@ -107,6 +107,10 @@ def train(args):
     start = 0
     if out.exists():
         ckpt = torch.load(out, map_location=device, weights_only=False)
+        if ckpt["config"]["epochs"] != args.epochs:
+            raise SystemExit(f"{out} was trained for {ckpt['config']['epochs']} epochs, "
+                             f"--epochs is {args.epochs}: the cosine schedule would restart "
+                             f"exhausted. Move the file or pick another --out.")
         model.load_state_dict(ckpt["model"])
         opt.load_state_dict(ckpt["optimizer"])
         sched.load_state_dict(ckpt["scheduler"])
