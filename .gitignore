@@ -1,4 +1,4 @@
-# --- Poids et sorties volumineuses (S3 est la source de vérité) ---
+# --- Weights and heavy outputs (S3 is the source of truth) ---
 weights/
 samples/
 fid/
@@ -8,7 +8,7 @@ dataset/
 *.ckpt
 *.safetensors
 
-# --- Checkpoint MDLM téléchargé (679 Mo, refait par hf download) ---
+# --- Downloaded MDLM checkpoint (679 MB, redone with hf download) ---
 mdlm_hf/*.safetensors
 mdlm_hf/*.bin
 
@@ -22,7 +22,7 @@ venv/
 # --- Jupyter ---
 .ipynb_checkpoints/
 
-# --- Divers ---
+# --- Misc ---
 .DS_Store
 *.log
 wandb/
