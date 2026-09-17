@@ -1,20 +1,35 @@
-# Décisions de conception
+# Design decisions
 
-## Choix de `right=False` dans `resample_systematic`
+## `right=False` in `resample_systematic`
 
-Dans `torch.searchsorted(cumw, points, right=False)` :
-- La fonction utilise des semi-ouverts à gauche : $[c_{i-1}, c_i)$.
-- Pour un point d'échantillonnage $p$, si $p = c_i$, l'indice retourné est $i$ (et non $i+1$).
-- Cela assure la cohérence avec la convention où la première particule est sélectionnée si $p \in [0, w_0]$, évitant qu'une valeur tombant exactement sur le bord supérieur ne déborde prématurément sur la tranche suivante ou hors limites lorsque $p = 1.0$.
+In `torch.searchsorted(cumw, points, right=False)`:
+- The function uses half-open intervals $[c_{i-1}, c_i)$.
+- For a sampling point $p$ with $p = c_i$, the returned index is $i$ (not $i+1$).
+- This matches the convention where the first particle is selected when $p \in [0, w_0]$, and keeps a point landing exactly on an upper edge from spilling into the next slot or out of bounds when $p = 1.0$.
 
-## Choix de `t_idx` dans `sample_trajectory`
+## `t_idx` in `sample_trajectory`
 
-Dans `sample_trajectory` le snapshot étiquété `t` est l'état avant le pas `t`
+In `sample_trajectory` the snapshot labelled `t` is the state *before* step `t`.
 
-## Tests face à l'oracle `particles`
+## Tests against the `particles` oracle
 
-- **Déterminisme et RNG** : `particles.resampling` ne prend pas d'objet générateur en argument explicite et s'appuie sur le runtime NumPy. Les tests d'oracle ne cherchent pas l'égalité bit-à-bit des indices, mais la conformité des lois empiriques.
-- **Précision multinomiale vs systématique** : 
-  - Pour le multinomial, l'écart d'échantillonnage standard est en $O(k^{-1/2})$, d'où une tolérance statistique fixée à `atol=0.02`.
-  - Pour le systématique, le mécanisme de peigne garantit un nombre de copies de la particule $i$ compris entre $\lfloor k w_i \rfloor$ et $\lceil k w_i \rceil$. L'erreur sur chaque fréquence est donc strictement bornée par $1/k$, ce qui autorise un seuil de comparaison strict à `2.0 / k`.
+- **Determinism and RNG**: `particles.resampling` takes no explicit generator and relies on the NumPy runtime. The oracle tests do not look for bit-for-bit equality of indices but for matching empirical laws.
+- **Multinomial vs systematic precision**:
+  - For the multinomial, the standard sampling error is $O(k^{-1/2})$, hence a statistical tolerance of `atol=0.02`.
+  - For the systematic resampler, the comb guarantees that the number of copies of particle $i$ lies between $\lfloor k w_i \rfloor$ and $\lceil k w_i \rceil$. The error on each frequency is therefore strictly bounded by $1/k$, which allows a strict threshold of `2.0 / k`.
 
+## One target for the three potentials
+
+The three potentials do not differ in their terminal target but in the temporal dynamics of the guidance:
+
+- `difference`: guides particles through local increments of the predicted reward.
+- `max`: keeps the guidance on the peak reward seen along the Tweedie path, then compensates the gap with the true $x_0$ at the final step.
+- `sum`: accumulates the whole signal along the path before the final correction.
+
+Without the corrective term at $t=0$, the product would be $\exp(\lambda \max_t r_t)$ or $\exp(\lambda \sum_t r_t)$: the final marginal in $x_0$ would then be biased by the intermediate Tweedie estimates $\hat{x}_0(x_t)$, notoriously blurry and inaccurate at large $t$.
+
+**Decision**: keep $\prod_{t=0}^{T-1} G_t = \exp(\lambda\, r(x_0))$ for all three potentials, via the corrective term at $t=0$.
+
+## EMA weights everywhere (17/09)
+
+The notebook FID (base 79.2 / fine-tuned 50.7) was measured on the EMA weights; the lambda sweep and figures 0–2 ran on the raw weights (`ckpt["model"]`), a different model (max parameter gap 0.018). Sweeps and samples switch to EMA — the DDPM standard and the only choice comparable to the FID anchors. `results/sweep_lambda.json` and `results/bestofn.json` remain raw-weight results; new JSON files carry an `"ema"` key.
