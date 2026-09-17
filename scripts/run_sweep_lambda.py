@@ -19,11 +19,18 @@ import torch
 from experiments.run_free_samples import load_model
 from smc.fk import best_of_n, fk_steer
 from smc.resampling import resample_multinomial, resample_systematic
-from smc.rewards import reward
+from smc.rewards import make_classifier_reward, reward as red_reward
 from smc.rng import make_generator
 
 ROOT = Path(__file__).resolve().parent.parent
+WEIGHTS = Path("/home/onyxia/work/ddpm/weights")
 RESAMPLERS = {"systematic": resample_systematic, "multinomial": resample_multinomial}
+
+
+def make_reward(args):
+    if args.reward == "red":
+        return red_reward
+    return make_classifier_reward(args.classifier_weights, args.target, args.device)
 
 
 def sample_from_weights(x, w, r, generator):
@@ -39,6 +46,9 @@ def main():
     p.add_argument("--resamplers", nargs="+", default=list(RESAMPLERS),
                    choices=list(RESAMPLERS))
     p.add_argument("--seeds", type=int, nargs="+", default=[2024, 2025, 2026])
+    p.add_argument("--reward", default="red", choices=["red", "classifier"])
+    p.add_argument("--target", type=int, default=3, help="target class of the classifier reward")
+    p.add_argument("--classifier-weights", default=str(WEIGHTS / "classifier_small_seed0.pt"))
     p.add_argument("--weights", default="/home/onyxia/work/ddpm/weights/ddpm_last.pt")
     p.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     p.add_argument("--out", default=str(ROOT / "results" / "sweep_lambda.json"))
@@ -46,10 +56,17 @@ def main():
                    help="keep the k final particles of each run in samples/")
     p.add_argument("--no-ema", action="store_true",
                    help="raw weights: those of results/sweep_lambda.json from 17/09")
+    p.add_argument("--steps", type=int, default=None, help="DDIM with this many steps")
+    p.add_argument("--eta", type=float, default=0.0)
     args = p.parse_args()
 
-    model, config = load_model(args.weights, args.device, ema=not args.no_ema)
+    model, config = load_model(args.weights, args.device, ema=not args.no_ema,
+                               steps=args.steps, eta=args.eta)
+    reward = make_reward(args)
     calls = args.k * model.T
+    common = {"k": args.k, "n_model_calls": calls, "reward": args.reward,
+              "target": args.target if args.reward == "classifier" else None,
+              "steps": model.T, "eta": args.eta if args.steps else None}
 
     runs, images = [], {}
     total = len(args.seeds) * (1 + len(args.potentials) * len(args.lam) * len(args.resamplers))
@@ -61,11 +78,9 @@ def main():
         r = info["rewards"]
         _, r_sample = sample_from_weights(x, info["weights"], r, gen)
         runs.append({"method": "best_of_n", "potential": None, "lam": None,
-                     "resampler": None, "k": args.k, "seed": seed,
-                     "effective_seed": effective_seed,
+                     "resampler": None, "seed": seed, "effective_seed": effective_seed,
                      "r_sample": r_sample, "r_max": r.max().item(),
-                     "ess_min": None, "n_resamplings": None,
-                     "n_model_calls": calls})
+                     "ess_min": None, "n_resamplings": None, **common})
         if args.save_images:
             images[f"best_of_n_seed{seed}"] = x.cpu()
         print(f"[{len(runs):3d}/{total}] seed={seed} best_of_n                          "
@@ -80,12 +95,10 @@ def main():
                     r = info["rewards"]
                     _, r_sample = sample_from_weights(x, info["weights"], r, gen)
                     runs.append({"method": "fk", "potential": pot, "lam": lam,
-                                 "resampler": name, "k": args.k, "seed": seed,
-                                 "effective_seed": effective_seed,
+                                 "resampler": name, "seed": seed, "effective_seed": effective_seed,
                                  "r_sample": r_sample, "r_max": r.max().item(),
                                  "ess_min": info["ess_min"],
-                                 "n_resamplings": info["n_resamplings"],
-                                 "n_model_calls": calls})
+                                 "n_resamplings": info["n_resamplings"], **common})
                     if args.save_images:
                         images[f"{pot}_{name}_lam{lam:g}_seed{seed}"] = x.cpu()
                     print(f"[{len(runs):3d}/{total}] seed={seed} {pot:10s} {name:11s} "
@@ -93,13 +106,13 @@ def main():
                           f"r_max={r.max().item():+.4f}  ess_min={info['ess_min']:5.2f}  "
                           f"resampl={info['n_resamplings']}", flush=True)
 
+    out = Path(args.out)
     images_path = None
     if args.save_images:
         (ROOT / "samples").mkdir(exist_ok=True)
-        images_path = ROOT / "samples" / "sweep_lambda.pt"
+        images_path = ROOT / "samples" / f"{out.stem}.pt"
         torch.save(images, images_path)
 
-    out = Path(args.out)
     out.parent.mkdir(exist_ok=True)
     out.write_text(json.dumps({
         "runs": runs,
@@ -109,9 +122,14 @@ def main():
         "resamplers": args.resamplers,
         "seeds": args.seeds,
         "T": model.T,
+        "sampler": "ddim" if args.steps else "ddpm",
+        "eta": args.eta if args.steps else None,
         "device": args.device,
         "weights": args.weights,
         "ema": not args.no_ema,
+        "reward": args.reward,
+        "target": args.target if args.reward == "classifier" else None,
+        "classifier_weights": args.classifier_weights if args.reward == "classifier" else None,
         "images": str(images_path.relative_to(ROOT)) if images_path else None,
         "config": {k: v for k, v in config.items() if isinstance(v, (int, float, str))},
     }, indent=2))
