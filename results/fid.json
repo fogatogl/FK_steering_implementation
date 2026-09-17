@@ -1,0 +1,42 @@
+[
+  {
+    "gen": "ref_class3_sub2048",
+    "ref": "ref_class3",
+    "n_gen": 2048,
+    "n_ref": 5000,
+    "fid": 8.782518133827693,
+    "date": "2026-09-17"
+  },
+  {
+    "gen": "ref_class3_test",
+    "ref": "ref_class3",
+    "n_gen": 1000,
+    "n_ref": 5000,
+    "fid": 35.548084642175695,
+    "date": "2026-09-17"
+  },
+  {
+    "gen": "gen_base",
+    "ref": "ref_class3",
+    "n_gen": 2048,
+    "n_ref": 5000,
+    "fid": 80.21883474755856,
+    "date": "2026-09-17"
+  },
+  {
+    "gen": "gen_ft_class3",
+    "ref": "ref_class3",
+    "n_gen": 2048,
+    "n_ref": 5000,
+    "fid": 51.41845787868385,
+    "date": "2026-09-17"
+  },
+  {
+    "gen": "gen_base",
+    "ref": "ref_test",
+    "n_gen": 2048,
+    "n_ref": 10000,
+    "fid": 31.620047275143634,
+    "date": "2026-09-17"
+  }
+]
