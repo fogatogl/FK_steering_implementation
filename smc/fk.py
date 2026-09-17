@@ -5,7 +5,7 @@ from smc.resampling import resample_systematic, resample_multinomial
 
 def best_of_n(model, reward, n, generator):
     state = model.initial_state(n, generator)
-    for t in range(model.T - 1, -1, -1):
+    for t in model.timesteps:
         state = model.step(state, t, generator)
     r = reward(state["x"])
     w = torch.full((n,), 1.0 / n, device=state["x"].device)
@@ -72,7 +72,7 @@ def fk_steer(
     n_resamplings = 0
     ess_min = float(k)
 
-    for t in range(model.T - 1, -1, -1):
+    for t in model.timesteps:
         state = model.step(state, t, generator)
 
         if t > 0:

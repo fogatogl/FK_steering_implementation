@@ -13,24 +13,24 @@ import torch
 from smc.models import CifarDDPM
 from smc.rewards import reward
 from smc.rng import make_generator
-from smc.scheduler import NoiseScheduler
+from smc.scheduler import DDIMScheduler, NoiseScheduler
 from smc.unet import UNet
 
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def load_model(weights_path, device, ema=True):
+def load_model(weights_path, device, ema=True, steps=None, eta=0.0):
     """EMA weights by default: those of the notebook FID (79.2 / 50.7) and of
     everything after 17/09. The lambda sweep and figures 0-2 ran on the raw
-    weights (`ema=False`), see docs/decisions.md."""
+    weights (`ema=False`), see docs/decisions.md. `steps` switches to DDIM."""
     ckpt = torch.load(weights_path, map_location=device, weights_only=False)
     config = ckpt["config"]
     unet = UNet(in_channels=3, n_feat=config["n_feat"]).to(device)
     unet.load_state_dict(ckpt["ema"] if ema else ckpt["model"])
     unet.eval()
-    scheduler = NoiseScheduler(timesteps=config["timesteps"],
-                               beta_start=config["beta1"], beta_end=config["beta2"],
-                               device=device)
+    kw = dict(timesteps=config["timesteps"], beta_start=config["beta1"],
+              beta_end=config["beta2"], device=device)
+    scheduler = DDIMScheduler(steps=steps, eta=eta, **kw) if steps else NoiseScheduler(**kw)
     return CifarDDPM(unet=unet, scheduler=scheduler, device=device), config
 
 
@@ -42,6 +42,8 @@ def main():
     p.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     p.add_argument("--tag", default="free")
     p.add_argument("--no-ema", action="store_true", help="raw weights, as before 17/09")
+    p.add_argument("--steps", type=int, default=None, help="DDIM with this many steps")
+    p.add_argument("--eta", type=float, default=0.0)
     p.add_argument("--rescore", action="store_true",
                    help="rewrite the JSON from the existing .pt, no sampling")
     args = p.parse_args()
@@ -55,13 +57,14 @@ def main():
         config, timesteps = old["config"], old["timesteps"]
         device = old.get("device", "unknown")
     else:
-        ddpm, config = load_model(args.weights, args.device, ema=not args.no_ema)
+        ddpm, config = load_model(args.weights, args.device, ema=not args.no_ema,
+                                  steps=args.steps, eta=args.eta)
         gen = make_generator(args.seed, device=args.device)
         state = ddpm.initial_state(args.n, generator=gen)
-        for t_idx in reversed(range(ddpm.scheduler.timesteps)):
+        for t_idx in ddpm.timesteps:
             state = ddpm.step(state, t_idx, generator=gen)
         x = state["x"].cpu()
-        timesteps, device = ddpm.scheduler.timesteps, args.device
+        timesteps, device = ddpm.T, args.device
         Path(ROOT / "samples").mkdir(exist_ok=True)
         torch.save(x, images_path)
 
@@ -76,6 +79,8 @@ def main():
         "device": device,
         "weights": args.weights,
         "ema": not args.no_ema,
+        "steps": args.steps,
+        "eta": args.eta if args.steps else None,
         "config": {k: v for k, v in config.items() if isinstance(v, (int, float, str))},
         "reward": r.tolist(),
         "images": str(images_path.relative_to(ROOT)),
