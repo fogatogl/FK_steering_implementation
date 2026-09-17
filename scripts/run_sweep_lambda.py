@@ -1,0 +1,122 @@
+"""Lambda sweep: the data behind figure 2.
+
+One flat record per run (method, potential, lam, resampler, k, seed): two
+result files concatenate, a diverged point reruns alone.
+
+Each run restarts from a fresh generator seeded on (seed, k). Best-of-N and FK
+at lambda=0 therefore see the same initial noise and consume the RNG in the
+same order: their `r_max` coincide, up to GPU non-determinism (~1e-6 in fp32;
+two identical calls are already not bit-for-bit equal).
+
+From the root: `python scripts/run_sweep_lambda.py`.
+"""
+import argparse
+import json
+from pathlib import Path
+
+import torch
+
+from experiments.run_free_samples import load_model
+from smc.fk import best_of_n, fk_steer
+from smc.resampling import resample_multinomial, resample_systematic
+from smc.rewards import reward
+from smc.rng import make_generator
+
+ROOT = Path(__file__).resolve().parent.parent
+RESAMPLERS = {"systematic": resample_systematic, "multinomial": resample_multinomial}
+
+
+def sample_from_weights(x, w, r, generator):
+    idx = torch.multinomial(w, num_samples=1, generator=generator).item()
+    return x[idx], r[idx].item()
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--k", type=int, default=16)
+    p.add_argument("--lam", type=float, nargs="+", default=[0.0, 0.5, 1.0, 2.0, 4.0, 8.0])
+    p.add_argument("--potentials", nargs="+", default=["difference", "max", "sum"])
+    p.add_argument("--resamplers", nargs="+", default=list(RESAMPLERS),
+                   choices=list(RESAMPLERS))
+    p.add_argument("--seeds", type=int, nargs="+", default=[2024, 2025, 2026])
+    p.add_argument("--weights", default="/home/onyxia/work/ddpm/weights/ddpm_last.pt")
+    p.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
+    p.add_argument("--out", default=str(ROOT / "results" / "sweep_lambda.json"))
+    p.add_argument("--save-images", action="store_true",
+                   help="keep the k final particles of each run in samples/")
+    p.add_argument("--no-ema", action="store_true",
+                   help="raw weights: those of results/sweep_lambda.json from 17/09")
+    args = p.parse_args()
+
+    model, config = load_model(args.weights, args.device, ema=not args.no_ema)
+    calls = args.k * model.T
+
+    runs, images = [], {}
+    total = len(args.seeds) * (1 + len(args.potentials) * len(args.lam) * len(args.resamplers))
+    for seed in args.seeds:
+        effective_seed = seed * 1000 + args.k
+
+        gen = make_generator(effective_seed, device=args.device)
+        x, info = best_of_n(model, reward, args.k, gen)
+        r = info["rewards"]
+        _, r_sample = sample_from_weights(x, info["weights"], r, gen)
+        runs.append({"method": "best_of_n", "potential": None, "lam": None,
+                     "resampler": None, "k": args.k, "seed": seed,
+                     "effective_seed": effective_seed,
+                     "r_sample": r_sample, "r_max": r.max().item(),
+                     "ess_min": None, "n_resamplings": None,
+                     "n_model_calls": calls})
+        if args.save_images:
+            images[f"best_of_n_seed{seed}"] = x.cpu()
+        print(f"[{len(runs):3d}/{total}] seed={seed} best_of_n                          "
+              f"r_sample={r_sample:+.4f}  r_max={r.max().item():+.4f}", flush=True)
+
+        for name in args.resamplers:
+            for pot in args.potentials:
+                for lam in args.lam:
+                    gen = make_generator(effective_seed, device=args.device)
+                    x, info = fk_steer(model, reward, args.k, lam, pot, gen,
+                                       resampler=RESAMPLERS[name])
+                    r = info["rewards"]
+                    _, r_sample = sample_from_weights(x, info["weights"], r, gen)
+                    runs.append({"method": "fk", "potential": pot, "lam": lam,
+                                 "resampler": name, "k": args.k, "seed": seed,
+                                 "effective_seed": effective_seed,
+                                 "r_sample": r_sample, "r_max": r.max().item(),
+                                 "ess_min": info["ess_min"],
+                                 "n_resamplings": info["n_resamplings"],
+                                 "n_model_calls": calls})
+                    if args.save_images:
+                        images[f"{pot}_{name}_lam{lam:g}_seed{seed}"] = x.cpu()
+                    print(f"[{len(runs):3d}/{total}] seed={seed} {pot:10s} {name:11s} "
+                          f"lam={lam:<5g} r_sample={r_sample:+.4f}  "
+                          f"r_max={r.max().item():+.4f}  ess_min={info['ess_min']:5.2f}  "
+                          f"resampl={info['n_resamplings']}", flush=True)
+
+    images_path = None
+    if args.save_images:
+        (ROOT / "samples").mkdir(exist_ok=True)
+        images_path = ROOT / "samples" / "sweep_lambda.pt"
+        torch.save(images, images_path)
+
+    out = Path(args.out)
+    out.parent.mkdir(exist_ok=True)
+    out.write_text(json.dumps({
+        "runs": runs,
+        "k": args.k,
+        "lam": args.lam,
+        "potentials": args.potentials,
+        "resamplers": args.resamplers,
+        "seeds": args.seeds,
+        "T": model.T,
+        "device": args.device,
+        "weights": args.weights,
+        "ema": not args.no_ema,
+        "images": str(images_path.relative_to(ROOT)) if images_path else None,
+        "config": {k: v for k, v in config.items() if isinstance(v, (int, float, str))},
+    }, indent=2))
+    print(out)
+
+
+if __name__ == "__main__":
+    main()
