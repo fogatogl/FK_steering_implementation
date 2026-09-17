@@ -20,7 +20,7 @@ class NoiseScheduler:
         self.sigma = self.beta.sqrt()
 
     def add_noise(self, x_0, t, noise=None):
-        """q(x_t | x_0)"""
+        """q(x_t | x_0)."""
         if noise is None:
             noise = torch.randn_like(x_0)
         s1 = self.sqrt_alpha_hat[t].view(-1, 1, 1, 1)
@@ -29,7 +29,7 @@ class NoiseScheduler:
 
     @torch.no_grad()
     def sample_step(self, model, x_t, t_idx, generator=None):
-        """Un pas de p(x_{t-1} | x_t)"""
+        """One step of p(x_{t-1} | x_t)."""
         t = torch.full((x_t.shape[0],), t_idx, device=self.device, dtype=torch.long)
         pred_noise = model(x_t, t)
         mean = self.sqrt_inv_alpha[t_idx] * (x_t - self.eps_coef[t_idx] * pred_noise)

@@ -6,14 +6,14 @@ import torch
 
 
 def weights_dir():
-    # Poids hors dépôt (S3 fait foi, cf. scripts/sync_s3.sh).
+    # Weights live outside the repo (S3 is the source of truth, see scripts/sync_s3.sh).
     return Path(os.environ.get("DDPM_WEIGHTS_DIR", "/home/onyxia/work/ddpm/weights"))
 
 
 def require_checkpoint(relative_path):
     path = weights_dir() / relative_path
     if not path.exists():
-        pytest.skip(f"Poids absents ({path}) : `scripts/sync_s3.sh pull`")
+        pytest.skip(f"weights missing ({path}): run `scripts/sync_s3.sh pull`")
     return path
 
 

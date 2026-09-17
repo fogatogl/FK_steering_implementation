@@ -1,9 +1,9 @@
-"""Un seul générateur par expérience, créé sur le device du modèle.
+"""One generator per experiment, created on the model's device.
 
-PyTorch refuse d'apparier un générateur et un tenseur de devices différents, et
-un `torch.Generator()` nu est un générateur CPU : le piège ne se voit qu'une
-fois sur GPU. Aucune fonction de `smc/` ne fabrique de générateur, elle le
-reçoit — ou reçoit `None` et tire alors sur le RNG global.
+PyTorch refuses to pair a generator and a tensor living on different devices,
+and a bare `torch.Generator()` is a CPU generator: the trap only shows up on
+GPU. No function in `smc/` creates a generator, it receives one — or `None`,
+and then draws from the global RNG.
 """
 import torch
 
@@ -17,11 +17,8 @@ def make_generator(seed, device="cpu"):
 def check_generator(generator, device):
     if generator is None:
         return
-    attendu = torch.device(device).type
-    obtenu = generator.device.type
-    if obtenu != attendu:
-        raise ValueError(
-            f"générateur sur '{obtenu}' pour un calcul sur '{attendu}'. "
-            f"Un seul générateur par expérience, créé avec "
-            f"make_generator(seed, device='{attendu}')."
-        )
+    expected = torch.device(device).type
+    got = generator.device.type
+    if got != expected:
+        raise ValueError(f"generator on '{got}' for a computation on '{expected}': "
+                         f"use make_generator(seed, device='{expected}')")

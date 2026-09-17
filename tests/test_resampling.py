@@ -31,19 +31,19 @@ def test_resample_systematic_lower_variance_than_multinomial():
     n_runs = 200
 
     gen_multi = torch.Generator().manual_seed(0)
-    comptes_multi = [
+    counts_multi = [
         torch.bincount(resample_multinomial(w, k, generator=gen_multi), minlength=3)[0].item()
         for _ in range(n_runs)
     ]
 
     gen_syst = torch.Generator().manual_seed(0)
-    comptes_syst = [
+    counts_syst = [
         torch.bincount(resample_systematic(w, k, generator=gen_syst), minlength=3)[0].item()
         for _ in range(n_runs)
     ]
 
-    var_multi = torch.tensor(comptes_multi, dtype=torch.float).var()
-    var_syst = torch.tensor(comptes_syst, dtype=torch.float).var()
+    var_multi = torch.tensor(counts_multi, dtype=torch.float).var()
+    var_syst = torch.tensor(counts_syst, dtype=torch.float).var()
 
     assert var_syst < var_multi
 
@@ -58,15 +58,15 @@ def test_resample_systematic_sanity_check_two_particles():
     assert torch.equal(idx, torch.tensor([0, 1]))
 
 
-# Poids dont la cumsum fp32 s'arrête à 1 − 1,9e−6 : le dernier point du peigne
-# passait alors au-delà du dernier bord et searchsorted renvoyait k.
-LOGW_CUMSUM_DEFICIENTE = torch.tensor(
+# Weights whose fp32 cumsum stops at 1 − 1.9e−6: the last comb point then fell
+# beyond the last edge and searchsorted returned k.
+LOGW_SHORT_CUMSUM = torch.tensor(
     [33.247059, -13.070757, 2.053682, 29.95665, 1.97585, 14.369114, -3.183539, 5.904665]
 )
 
 
-def test_peigne_reste_dans_les_bornes_quand_la_cumsum_rate_un(monkeypatch):
-    w, _ = normalize_logw(LOGW_CUMSUM_DEFICIENTE)
+def test_comb_stays_in_bounds_when_cumsum_misses_one(monkeypatch):
+    w, _ = normalize_logw(LOGW_SHORT_CUMSUM)
     k = w.numel()
     monkeypatch.setattr(torch, "rand", lambda *a, **kw: torch.tensor([1.0 - 2.0 ** -24]))
 

@@ -13,7 +13,7 @@ def gn(channels, max_groups=32):
 class SinusoidalPositionEmbeddings(nn.Module):
     def __init__(self, dim=128):
         super().__init__()
-        assert dim % 2 == 0, "dim doit être pair"
+        assert dim % 2 == 0, "dim must be even"
         self.dim = dim
 
     def forward(self, t):
@@ -94,7 +94,7 @@ class UNet(nn.Module):
         self.out_norm = gn(n_feat)
         self.out_act = nn.SiLU()
         self.out_conv = nn.Conv2d(n_feat, in_channels, 3, padding=1)
-        nn.init.zeros_(self.out_conv.weight)      # départ à epsilon=0, stabilise le début
+        nn.init.zeros_(self.out_conv.weight)      # start at epsilon=0, stabilises early training
         nn.init.zeros_(self.out_conv.bias)
 
     def forward(self, x, t):

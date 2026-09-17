@@ -1,6 +1,6 @@
-"""Le refactor notebook -> smc/ ne change pas les images (exercice 1.1).
+"""The notebook -> smc/ refactor does not change the images.
 
-Marqués `slow` : T=1000 pas sur le modèle entraîné.
+Marked `slow`: T=1000 steps on the trained model.
 """
 import pytest
 import torch
@@ -15,7 +15,7 @@ SEED = 2024
 
 
 @pytest.fixture(scope="module")
-def modele_et_schedule(checkpoint):
+def model_and_scheduler(checkpoint):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     config = checkpoint["config"]
     unet = UNet(in_channels=3, n_feat=config["n_feat"]).to(device)
@@ -28,7 +28,7 @@ def modele_et_schedule(checkpoint):
 
 
 class SchedulerNotebook(NoiseScheduler):
-    """`sample_step` tel qu'il était dans demo_DDPM.ipynb : bruit par randn_like."""
+    """`sample_step` as it was in demo_DDPM.ipynb: noise from randn_like."""
 
     @torch.no_grad()
     def sample_step(self, model, x_t, t_idx, generator=None):
@@ -41,8 +41,8 @@ class SchedulerNotebook(NoiseScheduler):
 
 
 @pytest.mark.slow
-def test_sampler_original_vs_interface_diffusion_model(modele_et_schedule):
-    unet, scheduler = modele_et_schedule
+def test_original_sampler_vs_diffusion_model_interface(model_and_scheduler):
+    unet, scheduler = model_and_scheduler
     ddpm = CifarDDPM(unet=unet, scheduler=scheduler, device=scheduler.device)
 
     torch.manual_seed(SEED)
@@ -57,19 +57,19 @@ def test_sampler_original_vs_interface_diffusion_model(modele_et_schedule):
 
 
 @pytest.mark.slow
-def test_bruit_du_refactor_identique_au_notebook(modele_et_schedule):
-    """`randn(shape, generator=None)` consomme le RNG comme `randn_like` : sinon
-    les images auraient changé et le FID de référence ne s'appliquerait plus."""
-    unet, scheduler = modele_et_schedule
+def test_refactor_noise_identical_to_notebook(model_and_scheduler):
+    """`randn(shape, generator=None)` consumes the RNG like `randn_like`: otherwise
+    the images would have changed and the reference FID would no longer apply."""
+    unet, scheduler = model_and_scheduler
     notebook = SchedulerNotebook(timesteps=scheduler.timesteps,
                                  beta_start=scheduler.beta[0].item(),
                                  beta_end=scheduler.beta[-1].item(),
                                  device=scheduler.device)
 
     torch.manual_seed(SEED)
-    x_actuel = sample(unet, scheduler, n_samples=K, channels=3, size=32)
+    x_current = sample(unet, scheduler, n_samples=K, channels=3, size=32)
 
     torch.manual_seed(SEED)
     x_notebook = sample(unet, notebook, n_samples=K, channels=3, size=32)
 
-    assert torch.equal(x_actuel, x_notebook)
+    assert torch.equal(x_current, x_notebook)
