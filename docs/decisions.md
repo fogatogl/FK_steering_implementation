@@ -32,7 +32,7 @@ Without the corrective term at $t=0$, the product would be $\exp(\lambda \max_t 
 
 ## EMA weights everywhere (17/09)
 
-The notebook FID (base 79.2 / fine-tuned 50.7) was measured on the EMA weights; the lambda sweep and figures 0–2 ran on the raw weights (`ckpt["model"]`), a different model (max parameter gap 0.018). Sweeps and samples switch to EMA — the DDPM standard and the only choice comparable to the FID anchors. `results/sweep_lambda.json` and `results/bestofn.json` remain raw-weight results; new JSON files carry an `"ema"` key.
+The notebook FID (base 79.2 / fine-tuned 50.7) was measured on the EMA weights; the lambda sweep and figures 0–2 ran on the raw weights (`ckpt["model"]`), a different model (max parameter gap 0.018). Sweeps and samples switch to EMA, the DDPM standard and the only choice comparable to the FID anchors. `results/sweep_lambda.json` and `results/bestofn.json` remain raw-weight results; new JSON files carry an `"ema"` key.
 
 ## Classifier reward: log p, clamped (17/09)
 
@@ -46,7 +46,7 @@ Red reward, $\lambda = 8$: sixteen flat red squares, mean $p_B(\text{cat}) = 0.4
 
 ## FID on FK samples: one particle per run
 
-At $\lambda \geq 1$ the sixteen final particles descend from two or three ancestors (`ess_min` ≈ 1, 100–270 resamplings). FID on all $k$ would measure duplication. Use the particle drawn from the final weights, one per run — 16 s per sample at $T = 1000$, hence DDIM.
+At $\lambda \geq 1$ the sixteen final particles descend from two or three ancestors (`ess_min` ≈ 1, 100–270 resamplings). FID on all $k$ would measure duplication. Use the particle drawn from the final weights, one per run. 16 s per sample at $T = 1000$, hence DDIM.
 
 ## Noise-conditioned classifier: deferred
 

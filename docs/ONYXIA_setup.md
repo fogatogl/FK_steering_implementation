@@ -1,6 +1,6 @@
-# Onyxia — bringing an instance back to a working state
+# Onyxia: bringing an instance back to a working state
 
-*v2, 16/09/2026 — reread when launching an SSP Cloud service*
+*v2, 16/09/2026, reread when launching an SSP Cloud service*
 
 > Project values live in `scripts/onyxia_bootstrap.sh`: repo `fogatogl/diffusion-models`,
 > MinIO bucket `gfogato`. **The bucket is not `$USERNAME`**: inside the service
@@ -14,7 +14,7 @@ The Onyxia form clones the repo by itself (Git tab). One command remains in the 
 bash ~/work/diffusion-models/scripts/onyxia_bootstrap.sh && source ~/.bashrc
 ```
 
-If `~/work/diffusion-models` does not exist — volume lost, or Git tab left empty:
+If `~/work/diffusion-models` does not exist (volume lost, or Git tab left empty):
 
 ```bash
 cd ~/work
@@ -42,7 +42,7 @@ An Onyxia service is an ephemeral container; only the persistent volume survives
 
 ## 2. Once per Datalab account
 
-1. Create a GitHub token at <https://github.com/settings/tokens> — scope `repo`, short expiry (30 days).
+1. Create a GitHub token at <https://github.com/settings/tokens>, scope `repo`, short expiry (30 days).
 2. Store it in the Datalab account, **External services** section. It becomes `$GIT_PERSONAL_ACCESS_TOKEN` in every service.
 3. Check that the **Datalab account e-mail is the GitHub one**, otherwise commits are not attached to the GitHub profile.
 4. Renew the token when it expires.
@@ -71,18 +71,18 @@ It lives **in the repo**, not on the volume: since the Git tab clones the repo a
 3. creates `~/work/.venvs/ddpm` with `--system-site-packages`, installs `requirements-onyxia.txt` and the repo in editable mode;
 4. re-registers the Jupyter kernel in `~/.local`;
 5. rewrites `~/.bashrc`: `BUCKET`, `REPO`, venv activation;
-6. fetches the **two latest checkpoints** (257 MB) from S3 — `FULL_WEIGHTS=1` for the 2 GB of intermediate checkpoints, `NO_S3=1` to skip;
+6. fetches the **two latest checkpoints** (257 MB) from S3; `FULL_WEIGHTS=1` for the 2 GB of intermediate checkpoints, `NO_S3=1` to skip;
 7. prints the torch version and the visible GPU.
 
 Two traps commented there, which cost time:
 
-- `mc ls s3/` **without a bucket name hangs** until timeout — the `stsonly` policy does not allow `ListBuckets`. Always target `s3/gfogato/...` explicitly.
+- `mc ls s3/` **without a bucket name hangs** until timeout: the `stsonly` policy does not allow `ListBuckets`. Always target `s3/gfogato/...` explicitly.
 - `particles` 0.4 declares `numpy<2` while its resamplers run fine on 2.x. Without a pin, pip downgrades the whole venv to numpy 1.26 while the image's torch is built against numpy 2. Hence the single `numpy==2.3.*` pin in `requirements-onyxia.txt`.
 
 ### Two dependency files, and why
 
-- `requirements.txt` — **pinned and complete, torch included**. The public one: a stranger must be able to reproduce the figures.
-- `requirements-onyxia.txt` — **no torch, no torchvision**. The one the bootstrap installs, because the Datalab GPU image already ships a PyTorch paired with its CUDA, and reinstalling it breaks the GPU.
+- `requirements.txt`: **pinned and complete, torch included**. The public one: a stranger must be able to reproduce the figures.
+- `requirements-onyxia.txt`: **no torch, no torchvision**. The one the bootstrap installs, because the Datalab GPU image already ships a PyTorch paired with its CUDA, and reinstalling it breaks the GPU.
 
 ## 5. Sixty-second check
 
@@ -124,9 +124,9 @@ Then a line in `LEARNING.md` if a bug took more than twenty minutes, and only th
 
 | Object | Destination | Never |
 |---|---|---|
-| Code, tests, scripts, regenerable figures | **Git** | — |
+| Code, tests, scripts, regenerable figures | **Git** | none |
 | Checkpoints, dataset, samples, heavy W&B runs | **S3** (`~/work/ddpm/...`) | in Git |
-| `results/*.json` (small, needed to regenerate figures) | **Git** | — |
+| `results/*.json` (small, needed to regenerate figures) | **Git** | none |
 | GitHub token, keys | **Datalab account / Vault** | in Git, nor in a notebook |
 | venv | `~/work/.venvs/ddpm` | in Git |
 
