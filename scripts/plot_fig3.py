@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 WEIGHTS = Path("/home/onyxia/work/ddpm/weights")
 
 
-def row(ax, images, scores, label, mean_score):
+def row(ax, images, scores, label, mean_score, cls="cat"):
     img = ((images.permute(0, 2, 3, 1).numpy() + 1) / 2).clip(0, 1)
     n, h, w = img.shape[0], img.shape[1], img.shape[2]
     gap = 2
@@ -37,7 +37,7 @@ def row(ax, images, scores, label, mean_score):
         ax.text(gap + i * (w + gap) + 1, gap + 5, f"{scores[i]:.2f}", fontsize=5.5,
                 color="white", family="monospace",
                 path_effects=[matplotlib.patheffects.withStroke(linewidth=1.4, foreground="black")])
-    ax.set_ylabel(f"{label}\nmean p_B(cat) = {mean_score:.2f}", rotation=0, ha="right",
+    ax.set_ylabel(f"{label}\nmean p_B({cls}) = {mean_score:.2f}", rotation=0, ha="right",
                   va="center", fontsize=9, color=INK, labelpad=8)
     ax.set_xticks([])
     ax.set_yticks([])
@@ -53,6 +53,9 @@ def main():
     p.add_argument("--seed", type=int, default=2024)
     p.add_argument("--target", type=int, default=3)
     p.add_argument("--out", default=str(ROOT / "figures" / "fig3_samples_by_reward.png"))
+    p.add_argument("--cls", default="cat", help="name of the target class in the labels")
+    p.add_argument("--note", default="red rows: raw weights (first sweep)  ·  other rows: EMA weights")
+    p.add_argument("--title", default=None)
     args = p.parse_args()
 
     red = torch.load(args.red, map_location="cpu")
@@ -72,21 +75,21 @@ def main():
     with torch.no_grad():
         for ax, (label, x) in zip(axes, rows):
             pb = judge(x.clamp(-1, 1)).softmax(1)[:, args.target]
-            row(ax, x, pb.tolist(), label, pb.mean().item())
+            row(ax, x, pb.tolist(), label, pb.mean().item(), args.cls)
             summary[label] = {"mean_pB": pb.mean().item(), "n_cat": int((pb > 0.5).sum())}
 
-    fig.suptitle(f"Figure 3 — the 16 final particles (seed {args.seed}), scored by the evaluator B",
+    fig.suptitle(args.title or f"Figure 3 — the 16 final particles (seed {args.seed}), scored by the evaluator B",
                  fontsize=12.5, color=INK, x=0.012, ha="left", y=0.995)
     fig.text(0.012, 0.004,
-             "number on each image = p_B(cat) from the ResNet-18 evaluator, never the guiding reward  ·  "
-             "red rows: raw weights (first sweep)  ·  other rows: EMA weights",
+             f"number on each image = p_B({args.cls}) from the ResNet-18 evaluator, never the guiding reward  ·  "
+             + args.note,
              fontsize=8, color=INK_LIGHT, family="monospace")
     fig.tight_layout(rect=(0, 0.02, 1, 0.97))
     out = Path(args.out)
     out.parent.mkdir(exist_ok=True)
     fig.savefig(out, dpi=170, bbox_inches="tight", facecolor="white")
     for label, s in summary.items():
-        print(f"{label:24s} mean p_B(cat)={s['mean_pB']:.3f}  images with p_B>0.5: {s['n_cat']:2d}/16")
+        print(f"{label:24s} mean p_B({args.cls})={s['mean_pB']:.3f}  images with p_B>0.5: {s['n_cat']:2d}/16")
     print(out)
 
 
