@@ -41,7 +41,7 @@ from −8.3 (free) to −0.5 at λ = 1 and −0.2 at λ = 4, while the minimum E
 falls from 16 to 1. Judged by B, 10 of 16 final particles are cats at λ = 1
 against 4 of 16 for the free model, on images that stay plausible.
 Reference point: the DDPM fine-tuned on the cat class reaches FID 51.4 against
-80.2 for the base model; the FK samples are next in `results/fid.json`.
+80.2 for the base model.
 
 ![CelebA-HQ samples](figures/fig3b_hub_samples_by_reward.png)
 
@@ -49,7 +49,22 @@ CelebA-HQ 256 with a glasses classifier as reward: λ = 1 puts glasses on 7 of
 16 faces for B, on clean faces. From λ = 2 the ESS drops to 1, the sixteen
 particles descend from one ancestor, and that ancestor was chosen on blurry
 Tweedie estimates where A is fooled. Same failure as the red squares, visible
-to the eye this time. Each choice behind these numbers is one entry of
+to the eye this time.
+
+The FID says the same thing on 2048 images per lot, against two references: the
+1468 faces with glasses, and all 30000 faces.
+
+| | vs glasses | vs all faces |
+|---|---|---|
+| free model | 123.8 | 43.6 |
+| FK glasses, λ = 1 | 65.1 | 52.6 |
+| FK glasses, λ = 2 | 73.7 | 67.3 |
+
+At λ = 1 the distance to the target is halved for nine points of global FID,
+without retraining anything; on CIFAR, fine-tuning the whole DDPM on the cat
+class bought a comparable gap (80.2 to 51.4). At λ = 2 both columns get worse.
+The lots keep the sixteen particles of each run, duplication included, so these
+are pessimistic bounds. Each choice behind these numbers is one entry of
 `docs/decisions.md`.
 
 ## Getting started
