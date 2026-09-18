@@ -29,5 +29,8 @@ matplotlib
 tqdm
 
 # experiment tracking and evaluation
-wandb
 pytorch-fid
+
+# pretrained 256 px DDPM and CelebA-HQ
+diffusers
+datasets
