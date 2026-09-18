@@ -19,7 +19,6 @@ particles==0.4
 matplotlib==3.11.2
 tqdm==4.70.1
 pytest==9.1.1
-wandb==0.30.0
 pytorch-fid==0.3.0
 diffusers==0.40.0        # google/ddpm-ema-celebahq-256
 datasets==5.0.1          # CelebA-HQ with attributes
