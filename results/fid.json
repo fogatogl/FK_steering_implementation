@@ -38,5 +38,53 @@
     "n_ref": 10000,
     "fid": 31.620047275143634,
     "date": "2026-09-17"
+  },
+  {
+    "gen": "gen_hub_base_ddim50_eta1",
+    "ref": "ref_celebahq_eyeglasses",
+    "n_gen": 2048,
+    "n_ref": 1468,
+    "fid": 123.77560453117871,
+    "date": "2026-09-18"
+  },
+  {
+    "gen": "gen_hub_base_ddim50_eta1",
+    "ref": "ref_celebahq_all",
+    "n_gen": 2048,
+    "n_ref": 30000,
+    "fid": 43.58755029600107,
+    "date": "2026-09-18"
+  },
+  {
+    "gen": "gen_fk_classifier_difference_lam1_k16_ddim50_eta1",
+    "ref": "ref_celebahq_eyeglasses",
+    "n_gen": 2048,
+    "n_ref": 1468,
+    "fid": 65.07329938727108,
+    "date": "2026-09-18"
+  },
+  {
+    "gen": "gen_fk_classifier_difference_lam1_k16_ddim50_eta1",
+    "ref": "ref_celebahq_all",
+    "n_gen": 2048,
+    "n_ref": 30000,
+    "fid": 52.59538239554851,
+    "date": "2026-09-18"
+  },
+  {
+    "gen": "gen_fk_classifier_difference_lam2_k16_ddim50_eta1",
+    "ref": "ref_celebahq_eyeglasses",
+    "n_gen": 2048,
+    "n_ref": 1468,
+    "fid": 73.7320694068967,
+    "date": "2026-09-18"
+  },
+  {
+    "gen": "gen_fk_classifier_difference_lam2_k16_ddim50_eta1",
+    "ref": "ref_celebahq_all",
+    "n_gen": 2048,
+    "n_ref": 30000,
+    "fid": 67.29436133761553,
+    "date": "2026-09-18"
   }
 ]

@@ -63,3 +63,9 @@ Binary classifier on one attribute, trained at 64 px (the classifier resizes a 2
 ## On the 256 px model lambda must stay small
 
 Glasses reward, $\lambda = 1$: 7 of 16 particles wear glasses for B, on clean faces. $\lambda = 2$: sixteen copies of one pink blurred face, A says glasses, B says none. `ess_min` is 1 from $\lambda = 2$ on, every particle descends from one ancestor, and that ancestor was chosen on Tweedie estimates at large $t$ where A is fooled. Same failure as the red squares on CIFAR, visible to the eye this time. Red reward degrades the same way: plausible at $\lambda = 2$, a red wash at $\lambda = 8$.
+
+## FID on CelebA-HQ 256: all sixteen particles, two references (18/09)
+
+2048 images per lot, DDIM 50 steps, $\eta = 1$. Two references: the 1468 faces with glasses (distance to the target) and the 30000 faces (what the guidance costs). Free model 123.8 / 43.6, FK glasses $\lambda = 1$ 65.1 / 52.6, $\lambda = 2$ 73.7 / 67.3. Half the distance to the target for nine points of global FID at $\lambda = 1$; at $\lambda = 2$ both get worse, the collapse seen on sixteen images holds on two thousand.
+
+The lots are the sixteen final particles of 128 runs, not one particle per run as decided above: one per run would be 2048 runs, two and a half days at 256 px. The FID therefore includes duplication and reads as a pessimistic bound. `runs/*.pt` keeps the final weights, so the one-per-run figure stays computable on 128 images.
