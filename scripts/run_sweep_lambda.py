@@ -49,7 +49,8 @@ def main():
     p.add_argument("--reward", default="red", choices=["red", "classifier"])
     p.add_argument("--target", type=int, default=3, help="target class of the classifier reward")
     p.add_argument("--classifier-weights", default=str(WEIGHTS / "classifier_small_seed0.pt"))
-    p.add_argument("--weights", default="/home/onyxia/work/ddpm/weights/ddpm_last.pt")
+    p.add_argument("--weights", default="/home/onyxia/work/ddpm/weights/ddpm_last.pt",
+                   help="a checkpoint, or hub:<repo> for a pretrained DDPM")
     p.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     p.add_argument("--out", default=str(ROOT / "results" / "sweep_lambda.json"))
     p.add_argument("--save-images", action="store_true",

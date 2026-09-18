@@ -1,0 +1,66 @@
+{
+  "runs": [
+    {
+      "method": "best_of_n",
+      "potential": null,
+      "lam": null,
+      "resampler": null,
+      "seed": 2024,
+      "effective_seed": 2024016,
+      "r_sample": 1.7624411582946777,
+      "r_max": 2.7589831352233887,
+      "ess_min": null,
+      "n_resamplings": null,
+      "k": 16,
+      "n_model_calls": 800,
+      "reward": "red",
+      "target": null,
+      "steps": 50,
+      "eta": 1.0
+    },
+    {
+      "method": "fk",
+      "potential": "difference",
+      "lam": 1.0,
+      "resampler": "systematic",
+      "seed": 2024,
+      "effective_seed": 2024016,
+      "r_sample": 4.640471458435059,
+      "r_max": 4.640471458435059,
+      "ess_min": 5.254784138724265,
+      "n_resamplings": 2,
+      "k": 16,
+      "n_model_calls": 800,
+      "reward": "red",
+      "target": null,
+      "steps": 50,
+      "eta": 1.0
+    }
+  ],
+  "k": 16,
+  "lam": [
+    1.0
+  ],
+  "potentials": [
+    "difference"
+  ],
+  "resamplers": [
+    "systematic"
+  ],
+  "seeds": [
+    2024
+  ],
+  "T": 50,
+  "sampler": "ddim",
+  "eta": 1.0,
+  "device": "cuda",
+  "weights": "hub:google/ddpm-ema-celebahq-256",
+  "ema": true,
+  "reward": "red",
+  "target": null,
+  "classifier_weights": null,
+  "images": "samples/smoke_hub.pt",
+  "config": {
+    "hub": "google/ddpm-ema-celebahq-256"
+  }
+}

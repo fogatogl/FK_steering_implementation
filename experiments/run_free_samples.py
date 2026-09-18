@@ -22,7 +22,11 @@ ROOT = Path(__file__).resolve().parent.parent
 def load_model(weights_path, device, ema=True, steps=None, eta=0.0):
     """EMA weights by default: those of the notebook FID (79.2 / 50.7) and of
     everything after 17/09. The lambda sweep and figures 0-2 ran on the raw
-    weights (`ema=False`), see docs/decisions.md. `steps` switches to DDIM."""
+    weights (`ema=False`), see docs/decisions.md. `steps` switches to DDIM.
+    `hub:<repo>` loads a pretrained pixel-space DDPM instead (smc.pretrained)."""
+    if str(weights_path).startswith("hub:"):
+        from smc.pretrained import load_hub_model
+        return load_hub_model(weights_path[4:], device, steps=steps, eta=eta), {"hub": weights_path[4:]}
     ckpt = torch.load(weights_path, map_location=device, weights_only=False)
     config = ckpt["config"]
     unet = UNet(in_channels=3, n_feat=config["n_feat"]).to(device)
