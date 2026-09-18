@@ -12,17 +12,21 @@ from smc.unet import gn
 
 
 class Tempered(nn.Module):
-    def __init__(self):
+    def __init__(self, input_size=32):
         super().__init__()
+        self.input_size = input_size
         self.register_buffer("temperature", torch.ones(()))
 
     def forward(self, x):
+        # A 256x256 DDPM sample is scored at the classifier's training resolution.
+        if x.shape[-1] != self.input_size:
+            x = F.interpolate(x, size=self.input_size, mode="area")
         return self.logits(x) / self.temperature
 
 
 class SmallVGG(Tempered):
-    def __init__(self, widths=(64, 128, 256), n_classes=10):
-        super().__init__()
+    def __init__(self, widths=(64, 128, 256), n_classes=10, input_size=32):
+        super().__init__(input_size)
         blocks, c_in = [], 3
         for w in widths:
             blocks += [nn.Conv2d(c_in, w, 3, padding=1, bias=False), gn(w), nn.ReLU(inplace=True),
@@ -57,8 +61,8 @@ class ResidualBlock(nn.Module):
 
 
 class ResNet18(Tempered):
-    def __init__(self, n_classes=10):
-        super().__init__()
+    def __init__(self, n_classes=10, input_size=32):
+        super().__init__(input_size)
         self.stem = nn.Sequential(nn.Conv2d(3, 64, 3, 1, 1, bias=False), gn(64), nn.ReLU(inplace=True))
         stages, c_in = [], 64
         for c_out, stride in ((64, 1), (128, 2), (256, 2), (512, 2)):
@@ -71,12 +75,13 @@ class ResNet18(Tempered):
         return self.head(self.stages(self.stem(x)).mean(dim=(2, 3)))
 
 
-def build(arch):
-    return {"small": SmallVGG, "resnet18": ResNet18}[arch]()
+def build(arch, n_classes=10, input_size=32):
+    return {"small": SmallVGG, "resnet18": ResNet18}[arch](n_classes=n_classes, input_size=input_size)
 
 
 def load(path, device):
     ckpt = torch.load(path, map_location=device, weights_only=False)
-    m = build(ckpt["config"]["arch"]).to(device)
+    c = ckpt["config"]
+    m = build(c["arch"], c.get("n_classes", 10), c.get("input_size", 32)).to(device)
     m.load_state_dict(ckpt["model"])
     return m.eval()

@@ -71,6 +71,25 @@ def refs(args):
         print(f"{name}: {len(images)} written")
 
 
+def refs_celebahq(args):
+    """Reference PNGs: the CelebA-HQ images with attribute `--attr` on, and all of them."""
+    from experiments.train_classifier import CELEBA_ATTRS
+    from datasets import load_from_disk
+    ds = load_from_disk(str(DATA_DIR / "celeba_hq_256"))
+    idx = CELEBA_ATTRS.index(args.attr)
+    attrs = torch.as_tensor(ds["attributes"]) > 0
+    sets = {f"ref_celebahq_{args.attr.lower()}": attrs[:, idx].nonzero().flatten().tolist(),
+            "ref_celebahq_all": list(range(len(ds)))}
+    for name, ids in sets.items():
+        folder = FID_DIR / name
+        if complete(folder, 0, len(ids)):
+            print(f"{name}: {len(ids)} already there"); continue
+        folder.mkdir(parents=True, exist_ok=True)
+        for j, i in enumerate(ids):
+            ds[i]["image"].save(folder / f"{j:05d}.png")
+        print(f"{name}: {len(ids)} written")
+
+
 def gen(args):
     model, _ = load_model(args.weights, args.device, ema=not args.no_ema,
                           steps=args.steps, eta=args.eta)
@@ -169,12 +188,14 @@ def fid(args):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("stage", choices=["refs", "gen", "fk", "fid"])
-    p.add_argument("--classe", type=int, default=3, help="target class")
+    p.add_argument("stage", choices=["refs", "refs-celebahq", "gen", "fk", "fid"])
+    p.add_argument("--classe", type=int, default=3, help="target class (CIFAR)")
+    p.add_argument("--attr", default="Eyeglasses", help="CelebA-HQ attribute for refs-celebahq")
     p.add_argument("--n", type=int, default=2048)
     p.add_argument("--seed", type=int, default=1234)
     p.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
-    p.add_argument("--weights", default=str(DDPM / "weights" / "ddpm_last.pt"))
+    p.add_argument("--weights", default=str(DDPM / "weights" / "ddpm_last.pt"),
+                   help="a checkpoint, or hub:<repo> for a pretrained DDPM")
     p.add_argument("--no-ema", action="store_true", help="raw weights, as in the lambda sweep")
     p.add_argument("--steps", type=int, default=None, help="DDIM with this many steps")
     p.add_argument("--eta", type=float, default=0.0)
@@ -183,7 +204,7 @@ def main():
     p.add_argument("--batch", type=int, default=256)
     # fk
     p.add_argument("--reward", default="rouge", choices=list(REWARDS))
-    p.add_argument("--target", type=int, default=3)
+    p.add_argument("--target", type=int, default=3, help="class index; 1 for a binary attribute classifier")
     p.add_argument("--classifier-weights",
                    default=str(DDPM / "weights" / "classifier_small_seed0.pt"))
     p.add_argument("--lam", type=float, default=1.0)
@@ -194,7 +215,7 @@ def main():
     p.add_argument("--gen", default="gen_base")
     p.add_argument("--ref", default="ref_class3")
     args = p.parse_args()
-    {"refs": refs, "gen": gen, "fk": fk, "fid": fid}[args.stage](args)
+    {"refs": refs, "refs-celebahq": refs_celebahq, "gen": gen, "fk": fk, "fid": fid}[args.stage](args)
 
 
 if __name__ == "__main__":
