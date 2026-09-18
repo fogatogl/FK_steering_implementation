@@ -22,20 +22,35 @@ schedule (linear β, T = 1000) and the same `step` / `predict_x0` interface:
 
 ### Results so far
 
-![lambda sweep](figures/fig2_sweep_lambda.png)
+The first reward is a deliberately simple "red" score. FK Steering pushes it up
+with λ, and that is the problem: `sum` pushes it past its own bound, the images
+leave [−1, 1], and at λ = 8 the CIFAR samples are flat red squares that the
+judge B still calls "cat" 43 % of the time. A reward that can be gamed, and a
+metric that follows it: the diagnosis of reward hacking
+(`figures/fig2_sweep_lambda.png`, `figures/fig3_samples_by_reward.png`).
 
-With a deliberately simple "red" reward, FK Steering pushes the reward up with
-λ; `sum` pushes it past its own bound and the images leave [−1, 1]. That is
-the diagnosis of reward hacking, and the reason for what follows: a classifier
-reward, and an evaluation independent of the reward (FID on the target class,
-a second classifier B that only judges).
+The classifier reward is the interesting part. `r(x) = log p_A(cat | x)` with A
+a small VGG (89 %); with the `difference` potential the product telescopes to
+`p(x) p_A(cat | x)^λ`, so λ = 1 is the Bayes posterior under A. A second
+classifier B (ResNet-18, 93 %, calibrated) only judges and never guides.
+
+![classifier sweep](figures/fig2_sweep_lambda_classifier.png)
+
+CIFAR-10, k = 16, three seeds: the log-probability of the drawn particle goes
+from −8.3 (free) to −0.5 at λ = 1 and −0.2 at λ = 4, while the minimum ESS
+falls from 16 to 1. Judged by B, 10 of 16 final particles are cats at λ = 1
+against 4 of 16 for the free model, on images that stay plausible.
+Reference point: the DDPM fine-tuned on the cat class reaches FID 51.4 against
+80.2 for the base model; the FK samples are next in `results/fid.json`.
 
 ![CelebA-HQ samples](figures/fig3b_hub_samples_by_reward.png)
 
-On CelebA-HQ 256 with a glasses classifier as reward, λ = 1 puts glasses on
-7 of 16 faces for B. From λ = 2 the ESS drops to 1, the sixteen particles
-descend from one ancestor and the guide is fooled on blurry Tweedie estimates.
-Each choice behind these numbers is one entry of `docs/decisions.md`.
+CelebA-HQ 256 with a glasses classifier as reward: λ = 1 puts glasses on 7 of
+16 faces for B, on clean faces. From λ = 2 the ESS drops to 1, the sixteen
+particles descend from one ancestor, and that ancestor was chosen on blurry
+Tweedie estimates where A is fooled. Same failure as the red squares, visible
+to the eye this time. Each choice behind these numbers is one entry of
+`docs/decisions.md`.
 
 ## Getting started
 
