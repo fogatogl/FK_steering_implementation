@@ -51,3 +51,15 @@ At $\lambda \geq 1$ the sixteen final particles descend from two or three ancest
 ## Noise-conditioned classifier: deferred
 
 Clean classifier on the Tweedie $\hat x_0$ first, as in the paper. On pure noise A gives $\log p(\text{cat})$ between −3 and −6, not $\log(1/10)$: the early potentials are noise. Revisit once the timesteps at which resampling fires are recorded.
+
+## A pretrained 256 px model from the Hub (18/09)
+
+CIFAR at 32 px hides the damage lambda does to an image. `google/ddpm-ema-celebahq-256` has the CIFAR schedule (linear beta, $T = 1000$), so `smc/` runs unchanged: `smc/pretrained.py` wraps the diffusers UNet behind `CifarDDPM`, fp16 on the T4. DDIM 50 steps, $\eta = 1$: a $T = 1000$ run at 256 px would take minutes per particle set.
+
+## Attribute reward on CelebA-HQ: Eyeglasses
+
+Binary classifier on one attribute, trained at 64 px (the classifier resizes a 256 px sample itself). Positives are 4.9 %: class-weighted cross-entropy, recall printed with the accuracy. A small VGG 98.4 % / recall 95.9 %, B ResNet-18 99.0 % / 97.3 %. Same guide/judge split as on CIFAR.
+
+## On the 256 px model lambda must stay small
+
+Glasses reward, $\lambda = 1$: 7 of 16 particles wear glasses for B, on clean faces. $\lambda = 2$: sixteen copies of one pink blurred face, A says glasses, B says none. `ess_min` is 1 from $\lambda = 2$ on, every particle descends from one ancestor, and that ancestor was chosen on Tweedie estimates at large $t$ where A is fooled. Same failure as the red squares on CIFAR, visible to the eye this time. Red reward degrades the same way: plausible at $\lambda = 2$, a red wash at $\lambda = 8$.
