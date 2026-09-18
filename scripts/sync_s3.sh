@@ -1,7 +1,7 @@
 #!/bin/bash
 # Back up / restore the heavy artefacts on the personal MinIO bucket.
 #
-#   ./sync_s3.sh push    -> send dataset + weights + samples + fid to S3
+#   ./sync_s3.sh push    -> send dataset + weights + samples + fid + hf (Hub models) to S3
 #   ./sync_s3.sh pull    -> fetch them back
 #   ./sync_s3.sh status  -> what the bucket holds
 #
@@ -25,14 +25,16 @@ case "${ACTION}" in
     mc mirror --overwrite "${PROJ}/samples"  "${REMOTE}/samples"
     mc mirror --overwrite "${PROJ}/dataset"  "${REMOTE}/dataset"
     mc mirror --overwrite "${PROJ}/fid"      "${REMOTE}/fid"
+    mc mirror --overwrite "${PROJ}/hf"       "${REMOTE}/hf"
     ;;
   pull)
     echo "<- ${REMOTE}"
-    mkdir -p "${PROJ}"/{weights,samples,dataset,fid}
+    mkdir -p "${PROJ}"/{weights,samples,dataset,fid,hf}
     mc mirror --overwrite "${REMOTE}/weights" "${PROJ}/weights"
     mc mirror --overwrite "${REMOTE}/samples" "${PROJ}/samples"
     mc mirror --overwrite "${REMOTE}/dataset" "${PROJ}/dataset"
     mc mirror --overwrite "${REMOTE}/fid"     "${PROJ}/fid"
+    mc mirror --overwrite "${REMOTE}/hf"      "${PROJ}/hf"
     ;;
   status)
     # Always name the bucket: a bare "mc ls s3/" hangs, the stsonly policy

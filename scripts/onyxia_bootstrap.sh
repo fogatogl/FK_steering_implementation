@@ -44,7 +44,7 @@ echo "-- git: $(git config --global user.name) <$(git config --global user.email
 
 # 3. Venv — --system-site-packages: inherit the image's PyTorch.
 #    NEVER reinstall torch here: 2-3 GB and the CUDA pairing breaks.
-mkdir -p "${WORK}/.venvs" "${ART}"/{weights,dataset,samples}
+mkdir -p "${WORK}/.venvs" "${ART}"/{weights,dataset,samples,hf}
 if [ ! -x "${VENV}/bin/python" ]; then
   echo "-- creating the venv"
   python3 -m venv --system-site-packages "${VENV}"
@@ -71,6 +71,8 @@ if ! grep -q "${VENV}/bin/activate" "${HOME}/.bashrc" 2>/dev/null; then
 # --- project ${REPO_NAME} (rewritten each session: ~/.bashrc is not persistent)
 export BUCKET=${BUCKET}
 export REPO=${REPO}
+# HuggingFace cache on the persistent volume: ~/.cache dies with the service
+export HF_HOME=${ART}/hf
 source ${VENV}/bin/activate
 BASHRC
 fi

@@ -34,6 +34,7 @@ An Onyxia service is an ephemeral container; only the persistent volume survives
 | `~/.bashrc` | no | venv auto-activation must be rewritten each time |
 | `~/.local` | no | the Jupyter kernel must be re-registered each time |
 | `~/.gitconfig` | no | commit name / e-mail to reset (unless the Git tab is filled) |
+| `~/.cache/huggingface` | no | `HF_HOME=~/work/ddpm/hf` (set by the bootstrap) keeps Hub models on the volume; mirrored by `sync_s3.sh` |
 | `~/.mc/config.json` | regenerated at launch | the `s3` alias is ready, token valid **7 days** |
 | `apt` packages, `/tmp`, everything else | no | install nothing important there |
 
