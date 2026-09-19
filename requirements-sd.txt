@@ -1,0 +1,22 @@
+# requirements-sd.txt — venv SEPARE pour le bloc C (SD v1.5 + ImageReward + HPSv2).
+#
+# Pourquoi un second venv. Le venv `ddpm` tourne sur diffusers 0.40, qui exige
+# transformers >= 4.48 et huggingface_hub >= 1.23. ImageReward 1.5 embarque une
+# copie du BERT de BLIP ecrite contre l'API transformers 4.x : elle importe
+# `apply_chunking_to_forward` depuis `transformers.modeling_utils` et lit
+# `tokenizer.additional_special_tokens_ids`, deux choses supprimees en
+# transformers 5. Les deux contraintes sont inconciliables dans un seul env, et
+# les resultats CIFAR / CelebA sont deja produits sur le stack `ddpm` gele.
+#
+# Cree avec --system-site-packages : torch vient de l'image Onyxia (2.14.0+cu130).
+# Voir scripts/setup_sd_env.sh, qui applique aussi deux correctifs manuels.
+#
+# Versions installees le 19/09/2026, Python 3.13, Tesla T4.
+
+transformers==4.49.0
+diffusers==0.31.0        # 0.40 exige transformers 5 ; 0.31 est la version testee ici
+accelerate==1.15.0
+setuptools<81            # openai-clip importe pkg_resources, retire de setuptools 81
+openai-clip==1.0.1       # dependance d'import d'ImageReward (AestheticScore)
+image-reward==1.5
+hpsv2==1.2.0
