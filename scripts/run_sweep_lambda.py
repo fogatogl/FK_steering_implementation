@@ -40,7 +40,7 @@ def sample_from_weights(x, w, r, generator):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--k", type=int, default=16)
+    p.add_argument("--k", type=int, nargs="+", default=[16])
     p.add_argument("--lam", type=float, nargs="+", default=[0.0, 0.5, 1.0, 2.0, 4.0, 8.0])
     p.add_argument("--potentials", nargs="+", default=["difference", "max", "sum"])
     p.add_argument("--resamplers", nargs="+", default=list(RESAMPLERS),
@@ -64,48 +64,54 @@ def main():
     model, config = load_model(args.weights, args.device, ema=not args.no_ema,
                                steps=args.steps, eta=args.eta)
     reward = make_reward(args)
-    calls = args.k * model.T
-    common = {"k": args.k, "n_model_calls": calls, "reward": args.reward,
-              "target": args.target if args.reward == "classifier" else None,
-              "steps": model.T, "eta": args.eta if args.steps else None}
-
     runs, images = [], {}
-    total = len(args.seeds) * (1 + len(args.potentials) * len(args.lam) * len(args.resamplers))
-    for seed in args.seeds:
-        effective_seed = seed * 1000 + args.k
+    per_k = 1 + len(args.potentials) * len(args.lam) * len(args.resamplers)
+    total = len(args.k) * len(args.seeds) * per_k
+    for k in args.k:
+        common = {"k": k, "n_model_calls": k * model.T, "reward": args.reward,
+                  "target": args.target if args.reward == "classifier" else None,
+                  "steps": model.T, "eta": args.eta if args.steps else None}
+        for seed in args.seeds:
+            effective_seed = seed * 1000 + k
 
-        gen = make_generator(effective_seed, device=args.device)
-        x, info = best_of_n(model, reward, args.k, gen)
-        r = info["rewards"]
-        _, r_sample = sample_from_weights(x, info["weights"], r, gen)
-        runs.append({"method": "best_of_n", "potential": None, "lam": None,
-                     "resampler": None, "seed": seed, "effective_seed": effective_seed,
-                     "r_sample": r_sample, "r_max": r.max().item(),
-                     "ess_min": None, "n_resamplings": None, **common})
-        if args.save_images:
-            images[f"best_of_n_seed{seed}"] = x.cpu()
-        print(f"[{len(runs):3d}/{total}] seed={seed} best_of_n                          "
-              f"r_sample={r_sample:+.4f}  r_max={r.max().item():+.4f}", flush=True)
+            gen = make_generator(effective_seed, device=args.device)
+            x, info = best_of_n(model, reward, k, gen)
+            r = info["rewards"]
+            _, r_sample = sample_from_weights(x, info["weights"], r, gen)
+            runs.append({"method": "best_of_n", "potential": None, "lam": None,
+                         "resampler": None, "seed": seed, "effective_seed": effective_seed,
+                         "r_sample": r_sample, "r_max": r.max().item(),
+                         "ess_min": None, "n_resamplings": None, "ess_trace": None, **common})
+            if args.save_images:
+                images[f"best_of_n_k{k}_seed{seed}"] = x.cpu()
+            print(f"[{len(runs):3d}/{total}] k={k:<3d} seed={seed} best_of_n                    "
+                  f"r_sample={r_sample:+.4f}  r_max={r.max().item():+.4f}", flush=True)
 
-        for name in args.resamplers:
-            for pot in args.potentials:
-                for lam in args.lam:
-                    gen = make_generator(effective_seed, device=args.device)
-                    x, info = fk_steer(model, reward, args.k, lam, pot, gen,
-                                       resampler=RESAMPLERS[name])
-                    r = info["rewards"]
-                    _, r_sample = sample_from_weights(x, info["weights"], r, gen)
-                    runs.append({"method": "fk", "potential": pot, "lam": lam,
-                                 "resampler": name, "seed": seed, "effective_seed": effective_seed,
-                                 "r_sample": r_sample, "r_max": r.max().item(),
-                                 "ess_min": info["ess_min"],
-                                 "n_resamplings": info["n_resamplings"], **common})
-                    if args.save_images:
-                        images[f"{pot}_{name}_lam{lam:g}_seed{seed}"] = x.cpu()
-                    print(f"[{len(runs):3d}/{total}] seed={seed} {pot:10s} {name:11s} "
-                          f"lam={lam:<5g} r_sample={r_sample:+.4f}  "
-                          f"r_max={r.max().item():+.4f}  ess_min={info['ess_min']:5.2f}  "
-                          f"resampl={info['n_resamplings']}", flush=True)
+            for name in args.resamplers:
+                for pot in args.potentials:
+                    for lam in args.lam:
+                        gen = make_generator(effective_seed, device=args.device)
+                        x, info = fk_steer(model, reward, k, lam, pot, gen,
+                                           resampler=RESAMPLERS[name])
+                        r = info["rewards"]
+                        _, r_sample = sample_from_weights(x, info["weights"], r, gen)
+                        tag = f"{pot}_{name}_k{k}_lam{lam:g}_seed{seed}"
+                        runs.append({"method": "fk", "potential": pot, "lam": lam,
+                                     "resampler": name, "seed": seed, "effective_seed": effective_seed,
+                                     "r_sample": r_sample, "r_max": r.max().item(),
+                                     "ess_min": info["ess_min"],
+                                     "n_resamplings": info["n_resamplings"],
+                                     # ESS(t) porte la figure 2 ; les ancetres pesent T*k
+                                     # entiers et partent dans le .pt avec les images.
+                                     "ess_trace": [round(v, 4) for v in info["ess_trace"].tolist()],
+                                     "tag": tag, **common})
+                        if args.save_images:
+                            images[tag] = x.cpu()
+                            images[f"ancestors_{tag}"] = info["ancestors"].cpu()
+                        print(f"[{len(runs):3d}/{total}] k={k:<3d} seed={seed} {pot:10s} {name:11s} "
+                              f"lam={lam:<5g} r_sample={r_sample:+.4f}  "
+                              f"r_max={r.max().item():+.4f}  ess_min={info['ess_min']:5.2f}  "
+                              f"resampl={info['n_resamplings']}", flush=True)
 
     out = Path(args.out)
     images_path = None
