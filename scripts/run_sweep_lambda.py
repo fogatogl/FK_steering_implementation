@@ -64,6 +64,32 @@ def main():
     model, config = load_model(args.weights, args.device, ema=not args.no_ema,
                                steps=args.steps, eta=args.eta)
     reward = make_reward(args)
+    out = Path(args.out)
+    out.parent.mkdir(exist_ok=True)
+    images_path = ROOT / "samples" / f"{out.stem}.pt" if args.save_images else None
+
+    # Ecrit apres chaque run : une nuit qui meurt a 90 % ne doit pas tout perdre.
+    def dump():
+        out.write_text(json.dumps({
+        "runs": runs,
+        "k": args.k,
+        "lam": args.lam,
+        "potentials": args.potentials,
+        "resamplers": args.resamplers,
+        "seeds": args.seeds,
+        "T": model.T,
+        "sampler": "ddim" if args.steps else "ddpm",
+        "eta": args.eta if args.steps else None,
+        "device": args.device,
+        "weights": args.weights,
+        "ema": not args.no_ema,
+        "reward": args.reward,
+        "target": args.target if args.reward == "classifier" else None,
+        "classifier_weights": args.classifier_weights if args.reward == "classifier" else None,
+        "images": str(images_path.relative_to(ROOT)) if images_path else None,
+        "config": {k: v for k, v in config.items() if isinstance(v, (int, float, str))},
+    }, indent=2))
+
     runs, images = [], {}
     per_k = 1 + len(args.potentials) * len(args.lam) * len(args.resamplers)
     total = len(args.k) * len(args.seeds) * per_k
@@ -86,6 +112,7 @@ def main():
                 images[f"best_of_n_k{k}_seed{seed}"] = x.cpu()
             print(f"[{len(runs):3d}/{total}] k={k:<3d} seed={seed} best_of_n                    "
                   f"r_sample={r_sample:+.4f}  r_max={r.max().item():+.4f}", flush=True)
+            dump()
 
             for name in args.resamplers:
                 for pot in args.potentials:
@@ -112,34 +139,12 @@ def main():
                               f"lam={lam:<5g} r_sample={r_sample:+.4f}  "
                               f"r_max={r.max().item():+.4f}  ess_min={info['ess_min']:5.2f}  "
                               f"resampl={info['n_resamplings']}", flush=True)
+                        dump()
 
-    out = Path(args.out)
-    images_path = None
     if args.save_images:
         (ROOT / "samples").mkdir(exist_ok=True)
-        images_path = ROOT / "samples" / f"{out.stem}.pt"
         torch.save(images, images_path)
-
-    out.parent.mkdir(exist_ok=True)
-    out.write_text(json.dumps({
-        "runs": runs,
-        "k": args.k,
-        "lam": args.lam,
-        "potentials": args.potentials,
-        "resamplers": args.resamplers,
-        "seeds": args.seeds,
-        "T": model.T,
-        "sampler": "ddim" if args.steps else "ddpm",
-        "eta": args.eta if args.steps else None,
-        "device": args.device,
-        "weights": args.weights,
-        "ema": not args.no_ema,
-        "reward": args.reward,
-        "target": args.target if args.reward == "classifier" else None,
-        "classifier_weights": args.classifier_weights if args.reward == "classifier" else None,
-        "images": str(images_path.relative_to(ROOT)) if images_path else None,
-        "config": {k: v for k, v in config.items() if isinstance(v, (int, float, str))},
-    }, indent=2))
+    dump()
     print(out)
 
 
