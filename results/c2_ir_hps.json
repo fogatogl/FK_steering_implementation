@@ -1,0 +1,254 @@
+{
+  "generation": {
+    "model": "runwayml/stable-diffusion-v1-5 (fp16, variant=fp16, safety_checker=None)",
+    "scheduler": "DDIMScheduler.from_config(pipe.scheduler.config)",
+    "num_inference_steps": 100,
+    "guidance_scale": 7.5,
+    "eta": 1.0,
+    "resolution": 512,
+    "batch_size": 1,
+    "images_per_prompt": 1,
+    "prompt_sampling": "ImageReward benchmark-prompts.json (100 prompts); sorted(random.Random(1234).sample(range(100), 20)); selected indices [0, 2, 3, 4, 10, 11, 12, 14, 30, 44, 45, 56, 61, 74, 79, 82, 85, 88, 98, 99]",
+    "prompt_sampling_seed": 1234,
+    "image_seed_rule": "seed = 20250919 + k, k = rank in selected list (0..19)",
+    "generation_seconds": 301.3
+  },
+  "scoring": {
+    "imagereward": "ImageReward-v1.0, cache: /home/onyxia/work/ir_cache",
+    "hps": "hpsv2.score(images, prompt, hps_version='v2.1')",
+    "cross_pairing": "image i scored against prompt (i+1) mod 20 (circular shift)"
+  },
+  "records": [
+    {
+      "id": "005695-0057",
+      "prompt": "a concept art of a vehicle, cyberpunk",
+      "seed": 20250919,
+      "crossed_prompt_id": "005848-0000",
+      "ir_matched": 0.9452,
+      "hps_matched": 0.2698,
+      "ir_crossed": -2.2106,
+      "hps_crossed": 0.1796
+    },
+    {
+      "id": "005848-0000",
+      "prompt": "a beautiful painting of the jungle in the morning with lots of smoke, fantasy art, matte painting",
+      "seed": 20250920,
+      "crossed_prompt_id": "005765-0094",
+      "ir_matched": 0.1655,
+      "hps_matched": 0.2668,
+      "ir_crossed": -1.3791,
+      "hps_crossed": 0.1831
+    },
+    {
+      "id": "005765-0094",
+      "prompt": "anthropomorphic crow werecreature, photograph captured in a forest",
+      "seed": 20250921,
+      "crossed_prompt_id": "005846-0102",
+      "ir_matched": 0.9565,
+      "hps_matched": 0.2854,
+      "ir_crossed": -2.2787,
+      "hps_crossed": 0.1025
+    },
+    {
+      "id": "005846-0102",
+      "prompt": "a beautiful portrait of a beautiful woman in the jungle surrounded by pink flowers, shamanism, matte painting, fantasy art",
+      "seed": 20250922,
+      "crossed_prompt_id": "005895-0048",
+      "ir_matched": -0.5283,
+      "hps_matched": 0.2759,
+      "ir_crossed": -1.8352,
+      "hps_crossed": 0.2046
+    },
+    {
+      "id": "005895-0048",
+      "prompt": "symmetry!! a hybrid medieval exquisite complex and beautiful double hatchet in the fog of magic light, painting, illustration, art by artgerm and greg rutkowski and alphonse mucha",
+      "seed": 20250923,
+      "crossed_prompt_id": "007048-0049",
+      "ir_matched": -0.1112,
+      "hps_matched": 0.1772,
+      "ir_crossed": -0.9387,
+      "hps_crossed": 0.1561
+    },
+    {
+      "id": "007048-0049",
+      "prompt": "victorian lady, painting by rossetti, daniel gerhartz, alphonse mucha, bouguereau, detailed art",
+      "seed": 20250924,
+      "crossed_prompt_id": "007086-0087",
+      "ir_matched": -0.3036,
+      "hps_matched": 0.2566,
+      "ir_crossed": -2.2253,
+      "hps_crossed": 0.1694
+    },
+    {
+      "id": "007086-0087",
+      "prompt": "an alien planet viewed from space, extremely, beautiful, dynamic, creative, cinematic",
+      "seed": 20250925,
+      "crossed_prompt_id": "007029-0027",
+      "ir_matched": -1.4334,
+      "hps_matched": 0.2291,
+      "ir_crossed": -2.2793,
+      "hps_crossed": 0.0797
+    },
+    {
+      "id": "007029-0027",
+      "prompt": "a full body portrait of a good - lookiung girl wearing long loose gown, high, detail, cleary see face, by gaston bussiere, bayard wu, greg rutkowski, odd nerdrum, maxim verehin, dan dos santos, masterpiece, focus, cinematic lightning",
+      "seed": 20250926,
+      "crossed_prompt_id": "007204-0161",
+      "ir_matched": 0.3011,
+      "hps_matched": 0.202,
+      "ir_crossed": -2.0967,
+      "hps_crossed": 0.1521
+    },
+    {
+      "id": "007204-0161",
+      "prompt": "dramatically lit, intricate fractal sculpture of an ancient, weathered, mossy marble sculpture of a dragonfly",
+      "seed": 20250927,
+      "crossed_prompt_id": "008173-0073",
+      "ir_matched": -2.0531,
+      "hps_matched": 0.2189,
+      "ir_crossed": -2.2618,
+      "hps_crossed": 0.0509
+    },
+    {
+      "id": "008173-0073",
+      "prompt": "small red wooden cottage by the lake, lanterns on the porch, smoke coming out of the chimney, dusk, birch trees, tranquility, two swans swimming on the lake, a wooden rowing boat, cumulus clouds, by charlie bowater, by greg rutkowski",
+      "seed": 20250928,
+      "crossed_prompt_id": "008222-0061",
+      "ir_matched": 0.4946,
+      "hps_matched": 0.2539,
+      "ir_crossed": -2.2066,
+      "hps_crossed": 0.1472
+    },
+    {
+      "id": "008222-0061",
+      "prompt": "frosted glass sphere sitting on a wooden table, high, complex",
+      "seed": 20250929,
+      "crossed_prompt_id": "010374-0099",
+      "ir_matched": 1.7942,
+      "hps_matched": 0.272,
+      "ir_crossed": -2.2763,
+      "hps_crossed": 0.0474
+    },
+    {
+      "id": "010374-0099",
+      "prompt": "cat with bunny ears",
+      "seed": 20250930,
+      "crossed_prompt_id": "010525-0074",
+      "ir_matched": 1.813,
+      "hps_matched": 0.3218,
+      "ir_crossed": -2.0466,
+      "hps_crossed": 0.177
+    },
+    {
+      "id": "010525-0074",
+      "prompt": "a nova scotia duck tolling retriever with white chest and pink nose, professional, photography, of, very",
+      "seed": 20250931,
+      "crossed_prompt_id": "001273-0046",
+      "ir_matched": 0.1201,
+      "hps_matched": 0.2676,
+      "ir_crossed": -2.2659,
+      "hps_crossed": 0.1656
+    },
+    {
+      "id": "001273-0046",
+      "prompt": "a red car",
+      "seed": 20250932,
+      "crossed_prompt_id": "001973-0059",
+      "ir_matched": 1.0795,
+      "hps_matched": 0.283,
+      "ir_crossed": -2.2711,
+      "hps_crossed": 0.1519
+    },
+    {
+      "id": "001973-0059",
+      "prompt": "a beautiful plant, aesthetic, oil, painting, pale",
+      "seed": 20250933,
+      "crossed_prompt_id": "000246-0117",
+      "ir_matched": 0.2,
+      "hps_matched": 0.2395,
+      "ir_crossed": -2.2779,
+      "hps_crossed": 0.1431
+    },
+    {
+      "id": "000246-0117",
+      "prompt": "surface of an alien planet",
+      "seed": 20250934,
+      "crossed_prompt_id": "000606-0024",
+      "ir_matched": -0.4066,
+      "hps_matched": 0.2477,
+      "ir_crossed": -2.2626,
+      "hps_crossed": 0.1311
+    },
+    {
+      "id": "000606-0024",
+      "prompt": "frozen food logo",
+      "seed": 20250935,
+      "crossed_prompt_id": "011623-0101",
+      "ir_matched": 1.4514,
+      "hps_matched": 0.2539,
+      "ir_crossed": -2.2411,
+      "hps_crossed": 0.1261
+    },
+    {
+      "id": "011623-0101",
+      "prompt": "A cheeseburger",
+      "seed": 20250936,
+      "crossed_prompt_id": "000324-0042",
+      "ir_matched": 0.5259,
+      "hps_matched": 0.2749,
+      "ir_crossed": -2.2577,
+      "hps_crossed": 0.137
+    },
+    {
+      "id": "000324-0042",
+      "prompt": "water bottle",
+      "seed": 20250937,
+      "crossed_prompt_id": "000562-0011",
+      "ir_matched": 0.5539,
+      "hps_matched": 0.2673,
+      "ir_crossed": -2.2812,
+      "hps_crossed": 0.1272
+    },
+    {
+      "id": "000562-0011",
+      "prompt": "a coffee mug made of cardboard",
+      "seed": 20250938,
+      "crossed_prompt_id": "005695-0057",
+      "ir_matched": 1.1325,
+      "hps_matched": 0.2742,
+      "ir_crossed": -2.2739,
+      "hps_crossed": 0.1096
+    }
+  ],
+  "summary": {
+    "n": 20,
+    "pearson_ir_hps_matched": 0.5769,
+    "spearman_ir_hps_matched": 0.5859,
+    "ir_matched": {
+      "mean": 0.3349,
+      "std": 0.9853,
+      "min": -2.0531,
+      "max": 1.813
+    },
+    "ir_crossed": {
+      "mean": -2.1083,
+      "std": 0.3497,
+      "min": -2.2812,
+      "max": -0.9387
+    },
+    "hps_matched": {
+      "mean": 0.2569,
+      "std": 0.0319,
+      "min": 0.1772,
+      "max": 0.3218
+    },
+    "hps_crossed": {
+      "mean": 0.1371,
+      "std": 0.0422,
+      "min": 0.0474,
+      "max": 0.2046
+    },
+    "ir_matched_wins": 20,
+    "hps_matched_wins": 20
+  }
+}

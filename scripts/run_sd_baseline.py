@@ -122,6 +122,10 @@ def main():
                     "seconds": round(dt, 1), **commun,
                 })
                 out.write_text(json.dumps({"runs": records}, indent=2))
+                # SD, ImageReward et le ViT-H de hpsv2 tiennent la VRAM ensemble, et
+                # hpsv2.score recharge son checkpoint a chaque appel : sans ca la
+                # fragmentation finit par declencher un OOM en pleine nuit.
+                torch.cuda.empty_cache()
                 print(f"[{fait:3d}/{total}] {pid:>4} {name:4s} seed={seed} "
                       f"ir_max={ir_scores[best]:+.4f} hps={hps[best]:.4f} "
                       f"unet={compteur['calls']}x{compteur['batch']}={compteur['rows']} "
