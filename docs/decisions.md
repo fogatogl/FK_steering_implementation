@@ -76,12 +76,14 @@ The block that reproduces the SD v1.5 row of the paper's table 1 at reduced scal
 These six were settled before any SD code was written; this section is what the
 "implementation choices" part of the write-up is built from.
 
-**1. The reward is evaluated at the five resampling steps only.** The paper resamples
-on a fixed schedule of five points out of a hundred, so five VAE decodes and five
-reward evaluations per particle, twenty in total at $k = 4$ — not four hundred. The
-consequence is that the running max of the MAX potential is a max over a coarse grid,
-which is a choice and not an obvious one. If the pilot shows the VAE decode is cheap
-relative to the UNet, one step in ten is the fallback.
+**1. The reward is evaluated at the five resampling steps only.** This is not a
+liberty taken with the algorithm: it is the paper's *interval resampling*, where
+$G_t = 1$ off schedule and the schedule always contains the terminal step. Five VAE
+decodes and five reward evaluations per particle, twenty in total at $k = 4$ — not four
+hundred. What remains a choice is that the running max is then a max over a five-point
+grid, so it underestimates the max over a hundred. That changes which particles get
+selected, not the target: $G_0$ closes the product either way. If the pilot shows the
+VAE decode is cheap relative to the UNet, one step in ten is the fallback.
 
 **2. Fixed schedule for the reproduction table, adaptive as a measured variant.**
 The table is reproduced on the paper's `[0, 20, 40, 60, 80]`. Resampling when
@@ -93,16 +95,10 @@ schedule mode goes into every output record rather than being remembered.
 and is written verbatim into the output JSON. Converting it inside the loop is how an
 off-by-one survives a night of GPU.
 
-**4. MAX potential, incremental weight = ratio, target $\exp(\lambda\, r(x_0))$.**
-The cumulative potential is $G_t = \exp(\lambda \max_{s \geq t} r(\hat x_s))$ and what
-enters the weight at each step is the ratio $G_t / G_{t+1}$, so the code stores the
-running max and forms the incremental factor from it; the product of the ratios
-telescopes, the product of the $G_t$ does not. The terminal factor keeps the corrective
-term, so the product lands on $\exp(\lambda\, r(x_0))$ and not on
-$\exp(\lambda \max_s r(\hat x_s))$, consistent with "One target for the three
-potentials" above and with `tests/test_fk.py`. This is a deviation from the paper,
-which has no such correction, and the reproduction table has to say so: the two
-coincide only when the max is attained at the terminal step.
+**4. The paper's MAX potential, corrective term at $t = 0$ included**, target
+$\exp(\lambda\, r(x_0))$. This is what `smc/fk.py` already computes, so there is no
+deviation to report here. What it does require is that the terminal step be identifiable
+on any schedule — see the next section.
 
 **5. The compute budget is matched on UNet calls.** It is the dominant cost and the
 portable one: a reader with another GPU can check the ratio. FK at $k = 4$ and
@@ -115,19 +111,30 @@ decoder, drop-in. Not TAESD: TAESD buys speed that only matters under dense scor
 and at five evaluations there is nothing to buy. The paper does not say which decoder
 it used, so this is a deviation and is flagged as one in the write-up.
 
-## The terminal step cannot stay a magic value
+## Identifying the terminal step (19/09)
 
-Decision 4 keeps the corrective term, so the terminal step has to be identifiable.
-Today it is not, outside CIFAR. The terminal step is identified in `fk_steer` by
-`t == 0`. That is true of the CIFAR schedule by construction — `DDIMScheduler` builds
-`tau` with `linspace(0, T-1, steps)`, so the list always ends exactly on 0 — but SD
-v1.5 ships `steps_offset = 1`, and its diffusers timesteps at 100 steps end on 1, not
-0: `[991, 981, ..., 21, 11, 1]`. Wired as is, the corrective branch never fires on SD,
-the target becomes $\exp(\lambda \max_s r(\hat x_s))$ without anything being decided,
-and nothing raises: the run would silently produce the paper's target instead of the
-one decision 4 chose, which is the one measurement this section exists to pin down.
-The terminal step has to be named rather than inferred from a value that only one of
-the two schedules happens to satisfy.
+Decision 4 looked like a fork and is not one. The paper defines the MAX and SUM
+potentials with the corrective term built in: $G_t = \exp(\lambda \max_{s \geq t}
+r_\phi(\hat x_s))$ for $t \geq 1$, and $G_0 = \exp(\lambda\, r(x_0))
+(\prod_{t=1}^{T} G_t)^{-1}$, that is a $G_0$ defined to cancel the running product.
+The section "One target for the three potentials" above therefore reproduces the paper
+rather than extending it, and `smc/fk.py` and `tests/test_fk.py` are right as they
+stand. An earlier reading of mine claimed the paper had no such correction; it was
+wrong, and the plan's A1 has been corrected accordingly.
+
+What the correction does require is a reliable notion of "terminal step", and that part
+is a real defect. `fk_steer` identifies it by `t == 0`. This holds for the CIFAR
+schedule by construction — `DDIMScheduler` builds `tau` with `linspace(0, T-1, steps)`,
+so the list always ends exactly on 0 — but SD v1.5 ships `steps_offset = 1` and its
+diffusers timesteps at 100 steps end on 1: `[991, 981, ..., 21, 11, 1]`. Wired as is,
+the corrective branch never fires on SD, the target silently becomes
+$\exp(\lambda \max_s r(\hat x_s))$, and nothing raises. The numbers would look
+plausible and would not be the paper's measurement.
+
+**Decision**: the terminal step stops being inferred from a magic value. It is derived
+from the schedule itself, which decision 3 already converts once into loop indices at
+entry. The property to hold, on CIFAR and on SD alike: the corrective branch fires
+exactly once per run, observed rather than read off the source.
 
 ## What the T4 measured before the pilot (19/09)
 
