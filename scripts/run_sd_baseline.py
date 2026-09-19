@@ -92,7 +92,7 @@ def main():
               "eta": args.eta, "size": args.size, "scheduler": "ddim"}
     total = len(prompts) * len(args.samplers) * len(args.seeds)
     fait = 0
-    for pid, prompt in prompts:
+    for i, (pid, prompt) in enumerate(prompts):
         for name in args.samplers:
             fn, n = SAMPLERS[name]
             for seed in args.seeds:
@@ -100,7 +100,10 @@ def main():
                 if (pid, name, seed) in faits:
                     continue
                 compteur.update(calls=0, rows=0)
-                g = torch.Generator("cuda").manual_seed(seed)
+                # Un x_T par prompt : un bruit initial commun aux 40 correlerait les
+                # tirages et l'ecart-type inter-prompts sous-estimerait l'incertitude.
+                effective = seed * 1000 + i
+                g = torch.Generator("cuda").manual_seed(effective)
                 t0 = time.time()
                 images = fn(pipe, prompt, n, g, args)
                 dt = time.time() - t0
@@ -113,7 +116,7 @@ def main():
                 best = max(range(len(images)), key=lambda i: ir_scores[i])
 
                 records.append({
-                    "prompt_id": pid, "prompt": prompt, "sampler": name, "n": n, "seed": seed,
+                    "prompt_id": pid, "prompt": prompt, "sampler": name, "n": n, "seed": seed, "seed_effective": effective,
                     "ir": ir_scores, "hps": hps,
                     # la table reporte la particule choisie par IR : son HPS, et non le max de HPS
                     "ir_max": ir_scores[best], "hps_at_ir_max": hps[best],

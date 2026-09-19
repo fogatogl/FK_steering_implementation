@@ -93,7 +93,16 @@ schedule mode goes into every output record rather than being remembered.
 and is written verbatim into the output JSON. Converting it inside the loop is how an
 off-by-one survives a night of GPU.
 
-**4. MAX potential, incremental weight = ratio.** *Left open — see the next section.*
+**4. MAX potential, incremental weight = ratio, target $\exp(\lambda\, r(x_0))$.**
+The cumulative potential is $G_t = \exp(\lambda \max_{s \geq t} r(\hat x_s))$ and what
+enters the weight at each step is the ratio $G_t / G_{t+1}$, so the code stores the
+running max and forms the incremental factor from it; the product of the ratios
+telescopes, the product of the $G_t$ does not. The terminal factor keeps the corrective
+term, so the product lands on $\exp(\lambda\, r(x_0))$ and not on
+$\exp(\lambda \max_s r(\hat x_s))$, consistent with "One target for the three
+potentials" above and with `tests/test_fk.py`. This is a deviation from the paper,
+which has no such correction, and the reproduction table has to say so: the two
+coincide only when the max is attained at the terminal step.
 
 **5. The compute budget is matched on UNet calls.** It is the dominant cost and the
 portable one: a reader with another GPU can check the ratio. FK at $k = 4$ and
@@ -106,33 +115,19 @@ decoder, drop-in. Not TAESD: TAESD buys speed that only matters under dense scor
 and at five evaluations there is nothing to buy. The paper does not say which decoder
 it used, so this is a deviation and is flagged as one in the write-up.
 
-## The open question behind decision 4
+## The terminal step cannot stay a magic value
 
-Decision 4 cannot be written yet, because the repository and the paper currently
-describe two different algorithms and the code silently picks one of them.
-
-The section "One target for the three potentials" above records the choice that all
-three potentials telescope to $\exp(\lambda\, r(x_0))$, via the corrective term at
-$t = 0$. `smc/fk.py` does exactly that: for `max`, the terminal factor is
-$\lambda\,(r_0 - \max_{s>0} r(\hat x_s))$, which cancels the running max and leaves
-$\lambda\, r_0$. `tests/test_fk.py` asserts it for the three potentials.
-
-The paper's MAX potential has no such correction: its cumulative potential is
-$G_t = \exp(\lambda \max_{s \geq t} r(\hat x_s))$ and the product of the incremental
-ratios is $\exp(\lambda \max_s r(\hat x_s))$, which coincides with the above only when
-the max happens to be attained at the terminal step. Reproducing the table means
-running their target; keeping the corrective term means running a variant. Both are
-defensible, they are not the same measurement, and the note has to say which one was
-run before any number is reported.
-
-There is a second, sharper edge. The terminal step is identified in `fk_steer` by
+Decision 4 keeps the corrective term, so the terminal step has to be identifiable.
+Today it is not, outside CIFAR. The terminal step is identified in `fk_steer` by
 `t == 0`. That is true of the CIFAR schedule by construction — `DDIMScheduler` builds
 `tau` with `linspace(0, T-1, steps)`, so the list always ends exactly on 0 — but SD
 v1.5 ships `steps_offset = 1`, and its diffusers timesteps at 100 steps end on 1, not
 0: `[991, 981, ..., 21, 11, 1]`. Wired as is, the corrective branch never fires on SD,
 the target becomes $\exp(\lambda \max_s r(\hat x_s))$ without anything being decided,
-and nothing raises. Whichever way decision 4 goes, the terminal step has to stop being
-inferred from a magic value that only one of the two schedules satisfies.
+and nothing raises: the run would silently produce the paper's target instead of the
+one decision 4 chose, which is the one measurement this section exists to pin down.
+The terminal step has to be named rather than inferred from a value that only one of
+the two schedules happens to satisfy.
 
 ## What the T4 measured before the pilot (19/09)
 
