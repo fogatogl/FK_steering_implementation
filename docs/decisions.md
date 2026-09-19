@@ -69,3 +69,91 @@ Glasses reward, $\lambda = 1$: 7 of 16 particles wear glasses for B, on clean fa
 2048 images per lot, DDIM 50 steps, $\eta = 1$. Two references: the 1468 faces with glasses (distance to the target) and the 30000 faces (what the guidance costs). Free model 123.8 / 43.6, FK glasses $\lambda = 1$ 65.1 / 52.6, $\lambda = 2$ 73.7 / 67.3. Half the distance to the target for nine points of global FID at $\lambda = 1$; at $\lambda = 2$ both get worse, the collapse seen on sixteen images holds on two thousand.
 
 The lots are the sixteen final particles of 128 runs, not one particle per run as decided above: one per run would be 2048 runs, two and a half days at 256 px. The FID therefore includes duplication and reads as a pessimistic bound. `runs/*.pt` keeps the final weights, so the one-per-run figure stays computable on 128 images.
+
+## The six SD decisions (18/09)
+
+The block that reproduces the SD v1.5 row of the paper's table 1 at reduced scale.
+These six were settled before any SD code was written; this section is what the
+"implementation choices" part of the write-up is built from.
+
+**1. The reward is evaluated at the five resampling steps only.** The paper resamples
+on a fixed schedule of five points out of a hundred, so five VAE decodes and five
+reward evaluations per particle, twenty in total at $k = 4$ — not four hundred. The
+consequence is that the running max of the MAX potential is a max over a coarse grid,
+which is a choice and not an obvious one. If the pilot shows the VAE decode is cheap
+relative to the UNet, one step in ten is the fallback.
+
+**2. Fixed schedule for the reproduction table, adaptive as a measured variant.**
+The table is reproduced on the paper's `[0, 20, 40, 60, 80]`. Resampling when
+$\mathrm{ESS} < k/2$, the rule used on CIFAR and CelebA, is kept as a variant run at
+the end if time allows. The gap between the two is itself a result, which is why the
+schedule mode goes into every output record rather than being remembered.
+
+**3. The schedule is converted once, at entry.** It enters as a list of loop indices
+and is written verbatim into the output JSON. Converting it inside the loop is how an
+off-by-one survives a night of GPU.
+
+**4. MAX potential, incremental weight = ratio.** *Left open — see the next section.*
+
+**5. The compute budget is matched on UNet calls.** It is the dominant cost and the
+portable one: a reader with another GPU can check the ratio. FK at $k = 4$ and
+best-of-4 must land on the same count, counted at runtime and logged, not derived on
+paper. The twenty VAE decodes and twenty ImageReward calls FK adds, against four and
+four for best-of-N, are reported but not folded into the matching.
+
+**6. `stabilityai/sd-vae-ft-mse` as the decoder.** Same latent space, fine-tuned
+decoder, drop-in. Not TAESD: TAESD buys speed that only matters under dense scoring,
+and at five evaluations there is nothing to buy. The paper does not say which decoder
+it used, so this is a deviation and is flagged as one in the write-up.
+
+## The open question behind decision 4
+
+Decision 4 cannot be written yet, because the repository and the paper currently
+describe two different algorithms and the code silently picks one of them.
+
+The section "One target for the three potentials" above records the choice that all
+three potentials telescope to $\exp(\lambda\, r(x_0))$, via the corrective term at
+$t = 0$. `smc/fk.py` does exactly that: for `max`, the terminal factor is
+$\lambda\,(r_0 - \max_{s>0} r(\hat x_s))$, which cancels the running max and leaves
+$\lambda\, r_0$. `tests/test_fk.py` asserts it for the three potentials.
+
+The paper's MAX potential has no such correction: its cumulative potential is
+$G_t = \exp(\lambda \max_{s \geq t} r(\hat x_s))$ and the product of the incremental
+ratios is $\exp(\lambda \max_s r(\hat x_s))$, which coincides with the above only when
+the max happens to be attained at the terminal step. Reproducing the table means
+running their target; keeping the corrective term means running a variant. Both are
+defensible, they are not the same measurement, and the note has to say which one was
+run before any number is reported.
+
+There is a second, sharper edge. The terminal step is identified in `fk_steer` by
+`t == 0`. That is true of the CIFAR schedule by construction — `DDIMScheduler` builds
+`tau` with `linspace(0, T-1, steps)`, so the list always ends exactly on 0 — but SD
+v1.5 ships `steps_offset = 1`, and its diffusers timesteps at 100 steps end on 1, not
+0: `[991, 981, ..., 21, 11, 1]`. Wired as is, the corrective branch never fires on SD,
+the target becomes $\exp(\lambda \max_s r(\hat x_s))$ without anything being decided,
+and nothing raises. Whichever way decision 4 goes, the terminal step has to stop being
+inferred from a magic value that only one of the two schedules satisfies.
+
+## What the T4 measured before the pilot (19/09)
+
+SD v1.5, fp16, CFG 7.5, DDIM $\eta = 1$, 100 steps, 512 px, batch 1: **13.7-14.4 s per
+image**, peak VRAM **2.16 GiB** out of 15. That is 5.7x the paper's 2.4 s, consistent
+with an A100 baseline. Attention slicing is therefore off by default: at 2.16 GiB it
+buys nothing and costs time.
+
+$\eta = 1$ does inject sampling noise, which had to be verified before anything else:
+two samples sharing $x_T$ and differing only in the generator give decorrelated final
+latents (relative difference 1.74), while at $\eta = 0$ they are equal bit for bit.
+Had $\eta$ been silently zero, resampling would have cloned particles that could never
+diverge, and the whole block would have been dead without saying so.
+
+`ImageReward.load` ignores `HF_HOME`: it passes `local_dir` to `hf_hub_download`, which
+short-circuits the hub cache and drops 1.7 GB in `~/.cache/ImageReward`, on the
+ephemeral overlay. It takes `download_root`, and the weights live in
+`/home/onyxia/work/ir_cache`.
+
+ImageReward and HPS are on scales with nothing in common: on thirteen images of one
+prompt, ImageReward spans 0.173 to 1.867 while HPS spans 0.2856 to 0.3429. At
+$\lambda = 10$ a 1.7 point gap is a weight ratio of $e^{17}$, so the ESS collapse is
+not something the pilot has to wait for; it is already in the scales. This only
+concerns the reward that guides: HPS judges and never enters a potential.
