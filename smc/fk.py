@@ -17,7 +17,7 @@ def best_of_n(model, reward, n, generator):
     }
 
 
-def potentials(r_t, gate, lam, potential, t, T):
+def potentials(r_t, gate, lam, potential, t):
     if potential == "difference":
         logG = lam * (r_t - gate)
         new_gate = r_t
@@ -59,6 +59,10 @@ def fk_steer(
     state = model.initial_state(k, generator)
     device = state["x"].device
 
+    logg_list = []
+    ess_trace = []
+    anc = []
+
     if potential in ("difference", "sum"):
         gate = torch.zeros(k, device=device)
     elif potential == "max":
@@ -80,30 +84,38 @@ def fk_steer(
         else:
             r_t = reward(state["x"])
 
-        logG, gate = potentials(r_t, gate, lam, potential, t, model.T)
+        logG, gate = potentials(r_t, gate, lam, potential, t)
+        logg_list.append(logG)
 
         logW = logW + logG
         w, _ = normalize_logw(logW)
 
-        # ESS measured before any resampling
         current_ess = ess(w)
+        ess_trace.append(current_ess)
         if current_ess < ess_min:
             ess_min = current_ess
 
         if t > 0 and should_resample(w, resample_threshold):
             n_resamplings += 1
             idx = resampler(w, k, generator)
+            anc.append(idx)
             for key in state:
                 if isinstance(state[key], torch.Tensor):
                     state[key] = state[key][idx]
             gate = gate[idx]
             logW = torch.zeros(k, device=device)
             w = torch.full((k,), 1.0 / k, device=device)
+        else:
+            anc.append(torch.arange(k, device=device))
 
     return state["x"], {
         "ess": current_ess,
         "ess_min": ess_min,
+        "ess_trace": torch.tensor(ess_trace, device=device),
+        "timesteps": torch.as_tensor(model.timesteps, device=device),
         "n_resamplings": n_resamplings,
         "weights": w,
         "rewards": r_t,
+        "logG": torch.stack(logg_list),
+        "ancestors": torch.stack(anc),
     }
