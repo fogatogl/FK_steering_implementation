@@ -206,3 +206,63 @@ step is the problem (drop it, or start at t = 60), whether the weight sharpness
 is (lambda 2 to 20), whether the five-point running max is (score every ten
 steps), and whether the paper's number needs k > 4. All four are one CLI flag
 away and are costed in `docs/protocol_sd.md`.
+
+## The FK screen on SD (20/09, 13:21 to 16:57)
+
+Seven variants of `fk4`, the first 20 prompts, seed 2024, one JSON each in
+`results/sd_variants/`, 3.44 h of sampling. Every run shares its $x_T$ with the
+`k1`, `bon4` and `fk4` records of the same prompt and seed in
+`results/sd_baseline.json`, so all differences below are paired. On these 20
+prompts the reference `fk4` - `bon4` is +0.093 ± 0.064 (13/20), against +0.062
+on the 100: the subset leans towards FK, so the columns are read against each
+other and not against the table above. `python scripts/compare_sd_variants.py`
+prints this table from the JSON.
+
+| variant | what changes | IR vs best-of-N | won | IR vs `fk4` | won | ESS, first step | resamplings | s/run |
+|---|---|---|---|---|---|---|---|---|
+| `S60` | schedule `[0, 20, 40, 60]` | **+0.187 ± 0.049** | 16/20 | +0.094 ± 0.080 | 14/20 | 1.03 | 2.85 | 60 |
+| `K8` | k = 8, against best-of-8 | +0.146 ± 0.091 | 13/20 | +0.182 ± 0.064 | 15/20 | 1.33 | 3.85 | 133 |
+| `S40` | schedule `[0, 20, 40]` | +0.133 ± 0.043 | 16/20 | +0.040 ± 0.059 | 10/20 | 1.05 | 2.00 | 59 |
+| `A05` | resample when ESS < k/2 | +0.124 ± 0.062 | 13/20 | +0.031 ± 0.035 | 8/20 | 1.21 | 2.25 | 62 |
+| `fk4` | reference, the paper's setting | +0.093 ± 0.064 | 13/20 | | | 1.18 | 3.75 | 62 |
+| `L5` | lambda = 5 | +0.091 ± 0.076 | 12/20 | -0.002 ± 0.037 | 6/20 | 1.71 | 3.70 | 62 |
+| `L2` | lambda = 2 | +0.051 ± 0.081 | 12/20 | -0.042 ± 0.062 | 8/20 | 2.88 | 3.90 | 62 |
+| `L20` | lambda = 20 | +0.019 ± 0.090 | 14/20 | -0.074 ± 0.073 | 6/20 | 1.02 | 3.60 | 62 |
+
+HPS moves on none of them: every paired difference against `fk4` is inside
+±0.009, most inside ±0.002. Whatever the variants do, they do it on the reward
+that guides.
+
+**The schedule is the lever, lambda is not.** Dropping the t = 80 step doubles
+the gain over best-of-4 on these prompts; dropping t = 60 as well gives back
+part of it. The three lambdas all lose to lambda = 10 on the paired difference,
+in both directions. A lower lambda does relax the collapse (ESS 2.88 at the
+first step for lambda = 2) and loses the selection with it; a higher one changes
+nothing about the collapse and adds noise.
+
+**The collapse follows the first evaluation, not the clock.** The ESS column is
+read at whichever step is scheduled first: 1.18 at t = 80, 1.03 at t = 60 for
+`S60`, 1.05 at t = 40 for `S40`. At the first evaluation the weights are
+$\exp(\lambda\, r)$ over particles that were uniform a step earlier, and with
+lambda = 10 one of the four takes almost everything whatever the step. What
+`S60` buys is not fewer collapses but a collapse on a sharper $\hat x_0$, so
+the single surviving ancestor is a better one.
+
+**Adaptive resampling helps a little, for a different reason.** `A05` collapses
+at t = 80 like the reference (1.21) but resamples 2.25 times instead of 3.75 and
+comes out +0.031 ahead, 0.9 standard errors. The prediction in
+`docs/protocol_sd.md` that it would not help was too strong; the mechanism is
+letting the weights carry across a step rather than avoiding the collapse.
+
+**k = 8 keeps the edge.** `fk8` beats best-of-8 by +0.146 at twice the budget,
+about what `fk4` does against best-of-4 on the same prompts. On the CIFAR sweep
+the edge had closed by k = 16; on SD at k = 8 it has not. Against `fk4` itself,
+`fk8` is +0.182 ahead, 15/20, so more particles help FK as much as they help
+the baseline. At 133 s per run it is the one variant whose cost the table would
+have to carry.
+
+None of this is settled at 20 prompts: `S60` over `fk4` is 1.2 standard errors,
+`K8` over `fk8` about the same. The screen ranks. What the ranking says, three
+times over, is that the first evaluation at full lambda on a blurred image is
+what costs, which is the case for a lambda that grows with the denoising: the
+protocol for it is written, and it waits on `smc/fk.py`.
