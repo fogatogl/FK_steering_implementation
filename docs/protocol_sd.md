@@ -34,7 +34,7 @@ SD v1.5 fp16 (`stable-diffusion-v1-5/stable-diffusion-v1-5`, the `runwayml` repo
 |---|---|---|
 | `k1` | one sample per prompt | measured |
 | `bon4` | four samples, the best one by ImageReward | measured |
-| `fk4` | lambda = 10, k = 4, MAX potential, fixed schedule `[0, 20, 40, 60, 80]` | launched 19/09 night, after the baselines |
+| `fk4` | lambda = 10, k = 4, MAX potential, fixed schedule `[0, 20, 40, 60, 80]` | measured 20/09, 07:18 to 12:36 |
 
 The first two do not go through `fk_steer` at all: best-of-N here is generate four,
 score, take the max, which is why they could be measured before the SD wrapper existed.

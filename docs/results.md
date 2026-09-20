@@ -92,33 +92,51 @@ recorded in these files, and the JSON has no timing key, so there is no cost
 figure to quote. The 256 px runs are DDIM 50 steps on a much larger UNet; their
 particles are the 136 MB `samples/sweep_k_hub_classifier.pt`.
 
-## What the FK row on SD will cost (20/09, estimated before launching)
+## The FK row on SD (20/09)
 
-Three prompts at seed 2024 measure `fk4` at **61.0 s of sampling per run**
-(57.7, 61.4, 63.8), against 56.1 s for `bon4`. The budget matches exactly: 800
-UNet rows, 100 calls of batch 8, the same counter `bon4` reads. The extra 9 % is
-the twenty VAE decodes and twenty ImageReward scorings the guide adds, five
-scheduled steps on four particles, which decision 5 reports without folding into
-the matching.
+Launched at 07:18 on the three seeds, prompt-major, finished at 12:36:
+`results/sd_baseline.json` now holds 900 records, 100 prompts x {`k1`, `bon4`,
+`fk4`} x 3 seeds, no gap. lambda = 10, MAX potential, fixed schedule
+`[0, 20, 40, 60, 80]`, k = 4.
 
-Both numbers time the sampling only, so add the ImageReward and HPS scoring of
-the final four images, the same tax the baselines paid.
-
-| | runs | sampling | with scoring, roughly |
+| | ImageReward | HPS v2.1 | paper (IR / HPS) |
 |---|---|---|---|
-| 100 prompts, seed 2024 | 100 | 1.7 h | ~1.9 h |
-| 100 prompts, three seeds | 300 | 5.1 h | ~5.6 h |
+| `k1` | +0.2368 ± 0.0816 | 0.2453 ± 0.0032 | 0.187 / 0.245 |
+| `bon4` | +0.7577 ± 0.0692 | 0.2576 ± 0.0032 | 0.737 / 0.265 |
+| `fk4` | +0.8196 ± 0.0690 | 0.2592 ± 0.0030 | 0.898 / 0.263 |
 
-Launched 20/09 at 07:18 on the three seeds, prompt-major as the protocol
-requires, so an instance that dies mid-run leaves complete prompts. The
-alternative was one seed for a third of the time. On `k1` the seed-to-seed
-movement is a sixth of the prompt-to-prompt standard error, which would have made
-one seed nearly free; on `bon4` it is half of it, and `bon4` is the configuration
-FK is budget-matched to. The extra 3.7 h buys comparability with the two rows
-already measured, which average three seeds per prompt before aggregating.
+The budget matched exactly: 800 UNet rows for `bon4` and 800 for `fk4`, measured
+by the forward hook, one single value across all 600 runs of the two.
 
-The pilot also says the guide and the judge agree on which particle wins: over
-the three prompts the argmax of `ir_guide` (sd-vae-ft-mse) and of `ir` (the
-pipeline VAE) is the same particle each time, though the scores differ by up to
-0.27. On this sample of three the choice of decoder moves the number, not the
-ranking.
+The three samplers are measured on the same prompts under the same seeds, so the
+comparison that matters is paired, not a read of two overlapping error bars:
+
+| | ImageReward | prompts won | HPS | prompts won |
+|---|---|---|---|---|
+| `fk4` - `bon4` | +0.0619 ± 0.0259 (2.4 se) | 69/100 | +0.0015 ± 0.0011 (1.4 se) | 50/100 |
+| `fk4` - `k1` | +0.5828 ± 0.0433 (13.5 se) | 97/100 | +0.0139 ± 0.0016 (8.7 se) | 82/100 |
+| `bon4` - `k1` | +0.5209 ± 0.0375 (13.9 se) | 98/100 | +0.0124 ± 0.0014 (8.7 se) | 84/100 |
+
+FK beats best-of-4 at equal UNet budget on the reward that guides, by 2.4
+standard errors and on 69 prompts out of 100. It does not beat it on the judge:
++0.0015 at 1.4 standard errors, 50 prompts each way, which is what the paper's
+own HPS column says too (0.263 for FK against 0.265 for best-of-4, FK slightly
+below).
+
+The size of the gain is where the reproduction falls short. The paper has FK
+0.161 above best-of-4 on ImageReward; this run has 0.062, about 40 % of it. Both
+baselines land on the paper, so the discrepancy is in the FK row alone. The
+three candidates, in the order I would test them: the running max is taken over
+a five-point grid rather than the full hundred steps (decision 1), the decoder
+is `sd-vae-ft-mse` where the paper does not say (decision 6), and the schedule
+is fixed at threshold 1.0 rather than adaptive (decision 2).
+
+Diagnostics, over the 300 FK runs: 3.75 resamplings per run out of 5 scheduled
+steps, median ESS 2.18 out of k = 4, minimum 1.00, and 273 of 300 runs dip below
+an ESS of 1.5 at least once. The collapse the scales predicted is there, and the
+method still gains: at k = 4 there is not much room between "all particles
+survive" and "one ancestor".
+
+Cost: 62.5 s of sampling per run against 56.1 s for `bon4`, 5.21 h for the 300
+runs, 5 h 18 min of wall clock. The estimate written before launching was 5.1 h
+of sampling and ~5.6 h wall.
