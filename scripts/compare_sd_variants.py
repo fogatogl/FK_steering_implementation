@@ -32,13 +32,15 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--baseline", default=str(ROOT / "results" / "sd_baseline.json"))
     p.add_argument("--variants", default=str(ROOT / "results" / "sd_variants"))
+    p.add_argument("--baseline-div", default=str(ROOT / "results" / "sd_baseline_div20.json"),
+                   help="bon4 et fk4 de référence refaits avec n_lineages / div_pix")
     args = p.parse_args()
 
     base = json.loads(Path(args.baseline).read_text())["runs"]
     ref_fk, ref_bon = par_cle(base, "fk4"), par_cle(base, "bon4")
 
     print(f"{'variante':8s} {'n':>3s}  {'IR vs fk4':>18s} {'gagnés':>7s}  {'IR vs best-of-N':>18s} {'gagnés':>7s}  "
-          f"{'HPS vs fk4':>18s}  {'ESS t=80':>8s} {'nres':>5s} {'s/run':>6s}")
+          f"{'HPS vs fk4':>18s}  {'ESS t=80':>8s} {'nres':>5s} {'lign.':>5s} {'div_pix':>7s} {'s/run':>6s}")
     for f in sorted(Path(args.variants).glob("*.json")):
         runs = json.loads(f.read_text())["runs"]
         fk_name = "fk8" if any(r["sampler"] == "fk8" for r in runs) else "fk4"
@@ -52,8 +54,14 @@ def main():
         ess80 = st.median(r["ess_at_schedule"][0] for r in var.values())
         nres = st.mean(r["n_resamplings"] for r in var.values())
         sec = st.mean(r["seconds"] for r in var.values())
+        # diversité des k finales : racines x_T distinctes et RMSE pixel moyenne entre paires ;
+        # absents des JSON écrits avant le 20/09 au soir
+        lign = [r["n_lineages"] for r in var.values() if "n_lineages" in r]
+        div = [r["div_pix"] for r in var.values() if r.get("div_pix") is not None]
+        lign_s = f"{st.mean(lign):5.2f}" if lign else "    -"
+        div_s = f"{st.mean(div):7.4f}" if div else "      -"
         print(f"{f.stem:8s} {n:3d}  {m1:+.4f} ± {s1:.4f}  {w1:3d}/{n:<3d}  {m2:+.4f} ± {s2:.4f}  {w2:3d}/{n:<3d}  "
-              f"{m3:+.4f} ± {s3:.4f}  {ess80:8.2f} {nres:5.2f} {sec:6.1f}")
+              f"{m3:+.4f} ± {s3:.4f}  {ess80:8.2f} {nres:5.2f} {lign_s} {div_s} {sec:6.1f}")
 
     # la référence elle-même, sur les mêmes prompts, pour lire l'écran à la bonne échelle
     communs = {k for f in Path(args.variants).glob("*.json")
@@ -64,6 +72,16 @@ def main():
         m, s, w, n = apparie(sub_fk, sub_bon, "ir_max")
         print(f"\nréférence fk4 - bon4 sur ces {n} prompts : {m:+.4f} ± {s:.4f}, {w}/{n} gagnés "
               f"(sur les 100 : +0.0619 ± 0.0259)")
+
+    # la diversité de la référence vient d'une régénération séparée (mêmes seeds, donc mêmes x_T)
+    if Path(args.baseline_div).exists():
+        div_runs = json.loads(Path(args.baseline_div).read_text())["runs"]
+        for name in ("bon4", "fk4"):
+            rs = [r for r in div_runs if r["sampler"] == name and r.get("div_pix") is not None]
+            if rs:
+                lign = [r["n_lineages"] for r in rs if "n_lineages" in r]
+                lign_s = f"{st.mean(lign):.2f} lignées, " if lign else ""
+                print(f"référence {name} ({len(rs)} prompts) : {lign_s}div_pix {st.mean(r['div_pix'] for r in rs):.4f}")
 
 
 if __name__ == "__main__":

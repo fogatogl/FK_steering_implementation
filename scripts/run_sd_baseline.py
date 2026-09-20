@@ -11,6 +11,7 @@ import argparse
 import json
 import time
 
+import numpy as np
 import torch
 from pathlib import Path
 
@@ -67,7 +68,15 @@ def sample_fk(pipe, prompt, n, generator, args):
     with torch.no_grad():
         img = pipe.vae.decode(x / pipe.vae.config.scaling_factor).sample
     images = pipe.image_processor.postprocess(img, output_type="pil")
+    # Combien de x_T distincts survivent parmi les n particules finales : on remonte les
+    # ancêtres depuis les cases finales, comme dans le test télescopique. 1 = les n images
+    # descendent du même bruit initial, c'est l'effondrement que la figure 6 montre.
+    slots = torch.arange(n, device=x.device)
+    anc = info["ancestors"]
+    for i in range(anc.shape[0] - 1, -1, -1):
+        slots = anc[i][slots]
     extra = {"lam": args.lam, "potential": "max", "threshold": args.fk_threshold,
+             "n_lineages": int(torch.unique(slots).numel()),
              "lam_schedule": args.fk_lam_schedule, "lam_placement": args.fk_lam_placement,
              "lam_at_schedule": [round(args.lam if lam_schedule is None else lam_schedule[i], 3) for i in schedule],
              "schedule_mode": "fixed" if args.fk_threshold >= 1.0 else "adaptive",
@@ -76,6 +85,18 @@ def sample_fk(pipe, prompt, n, generator, args):
              "n_resamplings": info["n_resamplings"],
              "ir_guide": [round(v, 4) for v in info["rewards"].tolist()]}
     return images, extra
+
+
+def diversite(images, taille=64):
+    """RMSE moyenne entre paires d'images réduites à 64x64 dans [0, 1] ; None à N=1.
+
+    Proxy pixel, pas perceptuel (ni lpips ni open_clip dans le venv) : il sépare
+    "quatre images identiques" de "quatre images différentes", pas plus."""
+    if len(images) < 2:
+        return None
+    arr = [np.asarray(im.resize((taille, taille))).astype(np.float32) / 255.0 for im in images]
+    d = [float(np.sqrt(((a - b) ** 2).mean())) for i, a in enumerate(arr) for b in arr[i + 1:]]
+    return round(sum(d) / len(d), 4)
 
 
 # Un échantillonneur = (fonction, N) ; la fonction rend ses N particules finales comme
@@ -180,6 +201,7 @@ def main():
                     "ir": ir_scores, "hps": hps,
                     # la table reporte la particule choisie par IR : son HPS, et non le max de HPS
                     "ir_max": ir_scores[best], "hps_at_ir_max": hps[best],
+                    "div_pix": diversite(images),
                     "n_unet_calls": compteur["calls"], "n_unet_rows": compteur["rows"],
                     "unet_batch": compteur["batch"],
                     "seconds": round(dt, 1), **commun, **extra,
