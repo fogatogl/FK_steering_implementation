@@ -140,3 +140,69 @@ survive" and "one ancestor".
 Cost: 62.5 s of sampling per run against 56.1 s for `bon4`, 5.21 h for the 300
 runs, 5 h 18 min of wall clock. The estimate written before launching was 5.1 h
 of sampling and ~5.6 h wall.
+
+## What the numbers say so far (20/09)
+
+Three blocks have run: CIFAR-10 with a classifier reward, CelebA-HQ 256 px with
+an attribute reward, SD v1.5 with ImageReward. Read together:
+
+**The implementation is right.** The product constraint
+$\prod_t G_t = \exp(\lambda r(x_0))$ holds on the three potentials
+(`tests/test_fk.py`), the SD wrapper reproduces the diffusers pipeline bit for
+bit at lambda = 0, and the UNet budget of FK and best-of-4 is the same measured
+number, 800 rows, on all 600 runs. The two baselines land on the paper's table
+within 0.3 to 0.6 standard errors on ImageReward. Whatever is missing is not a
+bug in the weights, the resampler or the potential.
+
+**FK beats best-of-N at equal budget, and by less than the paper.** On SD,
++0.062 ImageReward over best-of-4, 2.4 standard errors on 100 paired prompts,
+where the paper has +0.161. On the CIFAR k sweep the same shape: FK is far ahead
+at k = 4 and best-of-k has caught up by k = 16. The steering pays where the
+budget is small; with enough independent samples, taking the max is enough.
+
+**The gain does not reach the judge.** HPS moves by +0.0015 between best-of-4
+and FK, 1.4 standard errors, 50 prompts each way. The paper's own table has FK
+slightly *below* best-of-4 on HPS (0.263 against 0.265). Steering optimises the
+reward it is given, and ImageReward and HPS agree on the trend but not on the
+ranking (Pearson 0.58 on `results/c2_ir_hps.json`). An interviewer will ask
+whether +0.06 of ImageReward is worth anything; the honest answer is that the
+metric that was not optimised did not move.
+
+**Where the missing 60 % most likely went: the particles collapse before the
+image exists.** The FK diagnostics point one way:
+
+- At the first scheduled step, t = 80 in the paper's convention, only twenty of
+  the hundred denoising steps have run and the Tweedie estimate $\hat x_0$ is a
+  blur. The median ESS there is **1.18 out of 4**. With the fixed schedule
+  (threshold 1.0) the resample fires immediately, so from step 20 onwards three
+  of the four particles are copies of one ancestor chosen on noise. At the
+  terminal step the median ESS is 2.78: the weights are well spread once the
+  image is sharp, which is when they no longer have much to select from.
+- The per-prompt gain has a heavy left tail: median +0.08, quartiles -0.02 and
+  +0.18, minimum **-1.30**. On `001369-0084` ("greek or roman sculpture in
+  marble of a philosopher") best-of-4 draws a +0.92 particle at seed 2024; FK,
+  on the same four $x_T$, collapses to ESS 1.002 at the first step and ends with
+  four particles between -0.71 and -1.07, below `k1`. Same story on the three
+  seeds of that prompt. The particle that would have won was killed at step 20.
+- The decoder is not the story. `sd-vae-ft-mse` (guide) and the pipeline VAE
+  (judge) put the same particle first in 225 of 300 runs, and the median score
+  gap on the same particle is 0.034. Decision 6 costs at most the 75 runs where
+  the ranking flips on scores that are already within noise.
+- Final particles are not clones: only 9 of 300 runs end with two identical
+  ImageReward values. The per-slot generator does its job; the damage is done
+  by the selection, not by a failure to diverge.
+
+lambda = 10 on a reward whose useful range spans about two units means a 0.2
+gap in early ImageReward is a weight ratio of $e^2$. That is fine at the
+terminal step and destructive at step 20.
+
+**What this rules out.** The adaptive ESS < k/2 rule alone would not fix it:
+1.18 is already below 2, so it fires at the same step. Replacing the decoder
+would move a handful of rankings inside the noise. Neither is worth a night on
+its own.
+
+**What it leaves open, in the order I would test.** Whether the first scheduled
+step is the problem (drop it, or start at t = 60), whether the weight sharpness
+is (lambda 2 to 20), whether the five-point running max is (score every ten
+steps), and whether the paper's number needs k > 4. All four are one CLI flag
+away and are costed in `docs/protocol_sd.md`.
