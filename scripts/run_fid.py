@@ -28,8 +28,7 @@ FID_DIR, DATA_DIR = DDPM / "fid", DDPM / "dataset"
 RESULTS = ROOT / "results" / "fid.json"
 RESAMPLERS = {"systematic": resample_systematic, "multinomial": resample_multinomial}
 
-# The classifier reward goes here once it exists: one entry = one factory
-# args -> callable(x) -> (k,).
+# One entry = one factory args -> callable(x) -> (k,).
 REWARDS = {"rouge": lambda args: red_reward,
            "classifier": lambda args: make_classifier_reward(args.classifier_weights, args.target,
                                                              args.device)}

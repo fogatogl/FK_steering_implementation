@@ -13,7 +13,6 @@ def gn(channels, max_groups=32):
 class SinusoidalPositionEmbeddings(nn.Module):
     def __init__(self, dim=128):
         super().__init__()
-        assert dim % 2 == 0, "dim must be even"
         self.dim = dim
 
     def forward(self, t):

@@ -64,21 +64,19 @@ class DDIMScheduler(NoiseScheduler):
         t = torch.full((x_t.shape[0],), t_idx, device=self.device, dtype=torch.long)
         eps = model(x_t, t)
 
-        # 1. ᾱ_t et estimation du point propre x̂0
         alpha_hat_t = self.alpha_hat[t_idx]
         sqrt_alpha_hat_t = self.sqrt_alpha_hat[t_idx]
         sqrt_one_minus_alpha_hat_t = self.sqrt_one_minus_alpha_hat[t_idx]
 
         x0_hat = (x_t - sqrt_one_minus_alpha_hat_t * eps) / sqrt_alpha_hat_t
 
-        # 2. Dernier pas (t_idx == 0 -> s is None) : ᾱ_s = 1, x_s = x̂0 pur
+        # Dernier pas (t_idx == 0 -> s is None) : ᾱ_s = 1, x_s = x̂0 pur
         if s is None:
             return x0_hat, eps
 
-        # 3. Étape intermédiaire : extraction de ᾱ_s
         alpha_hat_s = self.alpha_hat[s]
 
-        # 4. Calcul de σ_s avec clamp contre instabilités numériques
+        # σ_s, clampé contre les instabilités numériques
         # σ_s = η * √((1 - ᾱ_s) / (1 - ᾱ_t)) * √(1 - ᾱ_t / ᾱ_s)
         sigma_sq = (
             (self.eta**2)
@@ -87,15 +85,13 @@ class DDIMScheduler(NoiseScheduler):
         )
         sigma = torch.sqrt(torch.clamp(sigma_sq, min=0.0))
 
-        # 5. Direction pointant vers x_t : √(1 - ᾱ_s - σ_s²)
         # clamp(min=0.0) indispensable lorsque η -> 1 où le terme tend vers 0 par le bas
         dir_xt_sq = torch.clamp(1.0 - alpha_hat_s - sigma**2, min=0.0)
         dir_xt = torch.sqrt(dir_xt_sq) * eps
 
-        # 6. Assemblage de l'équation (12)
+        # Assemblage de l'équation (12)
         x_s = torch.sqrt(alpha_hat_s) * x0_hat + dir_xt
 
-        # 7. Bruit résiduel stochastique
         if self.eta > 0.0:
             noise = torch.randn(
                 x_t.shape, generator=generator, device=x_t.device, dtype=x_t.dtype

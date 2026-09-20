@@ -132,8 +132,9 @@ def main():
                                      "r_sample": r_sample, "r_max": r.max().item(),
                                      "ess_min": info["ess_min"],
                                      "n_resamplings": info["n_resamplings"],
-                                     # ESS(t) porte la figure 2 ; les ancetres pesent T*k
-                                     # entiers et partent dans le .pt avec les images.
+                                     # Aucune figure ne lit ESS(t) pour l'instant : la figure 2
+                                     # prend ess_min. Les ancetres pesent T*k entiers et partent
+                                     # dans le .pt avec les images.
                                      "ess_trace": [round(v, 4) for v in info["ess_trace"].tolist()],
                                      "tag": tag, **common})
                         if args.save_images:

@@ -95,7 +95,6 @@ def main():
 
     prompts = load_prompts(Path(args.prompts), args.limit)
 
-    import torch
     import hpsv2
     import ImageReward as RM
     from diffusers import DDIMScheduler, StableDiffusionPipeline
