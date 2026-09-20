@@ -128,3 +128,39 @@ reported as such if kept.
 Not on the list: a tempered $\lambda_t$ growing with the denoising progress. It
 is the natural fix for a guide that is noise early and signal late, but it
 changes the potential, which is `smc/`, and it is not in the paper.
+
+## A time-dependent lambda (20/09, written before running)
+
+What the screen says, three ways: the first reward evaluation at full lambda on a
+blurred $\hat x_0$ is what costs. `S60` removes it and doubles the gain; `A05`
+resamples less often there and gains a little; `L2` softens it and loses the
+rest. A lambda that grows with the denoising progress is the synthesis, and the
+FK formalism allows it: any sequence $G_t$ is admissible as long as the product
+reaches the target.
+
+**The constraint.** With the MAX potential the intermediate terms are
+$\lambda_t (m_t - m_{t-1})$ and they no longer telescope against
+$\lambda\, m_{T-1}$ once $\lambda_t$ varies. The terminal correction must cancel
+the product accumulated **along the lineage**, not $\lambda \cdot$`gate`: a
+second per-particle tensor carried and resampled exactly like `gate`, and at
+the last step $\log G = \lambda_T\, r(x_0) - \text{acc}$. The test that has to
+hold is `test_telescoping_with_active_non_collapsed_resampling` in
+`tests/test_fk.py`, run with a non-constant lambda. This is `smc/fk.py` and is
+written by hand.
+
+**Schedules to screen**, in progress $p = 1 - t/T$ over the paper's five steps
+$t \in \{80, 60, 40, 20, 0\}$, $\lambda_T = 10$ so the target is unchanged:
+
+| tag | $\lambda_t$ | at the five steps | predicted ESS at t = 80 |
+|---|---|---|---|
+| `T1` | $10\,p$ | 2, 4, 6, 8, 10 | about 2.9, from `L2` |
+| `T2` | $10\,p^2$ | 0.4, 1.6, 3.6, 6.4, 10 | close to 4 |
+
+`S60` is the degenerate schedule (0, 10, 10, 10, 10). Same screening design as
+above: the first 20 prompts, seed 2024, one JSON per tag, paired against the
+900-record file. About 21 minutes each.
+
+**What counts as a result.** `T1` or `T2` above `S60` on the paired ImageReward
+difference says the smooth ramp beats the hard cut; below it says the first step
+is worth dropping outright. Either way the winner goes to 100 prompts x 3 seeds
+and enters the table as a stated deviation from the paper's constant lambda.
