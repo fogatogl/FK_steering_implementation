@@ -79,7 +79,7 @@ These six were settled before any SD code was written; this section is what the
 **1. The reward is evaluated at the five resampling steps only.** This is not a
 liberty taken with the algorithm: it is the paper's *interval resampling*, where
 $G_t = 1$ off schedule and the schedule always contains the terminal step. Five VAE
-decodes and five reward evaluations per particle, twenty in total at $k = 4$ — not four
+decodes and five reward evaluations per particle, twenty in total at $k = 4$, not four
 hundred. What remains a choice is that the running max is then a max over a five-point
 grid, so it underestimates the max over a hundred. That changes which particles get
 selected, not the target: $G_0$ closes the product either way. If the pilot shows the
@@ -98,7 +98,7 @@ off-by-one survives a night of GPU.
 **4. The paper's MAX potential, corrective term at $t = 0$ included**, target
 $\exp(\lambda\, r(x_0))$. This is what `smc/fk.py` already computes, so there is no
 deviation to report here. What it does require is that the terminal step be identifiable
-on any schedule — see the next section.
+on any schedule: see the next section.
 
 **5. The compute budget is matched on UNet calls.** It is the dominant cost and the
 portable one: a reader with another GPU can check the ratio. FK at $k = 4$ and
@@ -124,17 +124,20 @@ wrong, and the plan's A1 has been corrected accordingly.
 
 What the correction does require is a reliable notion of "terminal step", and that part
 is a real defect. `fk_steer` identifies it by `t == 0`. This holds for the CIFAR
-schedule by construction — `DDIMScheduler` builds `tau` with `linspace(0, T-1, steps)`,
-so the list always ends exactly on 0 — but SD v1.5 ships `steps_offset = 1` and its
+schedule by construction (`DDIMScheduler` builds `tau` with `linspace(0, T-1, steps)`,
+so the list always ends exactly on 0), but SD v1.5 ships `steps_offset = 1` and its
 diffusers timesteps at 100 steps end on 1: `[991, 981, ..., 21, 11, 1]`. Wired as is,
 the corrective branch never fires on SD, the target silently becomes
 $\exp(\lambda \max_s r(\hat x_s))$, and nothing raises. The numbers would look
 plausible and would not be the paper's measurement.
 
-**Decision**: the terminal step stops being inferred from a magic value. It is derived
-from the schedule itself, which decision 3 already converts once into loop indices at
-entry. The property to hold, on CIFAR and on SD alike: the corrective branch fires
-exactly once per run, observed rather than read off the source.
+**Decision**: the terminal step stops being inferred from a magic value. `fk_steer`
+walks `model.timesteps` by position and the terminal step is the last one, whatever
+its value; the resampling schedule (decision 3, converted once into loop indices at
+entry) must contain it, and `fk_steer` refuses to run otherwise, because that step
+carries the corrective term. A model cannot reintroduce the bug: no flag to forget, no
+value to match. The property to hold, on CIFAR and on SD alike: the corrective branch
+fires exactly once per run, observed rather than read off the source.
 
 ## What the T4 measured before the pilot (19/09)
 
@@ -159,3 +162,37 @@ prompt, ImageReward spans 0.173 to 1.867 while HPS spans 0.2856 to 0.3429. At
 $\lambda = 10$ a 1.7 point gap is a weight ratio of $e^{17}$, so the ESS collapse is
 not something the pilot has to wait for; it is already in the scales. This only
 concerns the reward that guides: HPS judges and never enters a potential.
+
+## The three choices C3 left open (19/09)
+
+**The VAE lives in the reward, not in the model.** `fk_steer` calls
+`reward(model.predict_x0(state))` without knowing what domain `predict_x0` returns.
+On SD it returns a latent and ImageReward needs pixels, so "decode" belongs to the
+reward object (`smc/rewards_sd.py`: decode, then score) and not to the model or the
+potential. This is what makes the C3 criterion hold literally: not one line of
+`fk.py` changed for SD.
+
+**Cache $\hat\varepsilon$ rather than the scheduler's `pred_original_sample`.**
+`DDIMScheduler.step` already returns $\hat x_0$; storing it in the state would have
+made `predict_x0` a mere accessor. Keeping the explicit Tweedie computation on the
+cached $(\hat\varepsilon, x_t, t)$ preserves the symmetry with `CifarDDPM` and a
+`predict_x0` that has content. The cost is a possible stale cache; it is acceptable
+because `step` rewrites `eps`, `x_t` and `t` as one block, and `fk_steer` calls
+`predict_x0` right after `step`.
+
+**One generator per batch: the noise follows the slot, not the lineage.** A single
+`torch.Generator` for the whole batch draws one $(k, 4, 64, 64)$ tensor per step, so
+two clones produced by resampling receive two different slices and diverge on the
+next step. Had the generator followed the particle, clones would have shared their
+noise stream and stayed identical, which empties resampling of its meaning. The
+consequence for the image grids: "same seed" means "same $x_T$ for slot $i$", not
+"same lineage".
+
+## C3 closed: the wrapper reproduces the pipeline bit for bit (19/09)
+
+`fk_steer(lambda=0, k=1, schedule=[99])` on `StableDiffusion` against
+`pipe(..., output_type="latent")`, same prompt, same seed, CFG 7.5, DDIM eta = 1, 100
+steps: `torch.equal` is true, max absolute difference 0.0 on latents of scale 3.6. The
+diffusers timesteps run `[991, 981, ..., 11, 1]`, so the terminal step is the last
+element of the list and never `t == 0`; no resampling fired and every `logG` was zero.
+Not one line of `fk.py` was changed for SD.

@@ -17,29 +17,21 @@ def best_of_n(model, reward, n, generator):
     }
 
 
-def potentials(r_t, gate, lam, potential, t):
+def potentials(r_t, gate, lam, potential, last):
     if potential == "difference":
         logG = lam * (r_t - gate)
         new_gate = r_t
         return logG, new_gate
 
     elif potential == "max":
-        if t == 0:
-            logG = lam * (r_t - gate)
-            new_gate = torch.maximum(gate, r_t)
-        else:
-            new_gate = torch.maximum(gate, r_t)
-            prev_gate = torch.where(torch.isneginf(gate), torch.zeros_like(r_t), gate)
-            logG = lam * (new_gate - prev_gate)
+        prev_gate = torch.where(torch.isneginf(gate), torch.zeros_like(r_t), gate)
+        new_gate = torch.maximum(gate, r_t)
+        logG = lam * (r_t - prev_gate) if last else lam * (new_gate - prev_gate)
         return logG, new_gate
 
     elif potential == "sum":
-        if t == 0:
-            logG = lam * (r_t - gate)
-            new_gate = gate + r_t
-        else:
-            logG = lam * r_t
-            new_gate = gate + r_t
+        new_gate = gate + r_t
+        logG = lam * (r_t - gate) if last else lam * r_t
         return logG, new_gate
 
     else:
@@ -47,21 +39,24 @@ def potentials(r_t, gate, lam, potential, t):
 
 
 def fk_steer(
-    model,
-    reward,
-    k,
-    lam,
-    potential,
-    generator,
+    model, reward, k, lam, potential, generator,
     resample_threshold=0.5,
     resampler=resample_systematic,
+    schedule=None,          # indices de boucle où l'on score ; None = tous
+    resample_last=False,    # décision ouverte du plan (§2) ; False = comportement actuel
 ):
+    timesteps = list(model.timesteps)
+    n_steps = len(timesteps)
+    schedule = set(range(n_steps)) if schedule is None else set(schedule)
+    if (n_steps - 1) not in schedule:
+        raise ValueError(
+            "le pas terminal doit être dans le calendrier : c'est lui qui porte la "
+            "correction G_last ; sans lui la cible devient exp(lam * max) au lieu de exp(lam * r_0)"
+        )
     state = model.initial_state(k, generator)
     device = state["x"].device
 
-    logg_list = []
-    ess_trace = []
-    anc = []
+    logg_list, ess_trace, anc = [], [], []
 
     if potential in ("difference", "sum"):
         gate = torch.zeros(k, device=device)
@@ -72,19 +67,24 @@ def fk_steer(
 
     logW = torch.zeros(k, device=device)
     w = torch.full((k,), 1.0 / k, device=device)
-
     n_resamplings = 0
     ess_min = float(k)
+    current_ess = float(k)
 
-    for t in model.timesteps:
+    for i, t in enumerate(timesteps):
+        last = (i == n_steps - 1)
         state = model.step(state, t, generator)
 
-        if t > 0:
-            r_t = reward(model.predict_x0(state))
-        else:
-            r_t = reward(state["x"])
+        if i not in schedule:
+            # hors calendrier : pas de reward, logG = 0, gate inchangé, pas de rééchantillonnage
+            logg_list.append(torch.zeros(k, device=device))
+            ess_trace.append(current_ess)
+            anc.append(torch.arange(k, device=device))
+            continue
 
-        logG, gate = potentials(r_t, gate, lam, potential, t)
+        r_t = reward(state["x"]) if last else reward(model.predict_x0(state))
+
+        logG, gate = potentials(r_t, gate, lam, potential, last)
         logg_list.append(logG)
 
         logW = logW + logG
@@ -92,10 +92,10 @@ def fk_steer(
 
         current_ess = ess(w)
         ess_trace.append(current_ess)
-        if current_ess < ess_min:
-            ess_min = current_ess
+        ess_min = min(ess_min, current_ess)
 
-        if t > 0 and should_resample(w, resample_threshold):
+        may_resample = resample_last or not last
+        if may_resample and should_resample(w, resample_threshold):
             n_resamplings += 1
             idx = resampler(w, k, generator)
             anc.append(idx)
@@ -112,7 +112,7 @@ def fk_steer(
         "ess": current_ess,
         "ess_min": ess_min,
         "ess_trace": torch.tensor(ess_trace, device=device),
-        "timesteps": torch.as_tensor(model.timesteps, device=device),
+        "timesteps": torch.as_tensor(timesteps, device=device),
         "n_resamplings": n_resamplings,
         "weights": w,
         "rewards": r_t,

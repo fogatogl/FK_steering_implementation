@@ -19,8 +19,6 @@ class NoiseScheduler:
         self.eps_coef = self.beta / self.sqrt_one_minus_alpha_hat
         self.sigma = self.beta.sqrt()
 
-        # What the sampler visits, descending. fk.py detects the last step by
-        # t == 0, so every schedule must end at 0.
         self.schedule = list(range(timesteps - 1, -1, -1))
 
     def add_noise(self, x_0, t, noise=None):
