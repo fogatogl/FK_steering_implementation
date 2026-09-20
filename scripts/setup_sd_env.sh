@@ -9,6 +9,11 @@ export HF_HOME=${HF_HOME:-/home/onyxia/work/hf_cache}
 python -m venv --system-site-packages "$VENV"
 "$VENV/bin/pip" install --upgrade pip
 "$VENV/bin/pip" install -r requirements-sd.txt
+# Les scripts s'executent depuis scripts/, donc sys.path[0] est scripts/ et non la
+# racine : sans cet editable, `import smc` echoue dans ce venv la ou il passe dans
+# celui du bloc CIFAR. Seul sample_fk importe smc, ce qui a laisse les deux
+# baselines tourner une nuit entiere avant que ca ne se voie.
+"$VENV/bin/pip" install -e . --no-deps
 
 SP=$("$VENV/bin/python" -c "import site; print(site.getsitepackages()[0])")
 
