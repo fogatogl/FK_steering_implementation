@@ -9,7 +9,7 @@ def best_of_n(model, reward, n, generator):
         state = model.step(state, t, generator)
     r = reward(state["x"])
     w = torch.full((n,), 1.0 / n, device=state["x"].device)
-    
+
     return state["x"], {
         "ess": float(n),
         "weights": w,
@@ -17,34 +17,61 @@ def best_of_n(model, reward, n, generator):
     }
 
 
-def potentials(r_t, gate, lam, potential, last):
+def potentials(r_t, gate, lam, lam_prev, potential, last, acc, lam_placement):
+    """
+    Computes logG and updates the gate across potentials:
+      difference: curr = r_t,               prev = gate
+      max:        curr = max(gate, r_t),    prev = where(gate == -inf, 0, gate)
+      sum:        curr = gate + r_t,        prev = gate
+
+    Under tempering:
+      logG = lam * curr - lam_prev * prev   (curr = r_t on last)
+    Under terminal correction:
+      logG = lam * (curr - prev)            if not last
+      logG = lam * r_t - acc                if last
+    """
     if potential == "difference":
-        logG = lam * (r_t - gate)
+        curr = r_t
+        prev = gate
         new_gate = r_t
-        return logG, new_gate
-
     elif potential == "max":
-        prev_gate = torch.where(torch.isneginf(gate), torch.zeros_like(r_t), gate)
+        prev = torch.where(torch.isneginf(gate), torch.zeros_like(r_t), gate)
+        curr = r_t if last else torch.maximum(gate, r_t)
         new_gate = torch.maximum(gate, r_t)
-        logG = lam * (r_t - prev_gate) if last else lam * (new_gate - prev_gate)
-        return logG, new_gate
-
     elif potential == "sum":
+        curr = r_t if last else gate + r_t
+        prev = gate
         new_gate = gate + r_t
-        logG = lam * (r_t - gate) if last else lam * r_t
-        return logG, new_gate
-
     else:
         raise ValueError(f"unknown potential: {potential}")
 
+    if lam_placement == "tempering":
+        logG = lam * curr - lam_prev * prev
+    elif last and acc is not None:
+        logG = lam * r_t - acc
+    else:
+        logG = lam * (curr - prev)
+
+    return logG, new_gate
+
 
 def fk_steer(
-    model, reward, k, lam, potential, generator,
+    model,
+    reward,
+    k,
+    lam,
+    potential,
+    generator,
     resample_threshold=0.5,
     resampler=resample_systematic,
-    schedule=None,          # indices de boucle où l'on score ; None = tous
-    resample_last=False,    # décision ouverte du plan (§2) ; False = comportement actuel
+    schedule=None,
+    resample_last=False,
+    lam_schedule=None,
+    lam_placement="terminal",
 ):
+    if lam_placement not in ("terminal", "tempering"):
+        raise ValueError(f"unknown lam_placement: {lam_placement}")
+
     timesteps = list(model.timesteps)
     n_steps = len(timesteps)
     schedule = set(range(n_steps)) if schedule is None else set(schedule)
@@ -65,6 +92,10 @@ def fk_steer(
     else:
         raise ValueError(f"unknown potential: {potential}")
 
+    # acc is an integral along the lineage and is never reset; logW is a weight and is.
+    acc = torch.zeros(k, device=device)
+    lam_prev = 0.0
+
     logW = torch.zeros(k, device=device)
     w = torch.full((k,), 1.0 / k, device=device)
     n_resamplings = 0
@@ -73,10 +104,10 @@ def fk_steer(
 
     for i, t in enumerate(timesteps):
         last = (i == n_steps - 1)
+        step_lam = lam if lam_schedule is None else float(lam_schedule[i])
         state = model.step(state, t, generator)
 
         if i not in schedule:
-            # hors calendrier : pas de reward, logG = 0, gate inchangé, pas de rééchantillonnage
             logg_list.append(torch.zeros(k, device=device))
             ess_trace.append(current_ess)
             anc.append(torch.arange(k, device=device))
@@ -84,7 +115,20 @@ def fk_steer(
 
         r_t = reward(state["x"]) if last else reward(model.predict_x0(state))
 
-        logG, gate = potentials(r_t, gate, lam, potential, last)
+        logG, gate = potentials(
+            r_t=r_t,
+            gate=gate,
+            lam=step_lam,
+            lam_prev=lam_prev,
+            potential=potential,
+            last=last,
+            acc=(acc if lam_schedule is not None else None),
+            lam_placement=lam_placement,
+        )
+        lam_prev = step_lam
+        if not last:
+            acc = acc + logG
+
         logg_list.append(logG)
 
         logW = logW + logG
@@ -103,6 +147,7 @@ def fk_steer(
                 if isinstance(state[key], torch.Tensor):
                     state[key] = state[key][idx]
             gate = gate[idx]
+            acc = acc[idx]
             logW = torch.zeros(k, device=device)
             w = torch.full((k,), 1.0 / k, device=device)
         else:
