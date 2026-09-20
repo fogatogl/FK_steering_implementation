@@ -69,7 +69,11 @@ def main():
     images_path = ROOT / "samples" / f"{out.stem}.pt" if args.save_images else None
 
     # Ecrit apres chaque run : une nuit qui meurt a 90 % ne doit pas tout perdre.
+    # Les images et les ancetres aussi, pas seulement le JSON.
     def dump():
+        if args.save_images:
+            (ROOT / "samples").mkdir(exist_ok=True)
+            torch.save(images, images_path)
         out.write_text(json.dumps({
         "runs": runs,
         "k": args.k,
@@ -141,9 +145,6 @@ def main():
                               f"resampl={info['n_resamplings']}", flush=True)
                         dump()
 
-    if args.save_images:
-        (ROOT / "samples").mkdir(exist_ok=True)
-        torch.save(images, images_path)
     dump()
     print(out)
 
