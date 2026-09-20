@@ -49,18 +49,19 @@ def sample_fk(pipe, prompt, n, generator, args):
     model = StableDiffusion(pipe, guidance_scale=args.guidance, num_steps=args.steps, eta=args.eta)
     model.set_prompt(prompt)
     reward = ImageRewardSD(FK["vae"], FK["ir"], prompt)
-    # Calendrier du papier en t (0 = pas terminal) -> indices de boucle. Calendrier fixe :
-    # seuil 1.0, donc on rééchantillonne à chaque point du calendrier dès que les poids
-    # ne sont pas uniformes ; la variante adaptative (ESS < k/2) est la décision 2.
+    # Calendrier du papier en t (0 = pas terminal) -> indices de boucle. Seuil 1.0 =
+    # calendrier fixe, on rééchantillonne à chaque point dès que les poids ne sont pas
+    # uniformes ; 0.5 = la variante adaptative ESS < k/2 de la décision 2.
     schedule = sorted(args.steps - 1 - t for t in args.fk_schedule)
     x, info = fk_steer(model, reward, n, args.lam, "max", generator,
-                       resample_threshold=1.0, schedule=schedule)
+                       resample_threshold=args.fk_threshold, schedule=schedule)
     # Les images finales passent par le VAE du pipeline, comme k1 et bon4 : le juge voit
     # le même décodeur pour les trois lignes ; ft-mse n'a servi qu'au guide.
     with torch.no_grad():
         img = pipe.vae.decode(x / pipe.vae.config.scaling_factor).sample
     images = pipe.image_processor.postprocess(img, output_type="pil")
-    extra = {"lam": args.lam, "potential": "max", "schedule_mode": "fixed",
+    extra = {"lam": args.lam, "potential": "max", "threshold": args.fk_threshold,
+             "schedule_mode": "fixed" if args.fk_threshold >= 1.0 else "adaptive",
              "schedule_t": list(args.fk_schedule), "schedule_idx": schedule,
              "ess_at_schedule": [round(info["ess_trace"][i].item(), 4) for i in schedule],
              "n_resamplings": info["n_resamplings"],
@@ -70,7 +71,8 @@ def sample_fk(pipe, prompt, n, generator, args):
 
 # Un échantillonneur = (fonction, N) ; la fonction rend ses N particules finales comme
 # images PIL, et éventuellement un dict de champs à verser dans l'enregistrement.
-SAMPLERS = {"k1": (sample_independent, 1), "bon4": (sample_independent, 4), "fk4": (sample_fk, 4)}
+SAMPLERS = {"k1": (sample_independent, 1), "bon4": (sample_independent, 4), "fk4": (sample_fk, 4),
+            "bon8": (sample_independent, 8), "fk8": (sample_fk, 8)}
 
 
 def main():
@@ -88,6 +90,8 @@ def main():
     p.add_argument("--lam", type=float, default=10.0, help="fk4 : lambda du potentiel max")
     p.add_argument("--fk-schedule", type=int, nargs="+", default=[0, 20, 40, 60, 80],
                    help="fk4 : pas de rééchantillonnage, convention du papier (0 = pas terminal)")
+    p.add_argument("--fk-threshold", type=float, default=1.0,
+                   help="fk4 : rééchantillonne si ESS < seuil * k ; 1.0 = à chaque pas du calendrier")
     p.add_argument("--reward-vae", default="stabilityai/sd-vae-ft-mse")
     p.add_argument("--limit", type=int, default=None, help="les n premiers prompts, pour un essai")
     p.add_argument("--out", default=str(ROOT / "results" / "sd_baseline.json"))
