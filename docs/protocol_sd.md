@@ -125,42 +125,155 @@ one stated deviation. A lambda other than 10 is a deviation from the paper's
 setting; a change of schedule is a deviation from its interval. Both are
 reported as such if kept.
 
-Not on the list: a tempered $\lambda_t$ growing with the denoising progress. It
-is the natural fix for a guide that is noise early and signal late, but it
-changes the potential, which is `smc/`, and it is not in the paper.
+A tempered $\lambda_t$ growing with the denoising progress is the natural fix for
+a guide that is noise early and signal late; it changes the potential, so it is
+`smc/` and gets its own section below.
 
-## A time-dependent lambda (20/09, written before running)
+## A time-dependent lambda (20/09)
 
-What the screen says, three ways: the first reward evaluation at full lambda on a
-blurred $\hat x_0$ is what costs. `S60` removes it and doubles the gain; `A05`
-resamples less often there and gains a little; `L2` softens it and loses the
-rest. A lambda that grows with the denoising progress is the synthesis, and the
-FK formalism allows it: any sequence $G_t$ is admissible as long as the product
-reaches the target.
+What the first screen says, three ways: the first reward evaluation at full
+lambda on a blurred $\hat x_0$ is what costs. `S60` removes it and doubles the
+gain; `A05` resamples less often there and gains a little; `L2` softens it and
+loses the rest. A lambda that grows with the denoising progress is the
+synthesis, and the FK formalism allows it: any sequence $G_t$ is admissible as
+long as the product along the lineage reaches $\lambda_T\, r(x_0)$.
 
-**The constraint.** With the MAX potential the intermediate terms are
-$\lambda_t (m_t - m_{t-1})$ and they no longer telescope against
-$\lambda\, m_{T-1}$ once $\lambda_t$ varies. The terminal correction must cancel
-the product accumulated **along the lineage**, not $\lambda \cdot$`gate`: a
-second per-particle tensor carried and resampled exactly like `gate`, and at
-the last step $\log G = \lambda_T\, r(x_0) - \text{acc}$. The test that has to
-hold is `test_telescoping_with_active_non_collapsed_resampling` in
-`tests/test_fk.py`, run with a non-constant lambda. This is `smc/fk.py` and is
-written by hand.
+**Schedules**, in progress $p = 1 - t/T$ over the paper's five steps
+$t \in \{80, 60, 40, 20, 0\}$, $\lambda_T = 10$ so the target is unchanged.
+`fk_steer` takes `lam_schedule`, a list over loop indices built in the script
+from `--fk-lam-schedule`; `S60` is the degenerate schedule (0, 10, 10, 10, 10).
 
-**Schedules to screen**, in progress $p = 1 - t/T$ over the paper's five steps
-$t \in \{80, 60, 40, 20, 0\}$, $\lambda_T = 10$ so the target is unchanged:
-
-| tag | $\lambda_t$ | at the five steps | predicted ESS at t = 80 |
-|---|---|---|---|
-| `T1` | $10\,p$ | 2, 4, 6, 8, 10 | about 2.9, from `L2` |
-| `T2` | $10\,p^2$ | 0.4, 1.6, 3.6, 6.4, 10 | close to 4 |
-
-`S60` is the degenerate schedule (0, 10, 10, 10, 10). Same screening design as
-above: the first 20 prompts, seed 2024, one JSON per tag, paired against the
-900-record file. About 21 minutes each.
+| tag | flags | $\lambda_t$ | at the five steps | predicted ESS at t = 80 |
+|---|---|---|---|---|
+| `T1` | `--fk-lam-schedule linear` | $10\,p$ | 2, 4, 6, 8, 10 | about 2.9, from `L2` |
+| `T2` | `--fk-lam-schedule quad` | $10\,p^2$ | 0.4, 1.6, 3.6, 6.4, 10 | close to 4 |
 
 **What counts as a result.** `T1` or `T2` above `S60` on the paired ImageReward
 difference says the smooth ramp beats the hard cut; below it says the first step
 is worth dropping outright. Either way the winner goes to 100 prompts x 3 seeds
 and enters the table as a stated deviation from the paper's constant lambda.
+
+## Where the ramp's deficit is paid: terminal correction or tempering (20/09)
+
+Two FK models share the schedules above and the same product along the lineage.
+They differ in **where** the weight that a rising $\lambda_t$ leaves unpaid is
+collected, and they are not the same experiment. Both are in `smc/fk.py` behind
+`lam_placement="terminal" | "tempering"`, `--fk-lam-placement` in the script,
+`lam_placement` in every record.
+
+**(a) Terminal correction.** With the MAX potential and running max $m_i$ at the
+$i$-th scheduled step,
+
+$$\log G_i = \lambda_i\,(m_i - m_{i-1}) \quad (i < T), \qquad
+\log G_T = \lambda_T\, r(x_0) - \text{acc}, \quad \text{acc} = \sum_{i<T} \lambda_i (m_i - m_{i-1}).$$
+
+`acc` is a per-particle integral along the lineage: indexed by the ancestors at
+each resampling like `gate`, never reset, unlike `logW`. With constant lambda
+`acc` $= \lambda\, m_{T-1}$ and the old formula is the special case. The deficit
+$\sum_{i<T} (\lambda_T - \lambda_i)(m_i - m_{i-1})$ is paid in one piece at the
+terminal step — and that step's weight is never used: `resample_last` is `False`
+and the script picks the particle by `argmax` ImageReward. The images of a `T1`
+run are therefore **exactly** those of a run with per-step $\lambda_i$ and no
+correction at all. Under (a) the ramp is, operationally, a weaker steering: the
+final cloud is tilted by $\sum_i \lambda_i \Delta m_i \le \lambda_T m_{T-1}$.
+
+**(b) Tempering.** The gate carries the tempered previous max:
+
+$$\log G_i = \lambda_i\, m_i - \lambda_{i-1}\, m_{i-1} \quad (i < T), \qquad
+\log G_T = \lambda_T\, r(x_0) - \lambda_{T-1}\, m_{T-1},$$
+
+the textbook sequence $G_t = \pi_t / \pi_{t-1}$, $\pi_t \propto p(x)\, e^{\lambda_t m_t}$
+(Chopin & Papaspiliopoulos, ch. 17). Written as
+$\lambda_i \Delta m_i + (\lambda_i - \lambda_{i-1})\, m_{i-1}$ it is (a) plus a
+catch-up term at every scheduled step, so the deficit is paid where resampling
+can still act, and the terminal weight stays small and local as in the constant
+case. $\lambda_{i-1}$ is the lambda of the previous *scheduled* step, a scalar,
+not resampled.
+
+**Verified (20/09, 21:30)**, on the dummy model, 24 tests green: the lineage sum
+equals $\lambda_T\, r(x_0)$ under both placements for the three potentials; with
+a constant `lam_schedule` tempering produces the same `logG` tensor as the
+constant path, for the three potentials; at $\lambda = 0$ tempering is neutral.
+On the linear ramp, k = 16, the terminal $\log G$ spreads over 7.2..13.5 under
+(a) and 3.9..4.7 under (b), which resamples once more on the way: the deficit
+did change place.
+
+**What the two placements predict.** At the first scheduled step both give
+$\lambda_1 m_1$: the ESS at t = 80 and the first resampling are identical. They
+diverge from t = 60 on, where (b) resamples harder, so (b) sits between (a) and
+the constant-lambda `fk4` in intermediate weight spread. If (a) beats `fk4`, (b)
+is worth its run; if (a) loses to `fk4`, the ramp is not the lever and (b) loses
+too. `T1` against `T1t` on the same $x_T$ is the placement effect alone.
+
+**Lineage collapse does not depend on lambda at threshold 1.0.** The smoke run
+of `T1` on prompt 0 gave ESS 2.07 at t = 80 (median 1.18 for `fk4`) and still a
+single surviving $x_T$ among the four finals: at threshold 1.0 the cloud is
+resampled at every scheduled step whatever the ESS, and four systematic draws on
+k = 4 end on one root, ramp or not. The ramp can protect diversity only if the
+threshold lets it skip the steps where it kept the ESS up; hence the cross with
+`A05`.
+
+**Two record fields for the collapse, since `ir_max` cannot see it.**
+`n_lineages`: distinct $x_T$ among the k finals, from a backward walk over
+`ancestors`; 1 is the figure-6 failure, four images from one noise. `div_pix`:
+mean pairwise RMSE of the k finals at 64 x 64 in [0, 1], a pixel proxy (neither
+LPIPS nor CLIP is in the venv) that separates "the same image four times" from
+"four images", no more; it applies to `bon4` too. `compare_sd_variants.py`
+prints both; `plot_fig6_sd_grid.py --rows k1 bon4 fk4 T1 ...` writes both under
+each strip. A variant can win on these and tie on `ir_max`: that is a claim
+about collapse, not about the table's number, and the write-up must say which.
+
+**Runs, 20/09 evening**, first 20 prompts, seed 2024, one JSON per tag in
+`results/sd_variants/`, in one queue on the T4:
+
+| launcher | tags | placement | log |
+|---|---|---|---|
+| `run_sd_lambda_t.sh` (20:47) | `T1`, `T2`, `T1A05`, `T2A05` | terminal | `ddpm/sd_lambda_t.log` |
+| queued | `bon4`, `fk4` regenerated with the two fields, `results/sd_baseline_div20.json` | — | `ddpm/sd_ref_div.log` |
+| `run_sd_tempering.sh`, queued | `T1t`, `T2t`, `T1tA05`, `T2tA05` | tempering | `ddpm/sd_tempering.log` |
+
+The tempering launcher runs `tests/test_fk.py` first and refuses to start if it
+is red. Each variant is a fresh process that imports `smc/fk.py` at start, so
+the file must not be left broken while the queue runs.
+
+## Code rules, from the review of the tempering change (20/09)
+
+The change was correct and doubled `smc/fk.py` (120 to 218 lines). What it
+taught, kept as rules:
+
+- **One formula, one body.** The terminal mode's intermediate potentials are the
+  tempering formula with $\lambda_{\text{prev}} = \lambda$; `potentials` computes
+  (current, previous) per potential once and `logG = lam * current - lam_prev * previous`,
+  terminal being `lam_prev = lam` plus the `acc` override on the last step. A
+  mode that duplicates the branches is wrong even when every branch is right.
+- **Nothing that cannot run.** No default for an argument the only caller always
+  passes; no `if/else` with identical branches; no mode-conditional indexing when
+  the unconditional one is harmless (`acc[idx]` on zeros).
+- **A comment states the non-obvious**, once: `acc` is an integral and is never
+  reset, `logW` is a weight and is. "Accumulator for terminal mode" paraphrases
+  the name and goes.
+- **Docstrings carry the equations, not a sentence saying what the name says.**
+  Signature style follows the file, not a formatter.
+- **A property test is never deleted when a mode is added**: the constant-lambda
+  telescoping over the three potentials and the $\lambda = 0$ neutrality stay
+  alongside the two-placement test; the constant-equivalence test is
+  parametrised over the three potentials since the property holds for all;
+  no dead parameter in a test (`lam` when `lam_schedule` is given).
+- **A branch no test reaches is either tested or removed** (`difference` and
+  `sum` under tempering; merging the bodies makes the question vanish).
+- **A refactor is gated by the same green.** All 24 before, all 24 after, and the
+  terminal path's `logG` byte-identical, since it is what the running screen
+  imports.
+
+## What remains, in order
+
+1. `smc/fk.py` and `tests/test_fk.py` per the rules above, by hand: restore the
+   two deleted tests (`git show HEAD:tests/test_fk.py`) and see them green, then
+   merge `potentials`, green again.
+2. After the queue (about 01:00): `compare_sd_variants.py`, read `ir_max` against
+   `fk4` and `bon4`, and `n_lineages` / `div_pix` against the regenerated
+   reference. Figure 6 for the best variant with a win, a median and a loss —
+   not three winners.
+3. The one or two ahead go to 100 prompts x 3 seeds and enter the table as a
+   stated deviation; the write-up says whether the claim is about `ir_max` or
+   about collapse.
