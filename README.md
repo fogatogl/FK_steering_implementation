@@ -25,7 +25,7 @@ schedule (linear β, T = 1000) and the same `step` / `predict_x0` interface:
 The first reward is a deliberately simple "red" score. FK Steering pushes it up
 with λ, and that is the problem: `sum` pushes it past its own bound, the images
 leave [−1, 1], and at λ = 8 the CIFAR samples are flat red squares that the
-judge B still calls "cat" 43 % of the time. A reward that can be gamed, and a
+judge B still gives a mean p(cat) of 0.43. A reward that can be gamed, and a
 metric that follows it: the diagnosis of reward hacking
 (`figures/fig2_sweep_lambda.png`, `figures/fig3_samples_by_reward.png`).
 
@@ -142,9 +142,24 @@ python scripts/run_sweep_lambda.py --weights hub:google/ddpm-ema-celebahq-256 --
        --lam 0 0.5 1 2 4 --potentials difference --resamplers systematic --save-images \
        --out results/sweep_lambda_hub_classifier.json
 python scripts/plot_grid.py --json results/sweep_lambda_hub_red.json --judge .../classifier_eyeglasses64_resnet18_seed1.pt
+
+# what k buys at a matched budget
+python scripts/run_sweep_lambda.py --reward classifier --k 2 4 8 16 --lam 0.5 1 2 \
+       --potentials difference --resamplers systematic --save-images \
+       --out results/sweep_k_classifier.json
+python scripts/run_sweep_lambda.py --reward classifier --k 4 8 16 --lam 0.5 1 2 \
+       --potentials max --resamplers systematic --save-images \
+       --out results/sweep_k_max_classifier.json
+python scripts/plot_fig5_k.py                     # figures/fig5_sweep_k.png
+
+# SD v1.5 (separate venv, see scripts/setup_sd_env.sh)
+HF_HOME=/home/onyxia/work/hf_cache python scripts/run_sd_baseline.py \
+       --prompts data/imagereward-benchmark-prompts.json --seeds 2024 2025 2026
+python scripts/plot_fig4_sd.py                    # figures/fig4_sd_ir_hps.png
+python scripts/make_table_sd.py
 ```
 
-`results/` and `figures/` in the repo are the outputs of exactly these commands.
+`results/` and `figures/` in the repo are the outputs of these commands.
 
 ## Repository structure
 
@@ -161,6 +176,9 @@ experiments/                  training and sampling runs, JSON in results/
 scripts/                      lambda sweep, FID, figures, Onyxia and S3 plumbing
 tests/                        one property per test; `particles` is the oracle for the resamplers
 docs/decisions.md             why each choice, one short entry each
+docs/results.md               every measurement and what it cost on the T4
+docs/protocol_sd.md           the SD run, written before it was launched
+docs/ONYXIA_setup.md          bringing an ephemeral instance back
 LEARNING.md                   the bugs that cost more than twenty minutes
 notebooks/, third_party/      the DDPM training notebook; the MDLM checkpoint for PG-DLM
 ```
