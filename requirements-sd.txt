@@ -20,3 +20,4 @@ setuptools<81            # openai-clip importe pkg_resources, retire de setuptoo
 openai-clip==1.0.1       # dependance d'import d'ImageReward (AestheticScore)
 image-reward==1.5
 hpsv2==1.2.0
+matplotlib==3.11.2      # plot_fig6_sd_grid.py regenere les images et trace dans le meme venv
