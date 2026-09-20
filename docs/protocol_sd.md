@@ -34,11 +34,20 @@ SD v1.5 fp16 (`stable-diffusion-v1-5/stable-diffusion-v1-5`, the `runwayml` repo
 |---|---|---|
 | `k1` | one sample per prompt | measured |
 | `bon4` | four samples, the best one by ImageReward | measured |
-| FK | lambda = 10, k = 4, MAX potential, fixed schedule `[0, 20, 40, 60, 80]` | waiting on the wrapper |
+| `fk4` | lambda = 10, k = 4, MAX potential, fixed schedule `[0, 20, 40, 60, 80]` | launched 19/09 night, after the baselines |
 
 The first two do not go through `fk_steer` at all: best-of-N here is generate four,
 score, take the max, which is why they could be measured before the SD wrapper existed.
-The FK row plugs into the same harness as a third sampler.
+The FK row plugs into the same harness as a third sampler, `sample_fk` in
+`run_sd_baseline.py`. Its schedule is the paper's, in reverse-process time with 0 the
+terminal step, converted to loop indices as `steps - 1 - t`: `[19, 39, 59, 79, 99]`
+on 100 steps. "Fixed" means the resampling threshold is 1.0, so the particles are
+resampled at every scheduled step as soon as the weights are not uniform; the
+adaptive ESS < k/2 variant is not run. The guide decodes with `sd-vae-ft-mse`
+(decision 6); the four final latents are decoded with the pipeline's own VAE, the same
+decoder the judge saw on `k1` and `bon4`. Each record carries the schedule in both
+conventions, the ESS at the five scheduled steps, the number of resamplings and the
+guide's ImageReward on the final particles.
 
 ## Seeds
 

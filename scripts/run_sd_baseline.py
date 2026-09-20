@@ -10,6 +10,8 @@ Depuis la racine :
 import argparse
 import json
 import time
+
+import torch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -34,9 +36,41 @@ def sample_independent(pipe, prompt, n, generator, args):
                 eta=args.eta, height=args.size, width=args.size, generator=generator).images
 
 
-# Un échantillonneur = (fonction, N) ; brancher FK plus tard tient en une ligne ici,
-# la fonction devant rendre ses N particules finales comme images PIL.
-SAMPLERS = {"k1": (sample_independent, 1), "bon4": (sample_independent, 4)}
+# Ce que sample_fk a besoin de trouver et que la signature des échantillonneurs ne porte
+# pas : le VAE de la reward (décision 6, ft-mse) et le scorer ImageReward. Rempli dans main.
+FK = {}
+
+
+def sample_fk(pipe, prompt, n, generator, args):
+    from smc.fk import fk_steer
+    from smc.models import StableDiffusion
+    from smc.rewards_sd import ImageRewardSD
+
+    model = StableDiffusion(pipe, guidance_scale=args.guidance, num_steps=args.steps, eta=args.eta)
+    model.set_prompt(prompt)
+    reward = ImageRewardSD(FK["vae"], FK["ir"], prompt)
+    # Calendrier du papier en t (0 = pas terminal) -> indices de boucle. Calendrier fixe :
+    # seuil 1.0, donc on rééchantillonne à chaque point du calendrier dès que les poids
+    # ne sont pas uniformes ; la variante adaptative (ESS < k/2) est la décision 2.
+    schedule = sorted(args.steps - 1 - t for t in args.fk_schedule)
+    x, info = fk_steer(model, reward, n, args.lam, "max", generator,
+                       resample_threshold=1.0, schedule=schedule)
+    # Les images finales passent par le VAE du pipeline, comme k1 et bon4 : le juge voit
+    # le même décodeur pour les trois lignes ; ft-mse n'a servi qu'au guide.
+    with torch.no_grad():
+        img = pipe.vae.decode(x / pipe.vae.config.scaling_factor).sample
+    images = pipe.image_processor.postprocess(img, output_type="pil")
+    extra = {"lam": args.lam, "potential": "max", "schedule_mode": "fixed",
+             "schedule_t": list(args.fk_schedule), "schedule_idx": schedule,
+             "ess_at_schedule": [round(info["ess_trace"][i].item(), 4) for i in schedule],
+             "n_resamplings": info["n_resamplings"],
+             "ir_guide": [round(v, 4) for v in info["rewards"].tolist()]}
+    return images, extra
+
+
+# Un échantillonneur = (fonction, N) ; la fonction rend ses N particules finales comme
+# images PIL, et éventuellement un dict de champs à verser dans l'enregistrement.
+SAMPLERS = {"k1": (sample_independent, 1), "bon4": (sample_independent, 4), "fk4": (sample_fk, 4)}
 
 
 def main():
@@ -51,6 +85,10 @@ def main():
     p.add_argument("--slicing", action="store_true",
                    help="pic VRAM mesuré à 2,16 Gio sur 15 Go : inutile par défaut")
     p.add_argument("--ir-cache", default="/home/onyxia/work/ir_cache")
+    p.add_argument("--lam", type=float, default=10.0, help="fk4 : lambda du potentiel max")
+    p.add_argument("--fk-schedule", type=int, nargs="+", default=[0, 20, 40, 60, 80],
+                   help="fk4 : pas de rééchantillonnage, convention du papier (0 = pas terminal)")
+    p.add_argument("--reward-vae", default="stabilityai/sd-vae-ft-mse")
     p.add_argument("--limit", type=int, default=None, help="les n premiers prompts, pour un essai")
     p.add_argument("--out", default=str(ROOT / "results" / "sd_baseline.json"))
     args = p.parse_args()
@@ -87,6 +125,10 @@ def main():
     pipe.unet.register_forward_hook(count)
 
     ir = RM.load("ImageReward-v1.0", device="cuda", download_root=args.ir_cache)
+    if any(SAMPLERS[n][0] is sample_fk for n in args.samplers):
+        from diffusers import AutoencoderKL
+        FK["vae"] = AutoencoderKL.from_pretrained(args.reward_vae, torch_dtype=torch.float16).to("cuda")
+        FK["ir"] = ir
 
     commun = {"model": REPO, "dtype": "fp16", "steps": args.steps, "guidance": args.guidance,
               "eta": args.eta, "size": args.size, "scheduler": "ddim"}
@@ -105,7 +147,8 @@ def main():
                 effective = seed * 1000 + i
                 g = torch.Generator("cuda").manual_seed(effective)
                 t0 = time.time()
-                images = fn(pipe, prompt, n, g, args)
+                res = fn(pipe, prompt, n, g, args)
+                images, extra = res if isinstance(res, tuple) else (res, {})
                 dt = time.time() - t0
 
                 ir_scores = ir.score(prompt, images)  # prompt d'abord
@@ -122,7 +165,7 @@ def main():
                     "ir_max": ir_scores[best], "hps_at_ir_max": hps[best],
                     "n_unet_calls": compteur["calls"], "n_unet_rows": compteur["rows"],
                     "unet_batch": compteur["batch"],
-                    "seconds": round(dt, 1), **commun,
+                    "seconds": round(dt, 1), **commun, **extra,
                 })
                 out.write_text(json.dumps({"runs": records}, indent=2))
                 # SD, ImageReward et le ViT-H de hpsv2 tiennent la VRAM ensemble, et
