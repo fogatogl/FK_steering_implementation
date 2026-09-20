@@ -7,6 +7,11 @@ deux sont imprimés côte à côte pour vérifier que la régénération est fid
 
 Depuis scripts/ :
 `HF_HOME=/home/onyxia/work/hf_cache python plot_fig6_sd_grid.py --cases 010856-0009:2025 001369-0084:2024 011623-0101:2024`
+
+Les lignes en plus de k1/bon4/fk4 sont les variantes de l'écran (VARIANTES) : leurs
+flags écrasent ceux de la ligne de commande, et leur JSON de référence est
+results/sd_variants/<tag>.json.
+`... --rows k1 bon4 fk4 T1 T1A05 --cases 005695-0057:2024`
 """
 import argparse
 import json
@@ -21,10 +26,25 @@ import numpy as np
 import torch
 
 from figstyle import BLUE, INK, INK_LIGHT, RED
-from run_sd_baseline import FK, REPO, SAMPLERS, load_prompts
+from run_sd_baseline import FK, REPO, SAMPLERS, diversite, load_prompts
 
 ROOT = Path(__file__).resolve().parent.parent
 COULEUR = {"k1": INK_LIGHT, "bon4": BLUE, "fk4": RED}
+# tag de l'écran -> (échantillonneur, flags de run_sd_baseline.py écrasés pour cette ligne)
+VARIANTES = {
+    "S60": ("fk4", {"fk_schedule": [0, 20, 40, 60]}),
+    "S40": ("fk4", {"fk_schedule": [0, 20, 40]}),
+    "L2": ("fk4", {"lam": 2.0}), "L5": ("fk4", {"lam": 5.0}), "L20": ("fk4", {"lam": 20.0}),
+    "A05": ("fk4", {"fk_threshold": 0.5}),
+    "T1": ("fk4", {"fk_lam_schedule": "linear"}),
+    "T2": ("fk4", {"fk_lam_schedule": "quad"}),
+    "T1A05": ("fk4", {"fk_lam_schedule": "linear", "fk_threshold": 0.5}),
+    "T2A05": ("fk4", {"fk_lam_schedule": "quad", "fk_threshold": 0.5}),
+    "T1t": ("fk4", {"fk_lam_schedule": "linear", "fk_lam_placement": "tempering"}),
+    "T2t": ("fk4", {"fk_lam_schedule": "quad", "fk_lam_placement": "tempering"}),
+    "T1tA05": ("fk4", {"fk_lam_schedule": "linear", "fk_lam_placement": "tempering", "fk_threshold": 0.5}),
+    "T2tA05": ("fk4", {"fk_lam_schedule": "quad", "fk_lam_placement": "tempering", "fk_threshold": 0.5}),
+}
 
 
 def feuille(ax, images, scores, thumb, couleur):
@@ -62,6 +82,12 @@ def main():
     p.add_argument("--size", type=int, default=512)
     p.add_argument("--lam", type=float, default=10.0)
     p.add_argument("--fk-schedule", type=int, nargs="+", default=[0, 20, 40, 60, 80])
+    p.add_argument("--fk-threshold", type=float, default=1.0)
+    p.add_argument("--fk-lam-schedule", default="constant", choices=["constant", "linear", "quad"])
+    p.add_argument("--fk-lam-placement", default="terminal", choices=["terminal", "tempering"])
+    p.add_argument("--rows", nargs="+", default=["k1", "bon4", "fk4"],
+                   help="lignes, dans l'ordre : k1, bon4, fk4 ou un tag de VARIANTES")
+    p.add_argument("--variants", default=str(ROOT / "results" / "sd_variants"))
     p.add_argument("--reward-vae", default="stabilityai/sd-vae-ft-mse")
     p.add_argument("--ir-cache", default="/home/onyxia/work/ir_cache")
     p.add_argument("--thumb", type=int, default=150)
@@ -75,6 +101,9 @@ def main():
     prompts = load_prompts(Path(args.prompts), None)
     index = {pid: (i, txt) for i, (pid, txt) in enumerate(prompts)}
     runs = json.loads(Path(args.json).read_text())["runs"]
+    for tag in args.rows:
+        if tag in VARIANTES and (Path(args.variants) / f"{tag}.json").exists():
+            runs += json.loads((Path(args.variants) / f"{tag}.json").read_text())["runs"]
 
     pipe = StableDiffusionPipeline.from_pretrained(
         REPO, torch_dtype=torch.float16, variant="fp16", safety_checker=None,
@@ -87,7 +116,7 @@ def main():
 
     keep = Path(args.keep)
     keep.mkdir(parents=True, exist_ok=True)
-    ordre = ["k1", "bon4", "fk4"]
+    ordre = args.rows
     resultats = []
     for case in args.cases:
         pid, seed = case.split(":")
@@ -96,27 +125,40 @@ def main():
         effective = seed * 1000 + i
         par_sampler = {}
         for name in ordre:
-            fn, n = SAMPLERS[name]
+            sampler, overrides = VARIANTES.get(name, (name, {}))
+            fn, n = SAMPLERS[sampler]
             g = torch.Generator("cuda").manual_seed(effective)
-            res = fn(pipe, prompt, n, g, args)
+            res = fn(pipe, prompt, n, g, argparse.Namespace(**{**vars(args), **overrides}))
             images = res[0] if isinstance(res, tuple) else res
             scores = ir.score(prompt, images)
             scores = [scores] if not isinstance(scores, list) else scores
             for j, im in enumerate(images):
                 im.save(keep / f"{pid}_seed{seed}_{name}_{j}.png")
-            enregistre = [r for r in runs if r["prompt_id"] == pid and r["seed"] == seed and r["sampler"] == name]
+            enregistre = [r for r in runs if r["prompt_id"] == pid and r["seed"] == seed and r["sampler"] == sampler
+                          and r.get("lam_schedule", "constant") == overrides.get("fk_lam_schedule", args.fk_lam_schedule)
+                          and r.get("lam_placement", "terminal") == overrides.get("fk_lam_placement", args.fk_lam_placement)
+                          and r.get("threshold", 1.0) == overrides.get("fk_threshold", args.fk_threshold)
+                          and r.get("lam", args.lam) == overrides.get("lam", args.lam)
+                          and r.get("schedule_t", args.fk_schedule) == overrides.get("fk_schedule", args.fk_schedule)]
             ref = [round(v, 2) for v in enregistre[0]["ir"]] if enregistre else None
-            print(f"{pid} seed={seed} {name:4s} régénéré {[round(v, 2) for v in scores]}  json {ref}", flush=True)
-            par_sampler[name] = (images, scores)
+            lignees = res[1].get("n_lineages") if isinstance(res, tuple) else None
+            print(f"{pid} seed={seed} {name:5s} régénéré {[round(v, 2) for v in scores]}  json {ref}"
+                  f"  div_pix={diversite(images)}  lignées={lignees}", flush=True)
+            par_sampler[name] = (images, scores, lignees)
             torch.cuda.empty_cache()
         resultats.append((pid, seed, prompt, par_sampler))
 
     n_cas = len(resultats)
-    fig, axes = plt.subplots(3, n_cas, figsize=(4.6 * n_cas, 4.6), squeeze=False)
+    fig, axes = plt.subplots(len(ordre), n_cas, figsize=(4.6 * n_cas, 1.55 * len(ordre) + 0.4), squeeze=False)
     for c, (pid, seed, prompt, par_sampler) in enumerate(resultats):
         for r_, name in enumerate(ordre):
-            images, scores = par_sampler[name]
-            feuille(axes[r_][c], images, scores, args.thumb, COULEUR[name])
+            images, scores, lignees = par_sampler[name]
+            feuille(axes[r_][c], images, scores, args.thumb, COULEUR.get(name, RED))
+            # sous les vignettes : la diversité pixel, et pour FK le nombre de x_T distincts survivants
+            note = f"div {diversite(images):.3f}" if len(images) > 1 else ""
+            if lignees is not None:
+                note += f"  ·  {lignees} lignée{'s' if lignees > 1 else ''}/{len(images)}"
+            axes[r_][c].set_xlabel(note, fontsize=7.5, color=INK_LIGHT, family="monospace", labelpad=2)
             if c == 0:
                 axes[r_][c].set_ylabel(name, rotation=0, ha="right", va="center", fontsize=10,
                                        color=INK, labelpad=10)
@@ -124,7 +166,7 @@ def main():
         maxs = "  ".join(f"{n} {max(par_sampler[n][1]):+.2f}" for n in ordre)
         axes[0][c].set_title(f"{titre}\nseed {seed}   ·   {maxs}", fontsize=8.5, color=INK, loc="left", pad=6)
 
-    fig.suptitle("Figure 6 — SD v1.5 : ce que k1, best-of-4 et FK ont produit sur le même x_T",
+    fig.suptitle(f"Figure 6 — SD v1.5 : ce que {', '.join(ordre)} ont produit sur le même x_T",
                  fontsize=12, color=INK, x=0.012, ha="left", y=0.995)
     fig.text(0.012, 0.004,
              "score = ImageReward recalculé sur l'image régénérée  ·  cadre = particule que l'ImageReward désigne  ·  "
