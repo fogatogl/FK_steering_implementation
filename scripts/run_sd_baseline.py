@@ -60,14 +60,15 @@ def sample_fk(pipe, prompt, n, generator, args):
     lam_schedule = None if rampe is None else [args.lam * rampe((i + 1) / args.steps) for i in range(args.steps)]
     kw = {} if lam_schedule is None else {"lam_schedule": lam_schedule}
     x, info = fk_steer(model, reward, n, args.lam, "max", generator,
-                       resample_threshold=args.fk_threshold, schedule=schedule, **kw)
+                       resample_threshold=args.fk_threshold, schedule=schedule,
+                       lam_placement=args.fk_lam_placement, **kw)
     # Les images finales passent par le VAE du pipeline, comme k1 et bon4 : le juge voit
     # le même décodeur pour les trois lignes ; ft-mse n'a servi qu'au guide.
     with torch.no_grad():
         img = pipe.vae.decode(x / pipe.vae.config.scaling_factor).sample
     images = pipe.image_processor.postprocess(img, output_type="pil")
     extra = {"lam": args.lam, "potential": "max", "threshold": args.fk_threshold,
-             "lam_schedule": args.fk_lam_schedule,
+             "lam_schedule": args.fk_lam_schedule, "lam_placement": args.fk_lam_placement,
              "lam_at_schedule": [round(args.lam if lam_schedule is None else lam_schedule[i], 3) for i in schedule],
              "schedule_mode": "fixed" if args.fk_threshold >= 1.0 else "adaptive",
              "schedule_t": list(args.fk_schedule), "schedule_idx": schedule,
@@ -100,6 +101,9 @@ def main():
                    help="fk4 : pas de rééchantillonnage, convention du papier (0 = pas terminal)")
     p.add_argument("--fk-lam-schedule", default="constant", choices=["constant", "linear", "quad"],
                    help="fk4 : lambda_t = lam * p ou lam * p^2, p = progression du débruitage ; constant = le papier")
+    p.add_argument("--fk-lam-placement", default="terminal", choices=["terminal", "tempering"],
+                   help="fk4 : où la rampe paie son déficit ; terminal = au dernier pas via acc, "
+                        "tempering = à chaque pas du calendrier, G_t = pi_t / pi_{t-1}")
     p.add_argument("--fk-threshold", type=float, default=1.0,
                    help="fk4 : rééchantillonne si ESS < seuil * k ; 1.0 = à chaque pas du calendrier")
     p.add_argument("--reward-vae", default="stabilityai/sd-vae-ft-mse")
