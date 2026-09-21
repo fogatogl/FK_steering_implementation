@@ -28,6 +28,8 @@ when the JSON has no timing key. The story that joins the runs is in
 | 13 | 20/09 | time-dependent lambda, terminal placement | `sd_variants/{T1,T2,T1A05,T2A05}.json` | 1 h 24 min | no ramp beats `fk4` on ImageReward |
 | 14 | 20/09 | reference `bon4` / `fk4` with the collapse fields | `sd_baseline_div20.json` | 39 min | `fk4` ends on one lineage in 20 of 20 prompts |
 | 15 | 20-21/09 | time-dependent lambda, tempering placement | `sd_variants/{T1t,T2t,T1tA05,T2tA05}.json` | 1 h 24 min | tempering buys back the lineages, not the reward |
+| 16 | 21/09 | the last two screen variants, `S80` and `D10` | `sd_variants/{S80,D10}.json` | 19 + 33 min | both predictions held; neither end of the schedule buys reward |
+| 17 | 21/09 | `S60` confirmatory, 100 prompts x 3 seeds | `sd_s60_full.json` | 7 h 28 min | +0.100 over best-of-4, not settled against `fk4`, root at chance |
 
 Not in the table: `smoke_hub.json` (2 runs, the Hub model's first FK run, 17/09),
 kept as the check that the wrapper worked before the sweeps.
@@ -586,3 +588,103 @@ variant. Whichever goes to 100 prompts x 3 seeds (5.3 h, paired standard error
 about 0.026) enters the table as a stated deviation from the paper's constant
 lambda. If diversity becomes the claim, `div_pix` needs a perceptual metric
 behind it, LPIPS or CLIP distance, and neither is in the sd venv today.
+
+## 16. The last two screen variants, `S80` and `D10` (21/09, 07:40 to 09:17)
+
+**Files.** `results/sd_variants/S80.json` and `results/sd_variants/D10.json`,
+20 records each. `scripts/run_sd_night1.sh`, logs `sd_night1.log` then
+`sd_chain.log`. Both carry the three fields added on 21/09: `root_slots`,
+`n_lineages` and `div_clip`.
+
+**Tested.** The two variants of the screen that had been costed and never
+launched. `S80` schedules one selection at t = 80 and then four free
+continuations, which asks whether the gain at k = 4 is bought by a single early
+pick. `D10` schedules ten steps, t = 0 to 90, which asks whether a denser running
+max helps. Both at lambda 10, k = 4, MAX, threshold 1.0, the same 20 prompts at
+seed 2024 as `sd_baseline.json`, so both are paired on shared x_T.
+
+**Cost.** `S80` 19 min of sampling at 57.6 s per run, `D10` 33 min at 98.6 s, the
+ten decodes showing up as +58 % on the clock. `S80` was cut in half by the service
+suspension at 08:00 UTC and finished after the chain restarted at 08:40, resuming
+from the records already written: the first time the tmp-plus-rename and the
+resume key were exercised by a real interruption.
+
+**Result**, paired against the `fk4` of run 11 on the same prompts:
+
+| tag | ir_max - `fk4` | won | ir_max - `bon4` | ESS at its first step | resamplings | lineages | div_pix |
+|---|---|---|---|---|---|---|---|
+| `S80` | -0.0274 +/- 0.0607 | 6/20 | +0.0653 +/- 0.0756 | 1.48 at t = 80 | 1.00 | **1.85** | 0.2330 |
+| `D10` | +0.0279 +/- 0.0877 | 11/20 | +0.1206 +/- 0.0727 | 2.10 at t = 90 | 8.15 | **1.00** | 0.0749 |
+
+HPS against `fk4` is inside +/- 0.007 for both.
+
+**Both pre-registered predictions held.** The protocol predicted `S80` below
+`fk4` and `D10` inside one standard error of it; measured -0.027 and +0.028.
+
+**The two bracket the trade.** `S80` resamples once and keeps 1.85 lineages out
+of 4, the most diverse FK arm measured so far, `div_pix` +0.142 +/- 0.014 above
+`fk4` on 19 of 20 prompts, and it is the only arm that loses to `fk4` on win rate
+as well as on the mean, 6 of 20. `D10` resamples 8.15 times, ends on one lineage
+in 20 of 20 runs with the lowest `div_pix` of any arm, and buys nothing for its
+58 % of extra clock. Selection and diversity trade against each other along the
+schedule, and neither end of the range buys reward.
+
+**What it changed.** It closed the screen: every variant that was costed has now
+been run. It also made the case that the schedule is not where the reward is,
+since the densest and the sparsest schedules both land inside a standard error of
+`fk4`.
+
+## 17. `S60` at 100 prompts x 3 seeds, the confirmatory (21/09, 09:17 to 16:47)
+
+**Files.** `results/sd_s60_full.json`, 300 records. `scripts/run_sd_night1.sh`,
+log `sd_chain.log`. Kept outside `results/sd_variants/` on purpose:
+`compare_sd_variants.py` globs that directory and would read 300 records against
+a 20-record reference.
+
+**Tested.** The variant the screen ranked first, at the scale that settles it.
+`S60` drops the t = 80 step and keeps t = 20, 40, 60 and the terminal one, at the
+paper's lambda 10, k = 4, MAX, threshold 1.0. Same 100 prompts and three seeds as
+run 11, so the comparison against `fk4` and `bon4` is paired throughout, seeds
+averaged within a prompt before anything else.
+
+**Cost.** 7 h 28 min of sampling, 87.4 s per run against the screen's 60.4, and
+7 h 30 min of wall clock. The pre-registration had budgeted 5.0 h.
+
+**Result.**
+
+| against | ir_max | prompts won | HPS |
+|---|---|---|---|
+| `k1` | +0.6215 +/- 0.0476 (13.1 se) | 96/100 | |
+| `bon4` | **+0.1005 +/- 0.0311 (3.2 se)** | 64/100 | +0.0032 +/- 0.0015 |
+| `fk4` | **+0.0386 +/- 0.0351 (1.1 se)** | 57/100 | +0.0017 +/- 0.0014 |
+
+Absolute `ir_max` 0.8583 against the paper's 0.898, so the row is still 0.040
+short. ESS medians at t = 60, 40, 20, 0 read 1.13, 2.07, 2.73, 2.87, and 2.84
+resamplings of the 3 available.
+
+**The pre-registration says not settled.** The bands written before the run were:
+above +0.052, two standard errors, the deviation is kept and the FK row becomes
+`S60`; between 0 and +0.052, reported as not settled; at or below 0, the table
+carries the paper's setting alone. It lands at +0.0386. The screen's
++0.094 +/- 0.080 at 20 prompts shrank to +0.039 +/- 0.035 at five times the
+prompts, which is what a 1.2-standard-error result does when it is given power.
+
+**It does not repair the collapse either.** 258 of 300 runs end on one lineage,
+mean 1.140 of 4, `div_pix` 0.1040 against best-of-4's 0.3269 and `div_clip`
+0.0140. Dropping the earliest evaluation moves the reward a little and the
+ancestry almost not at all.
+
+**The surviving root is no better than random.** This is the first file with
+`root_slots` at scale, so the wrong-root rate can be read for the first time:
+the particle best-of-4 would have chosen is absent from FK's surviving roots in
+**72.7 % of 300 runs, against a chance level of 72 %** given how few roots
+survive. FK is not keeping the root that wins, and it is not avoiding it either.
+The caveat the protocol attached to this number still stands: it rests on slot i
+of `bon4` and slot i of `S60` starting from the same x_T, which the lambda = 0
+bit-for-bit check makes plausible and does not prove.
+
+**What it changed.** The reward claim for the write-up is now `S60` against
+best-of-4 at +0.1005 +/- 0.0311, which is the strongest paired result in the
+project, rather than `S60` against `fk4`, which the confirmatory declines to
+settle. And the wrong-root rate turns the collapse from a diversity cost into a
+statement about the selection itself.
