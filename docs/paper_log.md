@@ -1,0 +1,197 @@
+# Log of the blog-post loop
+
+One block per pass, most recent on top. The loop, its scope and its review grid
+are `.claude/skills/paper-loop/SKILL.md`; what the post has to contain is
+`docs/paper_plan.md`.
+
+## Pass 3 (21/09, section 6 re-derived from the JSON and the saved tensors)
+
+**Reviewed.** Every number of section 6, recomputed from `results/*.json` and
+from `samples/*.pt` with the judge weights, rather than quoted from
+`docs/results.md`. Judge runs on CPU, since the T4 is on night 1.
+
+**Found.** Four errors, two of them mine and two inherited.
+
+1. **Mine.** The post read "the minimum ESS falls from 16 to 1" inside the
+   $\lambda = 1$ clause. Measured, the minimum ESS is 2.1 at $\lambda = 1$ and
+   1.05 at $\lambda = 4$. `docs/results.md` had it right as a column.
+2. **Mine.** "Past $\lambda = 1$ the guide is being fooled and $B$ stops
+   following" is contradicted by the data. On CIFAR the judge's cat count keeps
+   rising: 11 of 48 free, 15 at $\lambda = 1$, 32 at $\lambda = 2$, 37 at
+   $\lambda = 4$ (argmax; 9, 14, 32, 34 at $p > 0.5$). What it costs is
+   measurable in the same tensors: the mean pairwise pixel distance between the
+   sixteen finals falls from 0.339 to 0.231 to 0.183. The cats are bought by
+   spending the cloud, which is the collapse of section 3 at a second scale and
+   a better paragraph than the one it replaces.
+3. **Inherited.** "10 of 16 cats at $\lambda = 1$ against 4 of 16" is seed 2024
+   alone, and it is the favourable seed: the three seeds read 10, 0 and 5.
+   `docs/results.md` says "of seed 2024" and is honest; `README.md` places the
+   same count inside a "three seeds" sentence and was not. Both now carry the
+   48-particle counts.
+4. **Inherited.** The red reward's "mean $p(\text{cat})$ of 0.43" is the
+   `difference` seed-2024 cell, not `sum`, which reads 0.66, 0.37, 0.60. Over
+   three seeds either potential gives 0.54, against 0.27 for the free model. The
+   bound the score cannot exceed on pixels inside $[-1, 1]$ is 10.19, computed
+   from its definition; `sum` reaches 10.90 at $\lambda = 1$, and at
+   $\lambda = 8$ the pixels span $[-1.26, 1.30]$, which is the claim "the images
+   leave $[-1, 1]$" measured rather than asserted.
+
+**Also checked, outside section 6.** The CelebA glasses count in `README.md`
+carried the same single-seed framing as (3). Recounted: 2 of 48 free, 21 at
+$\lambda = 1$ (7, 0 and 14 per seed), and **0 of 48 at $\lambda = 2$**, where
+`results.md` only described one grid of sixteen copies of one face. The collapse
+is total there and is now a number. Note that CIFAR and CelebA part company past
+$\lambda = 1$: the cat count rises while the glasses count goes to zero.
+
+**Fixed.** Section 6 of `docs/paper.md` rewritten on the measured numbers.
+`README.md`: the red reward sentence, the CIFAR judge sentence, the CelebA
+sentence. `docs/results.md`: run 3's misattributed 0.43, run 5 and run 6 given
+their three-seed recounts, each marked as a 21/09 recount rather than silently
+changed. `docs/chronology.md` and `docs/results.md` run 11: the nine runs with
+"identical" scores, which hold only to three decimals.
+
+**Open.** The FID numbers of run 7 and the CIFAR fine-tuning FID are still
+quoted and not re-derived; they need the Inception statistics and a GPU, so they
+wait for the T4. The post cites none of them today.
+
+## Pass 2 (21/09, first draft of sections 1, 2, 3, 6, 7, 8)
+
+**Reviewed.** `docs/paper.md` as written this pass, against the five gates.
+2 233 words with sections 4 and 5 left as marked holes, so about 3 150 once the
+two nights are in. Written anonymous: no name, no institution, no repository URL
+in the text.
+
+**Found.** Three numbers inherited from the docs, and one of them was wrong.
+
+1. The standard errors of the three-row table (0.082, 0.069, 0.069) are the
+   per-prompt convention, seeds averaged first, and match. Over the 300 runs the
+   same quantities read 0.056, 0.043 and 0.044, so a reviewer recomputing them
+   the obvious way gets a different number. The post now states the convention
+   and gives both.
+2. The heavy left tail's -1.30 is a per-prompt mean over three seeds, not a run.
+   The worst individual run is -2.60. The post said "minimum", which reads as a
+   run. Corrected, and the -2.60 is given.
+3. **Wrong.** `docs/chronology.md` says nine of 300 FK runs end with two
+   identical ImageReward scores, and the post repeated it. At full precision the
+   count is zero; nine is what appears after rounding to three decimals. The
+   claim it supports gets stronger, not weaker: particles sharing a lineage
+   still diverge numerically, so the damage really is selection and not a
+   failure to diverge. The post now says both counts. `docs/chronology.md` still
+   carries the loose version and is the author's file to amend.
+
+**Checked and clean.** The citation: title, the seven authors in order, and ICML
+2025 confirmed against PMLR v267 (`singhal25b`) and the ICML 2025 poster listing,
+not only against the arXiv abstract. The anti-slop grep over `docs/paper.md`
+returns nothing. Every file, field and function named in the post exists.
+
+**Fixed.** The three corrections above, in `docs/paper.md`.
+
+**Open.**
+
+1. The figure is referenced as `../figures/fig7_ess_vs_gain.png`, which resolves
+   from `docs/` and will not resolve in whatever the venue renders. To settle
+   when the submission format is known, with open question 1.
+2. The CIFAR-10 and CelebA-HQ numbers of section 6 are quoted from
+   `docs/results.md` and were not re-derived from the JSON this pass. They
+   should be before the post is final.
+3. Sections 4 and 5 wait on the two nights. Night 1 started 21/09 at 07:40.
+
+## Pass 1 (21/09, review of the two record fields, and the two open questions answered)
+
+**Reviewed.** `scripts/run_sd_baseline.py`, the `root_slots` and `div_clip`
+fields, against the launchers that are about to read them. Plus the answers
+brought back on open questions 1 and 2.
+
+**Found.**
+
+1. `root_slots` is right and is the vector the wrong-root rate needs.
+2. `div_clip` returns `None` on every record. It looks up `model_dict` under the
+   key `"HPS-v2.1"`; `hpsv2.img_score.initialize_model` stores the model under
+   `"model"` and its transform under `"preprocess_val"`. The lookup misses, the
+   function returns `None` by its own guard, and no error is raised. Night 1
+   would write 440 records with `div_clip: null`.
+3. Three separate paths in `div_clip` return `None` and nothing tells them
+   apart: fewer than two images, the missing key, and any exception. The
+   `--limit 1` check catches a total failure because a four-particle run must
+   not produce `null`, but an intermittent failure during the night would be
+   silent and unattributable.
+4. The embedding, once the key is fixed, is the ViT-H after `hpsv2.score` has
+   loaded the HPS v2.1 state dict into it, so `div_clip` would be measured in the
+   judge's representation and not in vanilla CLIP. That is a statement the post
+   has to make where it reports the diversity result, and it is the cost of the
+   cheap option that was chosen over a separate `ViT-B/32`.
+
+**Open question 1 is answered in mechanism and not in fact.** An anonymised
+mirror (anonymous.4open.science) is the standard answer and strips commit
+metadata and account names. It does not touch file contents, and six tracked
+files name the author:
+
+| file | what |
+|---|---|
+| `LICENSE` | `Copyright (c) 2026 Giulio Fogato`, and the call requires a licensed repository |
+| `README.md` | the byline, line 3 |
+| `docs/ONYXIA_setup.md` | GitHub owner, MinIO bucket, clone URL |
+| `notebooks/demo_DDPM.ipynb` | W&B run URLs under `wandb.ai/fogatogl-ensae-fr`, in saved cell outputs |
+| `scripts/onyxia_bootstrap.sh` | GitHub owner, bucket, a default git name and e-mail |
+| `scripts/sync_s3.sh` | the bucket |
+
+`.claude/` is gitignored, so the personal context file is not exposed. The
+`LICENSE` line is the one that cannot be scrubbed without weakening the
+licensing the call requires, so it is a question for the organisers rather than
+a thing to fix alone.
+
+**Open question 2 keeps its answer and loses its justification.** `S60` leads
+and the collapse is the second result, which is what the plan already had. The
+reasoning brought back with it carries a number that exists in no file,
+"+0.062 to +0.134 via `S60`": the screen measured `S60` - `bon4` at
++0.187 +/- 0.049 and `S60` - `fk4` at +0.094 +/- 0.080 on 20 prompts, and `S60`
+at 100 prompts x 3 seeds is exactly what night 1 is for. Two other things in it
+do not go in the post: the collapse is at the first scheduled step, t = 80 in
+the paper's reverse-time convention, which is twenty of the hundred denoising
+steps and not eighty; and it is this reproduction that falls short of the
+paper's table, not the paper that failed, which is a much stronger claim than
+anything measured here supports.
+
+**Open.** Items 1 and 4 of pass 0 move here in sharper form: the organisers'
+answer on the licensed repository under double blind, and the `div_clip` key,
+which blocks night 1. Item 3 of pass 0 (French axis titles on figure 4) is
+unchanged.
+
+## Pass 0 (21/09, the plan and the plumbing under it)
+
+**Reviewed.** Nothing yet in `docs/paper.md`, which does not exist. This pass
+built what the post will be written from: the plan, the two launchers, the
+analysis script, the pre-registration.
+
+**Found.** One finding, and it is a correctness finding against the plan as it
+was written. The plan's section 3 was going to argue that the premature
+collapse is where the missing 60 % went, using the ESS as the evidence.
+Measured run by run on the 300 existing runs, the ESS at the first scheduled
+step does not order the runs by their paired gain: Spearman +0.018, and the
+three ESS terciles give median gains of +0.060, +0.042 and +0.083, which is not
+an order. The sentence the diagnostics of run 11 invite, that a low ESS predicts
+a bad run, is not supported by them. The mechanism claim survives, because it is
+a claim about what changing the schedule does to the average and that is what
+runs 12 and the confirmatory run measure, but it has to be written narrowly.
+Recorded in `docs/protocol_sd.md` under the pre-registration and in the plan.
+
+**Fixed.** `figures/fig7_ess_vs_gain.png` is the flat cloud, titled for what it
+shows rather than for what section 3 wanted. The plan gained a paragraph saying
+what the mechanism claim may not say.
+
+**Open.**
+
+1. Double blind against a public repository. The call requires a public,
+   documented, licensed repository and reviews double blind; a link to this one
+   names its author. Author to read the call. This is the item that can make a
+   finished submission ineligible, so it is first.
+2. `root_slots` and `div_clip` in `scripts/run_sd_baseline.py`, author's, before
+   night 1, since the images are not kept and a field added later means
+   re-running the night.
+3. `figures/fig4_sd_ir_hps.png` carries French axis titles ("la reward qui
+   guide", "le juge, que rien n'optimise") and the post is in English. Figure 5
+   is already in English. To settle before the figures are rebuilt, and it is a
+   one-line change in `scripts/plot_fig4_sd.py`.
+4. The slot correspondence between `bon4` and `fk4`, on which the wrong-root
+   rate rests, has never been checked directly. To check with `--limit 1` once
+   `root_slots` exists.
