@@ -60,9 +60,13 @@ def sample_fk(pipe, prompt, n, generator, args):
     rampe = {"constant": None, "linear": lambda p: p, "quad": lambda p: p * p}[args.fk_lam_schedule]
     lam_schedule = None if rampe is None else [args.lam * rampe((i + 1) / args.steps) for i in range(args.steps)]
     kw = {} if lam_schedule is None else {"lam_schedule": lam_schedule}
-    x, info = fk_steer(model, reward, n, args.lam, "max", generator,
+    # Le potentiel et sa forme viennent des flags : jusqu'au 21/09 le littéral "max" était
+    # écrit ici, et `difference` n'avait jamais tourné sur SD. Les défauts reproduisent
+    # exactement les 300 enregistrements de sd_baseline.json.
+    x, info = fk_steer(model, reward, n, args.lam, args.fk_potential, generator,
                        resample_threshold=args.fk_threshold, schedule=schedule,
-                       lam_placement=args.fk_lam_placement, **kw)
+                       lam_placement=args.fk_lam_placement,
+                       potential_form=args.fk_potential_form, **kw)
     # Les images finales passent par le VAE du pipeline, comme k1 et bon4 : le juge voit
     # le même décodeur pour les trois lignes ; ft-mse n'a servi qu'au guide.
     with torch.no_grad():
@@ -77,7 +81,8 @@ def sample_fk(pipe, prompt, n, generator, args):
         slots = anc[i][slots]
     root_slots = slots.tolist()
     extra = {"lam": args.lam,
-             "potential": "max",
+             "potential": args.fk_potential,
+             "potential_form": info.get("potential_form", args.fk_potential_form),
              "threshold": args.fk_threshold,
              "root_slots": root_slots,
              "n_lineages": int(torch.unique(slots).numel()),
@@ -87,6 +92,11 @@ def sample_fk(pipe, prompt, n, generator, args):
              "schedule_t": list(args.fk_schedule), "schedule_idx": schedule,
              "ess_at_schedule": [round(info["ess_trace"][i].item(), 4) for i in schedule],
              "n_resamplings": info["n_resamplings"],
+             # r_phi(predict_x0) par particule à chaque pas du calendrier, avant le
+             # rééchantillonnage de ce pas ; la dernière ligne est ir_guide. Avec root_slots
+             # et les ancêtres, c'est la corrélation r_phi(t) / r(x_0) que la figure du
+             # papier montre sans en donner les valeurs.
+             "r_at_schedule": [[round(v, 4) for v in row] for row in info["r_at_schedule"].tolist()],
              "ir_guide": [round(v, 4) for v in info["rewards"].tolist()]}
     return images, extra
 
@@ -157,7 +167,14 @@ def main():
     p.add_argument("--slicing", action="store_true",
                    help="pic VRAM mesuré à 2,16 Gio sur 15 Go : inutile par défaut")
     p.add_argument("--ir-cache", default="/home/onyxia/work/ir_cache")
-    p.add_argument("--lam", type=float, default=10.0, help="fk4 : lambda du potentiel max")
+    p.add_argument("--lam", type=float, default=10.0, help="fk4 : lambda du potentiel")
+    p.add_argument("--fk-potential", default="max", choices=["max", "difference", "sum"],
+                   help="fk4 : potentiel de fk_steer ; max = les 300 enregistrements de référence, "
+                        "difference = ce que l'annexe du papier dit avoir produit la table 1")
+    p.add_argument("--fk-potential-form", default="increment", choices=["increment", "statistic"],
+                   help="fk4 : increment = log G_t = lam * (S_t - S_{t-1}), le comportement historique ; "
+                        "statistic = lam * S_t avec G_0 qui referme le produit, l'écriture du papier et "
+                        "le code publié. Sans effet sur difference. Refusé avec --fk-lam-placement tempering.")
     p.add_argument("--fk-schedule", type=int, nargs="+", default=[0, 20, 40, 60, 80],
                    help="fk4 : pas de rééchantillonnage, convention du papier (0 = pas terminal)")
     p.add_argument("--fk-lam-schedule", default="constant", choices=["constant", "linear", "quad"],
