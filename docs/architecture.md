@@ -142,7 +142,8 @@ threshold, because a low ESS is what says the weights have degenerated. That is 
 Naesseth, Lindsten and Schön, *Elements of Sequential Monte Carlo* (2019), and
 Chopin and Papaspiliopoulos, *An Introduction to Sequential Monte Carlo* (2020).
 Which of the two readings the paper's released code applies has not been checked
-here.
+here. `docs/protocol_potentials.md` carries both mismatches with their measured
+impact.
 
 A second point is unresolved in the same way, and it is about the potentials
 themselves. The paper writes `max` as $G_t = \exp(\lambda \max_{s \geq t}
@@ -160,7 +161,8 @@ $G_t = \exp(\lambda(S_t - S_{t-1}))$ with $S_t$ the last reward, the running
 maximum or the running sum. Their intermediate targets are
 $\pi_t \propto p(x)\exp(\lambda S_t)$, which is the form `docs/protocol_sd.md`
 derives under the name tempering, at constant $\lambda$. Which form the paper's
-released code uses has not been checked here.
+released code uses has not been checked here. What it costs, how to implement the
+paper's form and the run that settles it are in `docs/protocol_potentials.md`.
 
 ## The contract the sampler asks for
 
