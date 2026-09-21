@@ -209,6 +209,7 @@ smc/
 experiments/                  training and sampling runs, JSON in results/
 scripts/                      lambda sweep, FID, figures, Onyxia and S3 plumbing
 tests/                        one property per test; `particles` is the oracle for the resamplers
+docs/architecture.md          the three stacks, every network and every parameter value
 docs/decisions.md             why each choice, one short entry each
 docs/results.md               one block per run: what it tested, what it cost, what it gave
 docs/chronology.md            the thread from one stage to the next, and the questions that drove it
