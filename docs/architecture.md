@@ -15,20 +15,28 @@ and `predict_x0`. The state that travels between them is a dict with four keys,
 sample that prediction was made from, and its timestep. `step` rewrites the four
 as one block, so the cached triple is never stale when `predict_x0` reads it.
 
+The six diagrams below share one colour code: blue for the generating path,
+green for the network that guides, amber for the one that judges, violet for a
+decoder, red for the SMC bookkeeping that belongs to no network.
+
 ```mermaid
-flowchart LR
-    A["initial_state k"] --> B["step: x_t to x_prev, caches eps"]
-    B --> C{"terminal step?"}
-    C -- "no" --> D["predict_x0: Tweedie x0_hat"]
-    C -- "yes" --> E["x itself"]
-    D --> F["reward r_t"]
+flowchart TB
+    A["initial_state<br>k particles"]:::gen
+    A --> B["step<br>x_t to x_prev, caches eps"]:::gen
+    B --> C{"last timestep?"}
+    C -- no --> D["predict_x0<br>Tweedie estimate"]:::gen
+    C -- yes --> E["the sample itself"]:::gen
+    D --> F["reward r_t"]:::guide
     E --> F
-    F --> G["potentials: log G_t"]
-    G --> H["logW += log G_t, normalize_logw"]
-    H --> I{"ESS < threshold * k?"}
-    I -- "yes" --> J["resample_systematic, logW reset to 0"]
-    I -- "no" --> B
+    F --> G["potentials<br>log G_t"]:::smc
+    G --> H["logW = logW + log G_t<br>normalise, ESS"]:::smc
+    H --> I{"ESS below<br>threshold times k?"}
+    I -- yes --> J["systematic resampling<br>logW reset to zero"]:::smc
+    I -- no --> B
     J --> B
+    classDef gen fill:#dbeafe,stroke:#1d4ed8,stroke-width:1px,color:#0b1220
+    classDef guide fill:#dcfce7,stroke:#15803d,stroke-width:1px,color:#0b1220
+    classDef smc fill:#fee2e2,stroke:#b91c1c,stroke-width:1px,color:#0b1220
 ```
 
 Two points of that loop are where the reproductions went wrong once and are
@@ -49,43 +57,51 @@ is what bridges the two, which is why no line of `fk.py` changed for SD.
 ## Stack 1: CIFAR-10 DDPM, 32 px, pixel space
 
 ```mermaid
-flowchart LR
-    X["x_T ~ N(0, I), 3x32x32"] --> U["U-Net eps_theta, 8.43 M"]
-    U --> S["NoiseScheduler or DDIMScheduler"]
-    S --> T["Tweedie x0_hat, clamped to [-1, 1]"]
-    T --> R["reward: red score, or SmallVGG guide A"]
-    R --> P["potential -> weights -> resampling"]
-    P --> S
-    S -.-> J["judge: ResNet-18 B, offline, never guides"]
+flowchart TB
+    X["x_T, 3 x 32 x 32"]:::gen
+    subgraph loop["sampling loop"]
+        U["U-Net eps_theta<br>8.43 M, smc/unet.py"]:::gen
+        S["DDPM or DDIM step"]:::gen
+        TW["Tweedie x0_hat<br>clamped to the image range"]:::gen
+        R["reward<br>red score, or SmallVGG A"]:::guide
+        W["log G_t, weights, ESS"]:::smc
+        RS["resample if ESS below k/2"]:::smc
+        U --> S --> TW --> R --> W --> RS
+        RS --> U
+    end
+    X --> U
+    S -- "after the last step" --> FIN["x_0, k particles"]:::gen
+    FIN --> B["ResNet-18 B<br>judges, never guides"]:::judge
+    classDef gen fill:#dbeafe,stroke:#1d4ed8,stroke-width:1px,color:#0b1220
+    classDef guide fill:#dcfce7,stroke:#15803d,stroke-width:1px,color:#0b1220
+    classDef judge fill:#fef3c7,stroke:#b45309,stroke-width:1px,color:#0b1220
+    classDef smc fill:#fee2e2,stroke:#b91c1c,stroke-width:1px,color:#0b1220
 ```
 
 **The generator.** `smc/unet.py`, trained here in `notebooks/demo_DDPM.ipynb`.
 Encoder 32 to 16 to 8, one residual block per resolution and two in the
-bottleneck, self-attention at 16 and at the 8-px bottleneck, GroupNorm with at most 32 groups everywhere, and a
-zero-initialised output convolution so training starts at $\hat\varepsilon = 0$.
+bottleneck, self-attention at 16 and at the 8-px bottleneck, GroupNorm with at
+most 32 groups everywhere, and a zero-initialised output convolution so training
+starts at $\hat\varepsilon = 0$.
 The class default is `n_feat = 64`; the checkpoint carries `n_feat = 128`, which
 is **8.43 M** parameters, the 8.4 M of the README. Time enters as a sinusoidal
 embedding of width `n_feat`, an MLP to `4 * n_feat`, and one linear projection
 per residual block.
 
 ```mermaid
-flowchart LR
-    IN["x_t, 3x32x32"] --> C0["init_conv, 128 ch"]
-    C0 --> D1["res block, 32x32"]
-    D1 --> DC1["stride-2 conv, 16x16"]
-    DC1 --> D2["res block, 256 ch"]
-    D2 --> DA["self-attention, 16x16"]
-    DA --> DC2["stride-2 conv, 8x8"]
-    DC2 --> M["res, attention, res, 8x8"]
-    M --> UC2["transpose conv, 16x16"]
-    UC2 --> U2["res block on concat with 16x16 skip"]
-    U2 --> UA["self-attention, 16x16"]
-    UA --> UC1["transpose conv, 32x32"]
-    UC1 --> U1["res block on concat with 32x32 skip"]
-    U1 --> OUT["GroupNorm, SiLU, conv, zero-init -> eps_hat"]
-    DA -. "skip" .-> U2
-    D1 -. "skip" .-> U1
-    TE["t -> sinusoidal 128 -> MLP 512"] -. "per res block" .-> M
+flowchart TB
+    IN["x_t, 3 x 32 x 32"]:::gen
+    IN -- "init conv, 128 ch" --> E1["res block<br>32 x 32, 128 ch"]:::gen
+    E1 -- "stride-2 conv" --> E2["res block + attention<br>16 x 16, 256 ch"]:::gen
+    E2 -- "stride-2 conv" --> M1["res, attention, res<br>8 x 8, 256 ch"]:::gen
+    M1 -- "transpose conv" --> D2["res block + attention<br>16 x 16, 128 ch"]:::gen
+    D2 -- "transpose conv" --> D1["res block<br>32 x 32, 128 ch"]:::gen
+    D1 -- "norm, SiLU, zero-init conv" --> OUT["eps_hat, 3 x 32 x 32"]:::gen
+    E2 -. "skip, concat" .-> D2
+    E1 -. "skip, concat" .-> D1
+    TIM["t: sinusoidal 128, MLP 512"]:::gen
+    TIM -. "added in every res block" .-> M1
+    classDef gen fill:#dbeafe,stroke:#1d4ed8,stroke-width:1px,color:#0b1220
 ```
 
 | training | value |
@@ -137,14 +153,26 @@ $\varepsilon_\theta(x, t)$ under fp16 autocast, and `HubDDPM` subclasses
 memory from 8.3 to 5.4 GiB at batch 16 on the T4.
 
 ```mermaid
-flowchart LR
-    X["x_T, 3x256x256"] --> U["HubUNet, fp16 autocast"]
-    U --> S["DDIMScheduler, 50 steps, eta = 1"]
-    S --> T["Tweedie x0_hat"]
-    T --> Z["area-resize 256 -> 64"]
-    Z --> A["glasses classifier A"]
-    A --> P["potential -> weights -> resampling"]
-    P --> S
+flowchart TB
+    X["x_T, 3 x 256 x 256"]:::gen
+    subgraph loop["sampling loop, 50 DDIM steps"]
+        U["HubUNet<br>ddpm-ema-celebahq-256, fp16"]:::gen
+        S["DDIM step, eta = 1"]:::gen
+        TW["Tweedie x0_hat"]:::gen
+        Z["area-resize<br>256 down to 64"]:::guide
+        A["glasses classifier A"]:::guide
+        W["log G_t, weights, ESS"]:::smc
+        RS["resample if ESS below k/2"]:::smc
+        U --> S --> TW --> Z --> A --> W --> RS
+        RS --> U
+    end
+    X --> U
+    S -- "after the last step" --> FIN["x_0, k particles"]:::gen
+    FIN --> B["ResNet-18 B<br>judges, never guides"]:::judge
+    classDef gen fill:#dbeafe,stroke:#1d4ed8,stroke-width:1px,color:#0b1220
+    classDef guide fill:#dcfce7,stroke:#15803d,stroke-width:1px,color:#0b1220
+    classDef judge fill:#fef3c7,stroke:#b45309,stroke-width:1px,color:#0b1220
+    classDef smc fill:#fee2e2,stroke:#b91c1c,stroke-width:1px,color:#0b1220
 ```
 
 The resize is not a preprocessing step written into the pipeline: `Tempered.forward`
@@ -168,20 +196,31 @@ not live in the same space as the model.
 
 ```mermaid
 flowchart TB
-    subgraph gen["generator, fp16"]
-        P["prompt"] --> TE["CLIP ViT-L/14 text encoder, 77 tokens, 768 dims"]
-        TE --> UN["SD U-Net, 4-channel latents, cross-attention 768"]
-        X["x_T, k x 4 x 64 x 64"] --> UN
-        UN --> CFG["CFG: eps_u + 7.5 (eps_c - eps_u), UNet batch 2k"]
-        CFG --> DD["DDIMScheduler, 100 steps, eta = 1"]
+    P["prompt"]:::gen
+    TE["CLIP text encoder<br>ViT-L/14, 77 tokens"]:::gen
+    X["x_T, k x 4 x 64 x 64"]:::gen
+    subgraph loop["sampling loop, 100 DDIM steps"]
+        UN["SD U-Net<br>cross-attention 768"]:::gen
+        CFG["guidance 7.5<br>U-Net batch 2k"]:::gen
+        DD["DDIM step, eta = 1"]:::gen
+        TW["Tweedie x0_hat<br>latent, no clamp"]:::gen
+        VG["sd-vae-ft-mse<br>decode for the guide"]:::dec
+        IR["ImageReward v1.0"]:::guide
+        W["log G_t, weights, ESS"]:::smc
+        RS["resample at every<br>scheduled step"]:::smc
+        UN --> CFG --> DD --> TW --> VG --> IR --> W --> RS
+        RS --> UN
     end
-    DD --> TW["Tweedie x0_hat, latent, no clamp"]
-    TW --> VG["reward VAE: sd-vae-ft-mse, decode in chunks of 4"]
-    VG --> IR["ImageReward v1.0 -> r_t"]
-    IR --> POT["potential -> weights -> resampling"]
-    POT --> DD
-    DD --> VF["final images: pipeline VAE"]
-    VF --> JU["judges: ImageReward, HPS v2.1"]
+    P --> TE
+    TE --> UN
+    X --> UN
+    DD -- "after the last step" --> VF["pipeline VAE<br>final images"]:::dec
+    VF --> JU["ImageReward, HPS v2.1<br>judge"]:::judge
+    classDef gen fill:#dbeafe,stroke:#1d4ed8,stroke-width:1px,color:#0b1220
+    classDef guide fill:#dcfce7,stroke:#15803d,stroke-width:1px,color:#0b1220
+    classDef judge fill:#fef3c7,stroke:#b45309,stroke-width:1px,color:#0b1220
+    classDef dec fill:#ede9fe,stroke:#6d28d9,stroke-width:1px,color:#0b1220
+    classDef smc fill:#fee2e2,stroke:#b91c1c,stroke-width:1px,color:#0b1220
 ```
 
 **The generator.** `stable-diffusion-v1-5/stable-diffusion-v1-5`, fp16, `variant="fp16"`,
@@ -342,7 +381,7 @@ The constant $\lambda$ of the paper puts its full weight on the first scheduled
 step, where the only thing to score is a Tweedie estimate at $t = 80$ that is
 close to noise. The measured consequence is run 11 of `docs/results.md`, median
 ESS 1.18 out of 4 at that first step, and run 14, where `fk4` ends on one lineage
-out of four on all twenty prompts. A $\lambda$ that grows with the denoising is the answer that
+out of four on all twenty prompts. A $\lambda$ that grows with the denoising
 follows from the diagnosis: trust the reward less when the image is blurry.
 
 **The ramp.** $\lambda_i = \lambda\,\rho\!\left(\frac{i+1}{\text{steps}}\right)$
@@ -362,14 +401,22 @@ only in when it is settled.
 
 ```mermaid
 flowchart TB
-    R["lambda_i rising, target unchanged"] --> TERM["terminal placement"]
-    R --> TEMP["tempering placement"]
-    TERM --> T1["log G_i = lambda_i (m_i - m_prev), i < T"]
-    T1 --> T2["log G_T = lambda r_T - acc, acc carried along the lineage"]
-    T2 --> T3["that weight is never read: resample_last off, pick by argmax"]
-    TEMP --> P1["log G_i = lambda_i m_i - lambda_prev m_prev"]
-    P1 --> P2["G_t = pi_t / pi_prev, pi_t proportional to p(x) exp(lambda_t m_t)"]
-    P2 --> P3["catch-up paid at every scheduled step, where resampling still acts"]
+    R["lambda_i rising<br>target unchanged"]:::smc
+    subgraph TERM["terminal placement"]
+        T1["log G_i = lambda_i times<br>m_i minus m_prev"]:::smc
+        T2["log G_T = lambda r_T minus acc<br>acc carried along the lineage"]:::smc
+        T3["that weight is never read<br>resample_last off, pick by argmax"]:::smc
+        T1 --> T2 --> T3
+    end
+    subgraph TEMP["tempering placement"]
+        P1["log G_i = lambda_i m_i<br>minus lambda_prev m_prev"]:::smc
+        P2["G_t = pi_t over pi_prev<br>the tempering sequence"]:::smc
+        P3["catch-up paid at every step<br>where resampling still acts"]:::smc
+        P1 --> P2 --> P3
+    end
+    R --> T1
+    R --> P1
+    classDef smc fill:#fee2e2,stroke:#b91c1c,stroke-width:1px,color:#0b1220
 ```
 
 $\lambda_{i-1}$ under tempering is the lambda of the previous scheduled step, a
