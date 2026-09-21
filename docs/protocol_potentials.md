@@ -175,3 +175,68 @@ constant $\lambda$. The paper's form has intermediate targets
 $\pi_t \propto p(x)\exp(\lambda \sum_{s \geq t} S_s)$, so that section needs
 re-deriving and not merely re-running. Runs using `difference`, which is runs 5,
 6 and most of 8, are unaffected.
+
+## What the offline check says (21/09, no GPU)
+
+`potential_form` landed in `smc/fk.py` on 21/09. What follows was measured on CPU
+while the T4 was busy with the S60 confirmatory run. It changes the conclusion of
+the section above, so it is recorded before the run it was meant to prepare.
+
+**The suite is green**, 42 passed and 1 skipped for missing weights. It was
+written before `potential_form`, so that says the increment path is intact, not
+that the statistic path is right.
+
+**The invariant holds under the statistic form.** Accumulating `logG` along each
+surviving lineage the way `tests/test_fk.py` does, the lineage total matches
+$\lambda\, r(x_0)$ to 1.5e-05 over 400 toy runs at $\lambda = 10$, $k = 4$. The
+terminal `acc` branch closes the product as intended.
+
+**The two forms are algebraically identical on a one-step epoch.** Right after a
+resampling every particle carries the same running maximum $S_{a-1}$, so
+$\lambda S_t$ and $\lambda(S_t - S_{a-1})$ differ by a constant, and
+normalisation removes it. Checked directly: same weights, same ESS to 1e-6. The
+two forms can only diverge over an epoch spanning two or more scheduled steps,
+that is, only after a resampling has been skipped.
+
+**Which almost never changes an `fk4` image.** Over the 300 records of
+`results/sd_baseline.json`:
+
+| | runs |
+|---|---|
+| one-step epochs throughout, provably identical under both forms | 236 (78.7 %) |
+| the only skipped resampling is at $t = 20$, inert for the images | 30 (10.0 %) |
+| a skipped resampling at $t$ = 80, 60 or 40, so the images could differ | 34 (11.3 %) |
+
+A skip at $t = 20$ cannot change anything: no resampling follows it, and the
+particle is picked by argmax ImageReward.
+
+**And the reward does not move.** Four toy regimes, $k$ particles on a random
+walk whose intermediate reward is the walk seen through shrinking noise: the
+`fk4` geometry at threshold 1.0 and at 0.5, a CIFAR-like geometry with every step
+scheduled, and a saturating regime built to reproduce run 3, where `max`
+resamples 3.3 times in 200 steps against `difference`'s 173. In all four the gain
+over best-of-$k$ differs between the forms by less than one standard error:
++0.3548 against +0.3491, +0.3380 against +0.3275, +0.5062 against +0.5341,
++0.4836 against +0.4940. The statistic form does resample more often, 2.17 to
+2.95 and 3.34 to 4.20, and that is all it does.
+
+**So the diagnosis in the section above was wrong, and this is the correction.**
+`max` under-resamples because the running maximum saturates and is then shared by
+every clone, which drives its across-particle spread to zero. Both forms are
+functions of that same saturated statistic, so neither restores the spread. The
+increment form is not what makes `max` weak, and switching to the paper's form
+does not recover the 0.078 on the FK row. That gap is still unexplained.
+
+The change is worth keeping on fidelity grounds: the code now offers the paper's
+definition, and a reader comparing the two can see the difference is a constant
+wherever the schedule resamples at every step. It is not a fix.
+
+**Nothing queued needs changing.** `S60` at 100 x 3 and the `fk4` reference both
+run at threshold 1.0, where the forms coincide on 79 % of runs outright and the
+rest by an inert margin. Night 2's `T2tA05` is a tempering ramp, and
+`potential_form="statistic"` refuses to combine with `lam_placement="tempering"`
+by construction, so it sits on another axis entirely. The 20-minute paired run
+above is still worth its cost as a check on the real model rather than a proxy,
+with its prediction inverted: `ir_max` is expected to move by less than its own
+standard error, and `n_resamplings` by less than the 3.75 to 4.00 predicted
+earlier, since only the 11 % of runs with an early skip can move at all.
