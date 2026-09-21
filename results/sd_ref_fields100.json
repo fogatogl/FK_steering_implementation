@@ -1,0 +1,8304 @@
+{
+  "runs": [
+    {
+      "prompt_id": "005695-0057",
+      "prompt": "a concept art of a vehicle, cyberpunk",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024000,
+      "ir": [
+        1.2658671140670776,
+        1.1894359588623047,
+        1.2277119159698486,
+        1.2715113162994385
+      ],
+      "hps": [
+        0.257080078125,
+        0.250244140625,
+        0.258056640625,
+        0.245849609375
+      ],
+      "ir_max": 1.2715113162994385,
+      "hps_at_ir_max": 0.245849609375,
+      "div_pix": 0.1087,
+      "div_clip": 0.0091,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.6,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.1761,
+        1.1901,
+        2.0773,
+        3.3179,
+        3.1466
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.2521,
+        1.1641,
+        1.2915,
+        1.2504
+      ]
+    },
+    {
+      "prompt_id": "005784-0093",
+      "prompt": "desolate space, 4, octane, beautifully, epic, magical, cinematic, masterpiece",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024001,
+      "ir": [
+        0.20670729875564575,
+        0.14548693597316742,
+        0.1632874757051468,
+        0.1824873387813568
+      ],
+      "hps": [
+        0.197265625,
+        0.1968994140625,
+        0.206298828125,
+        0.2012939453125
+      ],
+      "ir_max": 0.20670729875564575,
+      "hps_at_ir_max": 0.197265625,
+      "div_pix": 0.0481,
+      "div_clip": 0.0132,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.7,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.2019,
+        1.9764,
+        1.9441,
+        1.964,
+        2.6546
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.2677,
+        0.1527,
+        0.1128,
+        0.0621
+      ]
+    },
+    {
+      "prompt_id": "005848-0000",
+      "prompt": "a beautiful painting of the jungle in the morning with lots of smoke, fantasy art, matte painting",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024002,
+      "ir": [
+        1.1515867710113525,
+        1.1564555168151855,
+        1.355768084526062,
+        0.8614364266395569
+      ],
+      "hps": [
+        0.267333984375,
+        0.27001953125,
+        0.267822265625,
+        0.255615234375
+      ],
+      "ir_max": 1.355768084526062,
+      "hps_at_ir_max": 0.267822265625,
+      "div_pix": 0.0656,
+      "div_clip": 0.0119,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.7,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.996,
+        1.644,
+        1.2311,
+        1.8588,
+        1.3669
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.0814,
+        1.0135,
+        1.2994,
+        0.7084
+      ]
+    },
+    {
+      "prompt_id": "005765-0094",
+      "prompt": "anthropomorphic crow werecreature, photograph captured in a forest",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024003,
+      "ir": [
+        1.2534805536270142,
+        1.2047139406204224,
+        1.0869909524917603,
+        1.2093051671981812
+      ],
+      "hps": [
+        0.30810546875,
+        0.30419921875,
+        0.313232421875,
+        0.302978515625
+      ],
+      "ir_max": 1.2534805536270142,
+      "hps_at_ir_max": 0.30810546875,
+      "div_pix": 0.0866,
+      "div_clip": 0.0084,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.7,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0862,
+        1.5977,
+        1.0403,
+        3.8216,
+        2.7867
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.2555,
+        1.1425,
+        1.0369,
+        1.2316
+      ]
+    },
+    {
+      "prompt_id": "005846-0102",
+      "prompt": "a beautiful portrait of a beautiful woman in the jungle surrounded by pink flowers, shamanism, matte painting, fantasy art",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024004,
+      "ir": [
+        1.9881285429000854,
+        1.9757283926010132,
+        1.9784619808197021,
+        1.981131672859192
+      ],
+      "hps": [
+        0.3193359375,
+        0.322265625,
+        0.327880859375,
+        0.314453125
+      ],
+      "ir_max": 1.9881285429000854,
+      "hps_at_ir_max": 0.3193359375,
+      "div_pix": 0.1768,
+      "div_clip": 0.0137,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.3,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.232,
+        1.5001,
+        3.9764,
+        3.997,
+        3.9747
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.9875,
+        1.9739,
+        1.9778,
+        1.9769
+      ]
+    },
+    {
+      "prompt_id": "005937-0170",
+      "prompt": "a cute cat",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024005,
+      "ir": [
+        0.7610006332397461,
+        0.5794270038604736,
+        0.5111290812492371,
+        0.4050203859806061
+      ],
+      "hps": [
+        0.32861328125,
+        0.328125,
+        0.324462890625,
+        0.301025390625
+      ],
+      "ir_max": 0.7610006332397461,
+      "hps_at_ir_max": 0.32861328125,
+      "div_pix": 0.232,
+      "div_clip": 0.0269,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.6,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        3
+      ],
+      "n_lineages": 2,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.4383,
+        2.4786,
+        2.7312,
+        3.1221,
+        2.0821
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.7502,
+        0.6026,
+        0.4612,
+        0.4798
+      ]
+    },
+    {
+      "prompt_id": "005895-0035",
+      "prompt": "close up photo of anthropomorphic fox animal dressed in white shirt and khaki cargo pants, fox animal, glasses",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024006,
+      "ir": [
+        -0.658010721206665,
+        -0.5021788477897644,
+        -0.7144588232040405,
+        -0.8024625778198242
+      ],
+      "hps": [
+        0.27978515625,
+        0.283447265625,
+        0.28271484375,
+        0.2822265625
+      ],
+      "ir_max": -0.5021788477897644,
+      "hps_at_ir_max": 0.283447265625,
+      "div_pix": 0.0389,
+      "div_clip": 0.0018,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0124,
+        1.1533,
+        4.0,
+        1.0322,
+        2.0485
+      ],
+      "n_resamplings": 3,
+      "ir_guide": [
+        -0.7212,
+        -0.5763,
+        -0.7712,
+        -0.7913
+      ]
+    },
+    {
+      "prompt_id": "005937-0167",
+      "prompt": "a painting of an ocean with clouds and birds, day, depth, field",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024007,
+      "ir": [
+        1.0369575023651123,
+        1.051697850227356,
+        1.0085004568099976,
+        0.8244072794914246
+      ],
+      "hps": [
+        0.25,
+        0.2454833984375,
+        0.2491455078125,
+        0.241455078125
+      ],
+      "ir_max": 1.051697850227356,
+      "hps_at_ir_max": 0.2454833984375,
+      "div_pix": 0.0942,
+      "div_clip": 0.0149,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 88.9,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.1814,
+        1.0074,
+        1.6054,
+        3.1228,
+        3.4819
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.9832,
+        1.0648,
+        0.9499,
+        0.7518
+      ]
+    },
+    {
+      "prompt_id": "005912-0052",
+      "prompt": "medieval old king, character, hearthstone, fantasy, elegant, highly, illustration, art by artgerm and greg rutkowski and alphonse mucha",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024008,
+      "ir": [
+        1.4854310750961304,
+        1.1729459762573242,
+        1.7653758525848389,
+        1.6279057264328003
+      ],
+      "hps": [
+        0.263427734375,
+        0.2763671875,
+        0.269775390625,
+        0.268310546875
+      ],
+      "ir_max": 1.7653758525848389,
+      "hps_at_ir_max": 0.269775390625,
+      "div_pix": 0.1099,
+      "div_clip": 0.0209,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 88.9,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.029,
+        2.1315,
+        1.926,
+        2.9716,
+        1.8208
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.5991,
+        1.3592,
+        1.7655,
+        1.5855
+      ]
+    },
+    {
+      "prompt_id": "005903-0142",
+      "prompt": "landscape photography by marc adamus, mountains with some forests, small lake in the center, fog in the background, sunrays, golden hour, high",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024009,
+      "ir": [
+        1.2618944644927979,
+        1.4230965375900269,
+        1.505751371383667,
+        1.3579638004302979
+      ],
+      "hps": [
+        0.267333984375,
+        0.2900390625,
+        0.295654296875,
+        0.287109375
+      ],
+      "ir_max": 1.505751371383667,
+      "hps_at_ir_max": 0.295654296875,
+      "div_pix": 0.0897,
+      "div_clip": 0.0145,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.4448,
+        1.581,
+        1.964,
+        1.5531,
+        2.9622
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.2255,
+        1.4286,
+        1.488,
+        1.3087
+      ]
+    },
+    {
+      "prompt_id": "005895-0048",
+      "prompt": "symmetry!! a hybrid medieval exquisite complex and beautiful double hatchet in the fog of magic light, painting, illustration, art by artgerm and greg rutkowski and alphonse mucha",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024010,
+      "ir": [
+        0.19143077731132507,
+        0.034253597259521484,
+        0.25488483905792236,
+        0.22360001504421234
+      ],
+      "hps": [
+        0.1761474609375,
+        0.174072265625,
+        0.1737060546875,
+        0.1793212890625
+      ],
+      "ir_max": 0.25488483905792236,
+      "hps_at_ir_max": 0.1737060546875,
+      "div_pix": 0.0328,
+      "div_clip": 0.0067,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.994,
+        1.0,
+        2.1025,
+        1.197,
+        3.1378
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.2098,
+        0.0964,
+        0.2696,
+        0.2018
+      ]
+    },
+    {
+      "prompt_id": "007048-0049",
+      "prompt": "victorian lady, painting by rossetti, daniel gerhartz, alphonse mucha, bouguereau, detailed art",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024011,
+      "ir": [
+        0.007377718109637499,
+        0.09525679051876068,
+        0.03876376152038574,
+        0.14796040952205658
+      ],
+      "hps": [
+        0.283447265625,
+        0.28759765625,
+        0.2841796875,
+        0.284423828125
+      ],
+      "ir_max": 0.14796040952205658,
+      "hps_at_ir_max": 0.284423828125,
+      "div_pix": 0.0706,
+      "div_clip": 0.0117,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.0,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.3404,
+        1.0008,
+        1.8343,
+        1.9966,
+        2.9041
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.071,
+        0.0033,
+        -0.0058,
+        0.1475
+      ]
+    },
+    {
+      "prompt_id": "007086-0087",
+      "prompt": "an alien planet viewed from space, extremely, beautiful, dynamic, creative, cinematic",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024012,
+      "ir": [
+        0.5125560164451599,
+        0.28676044940948486,
+        0.5282595753669739,
+        0.5684435963630676
+      ],
+      "hps": [
+        0.26416015625,
+        0.264404296875,
+        0.258056640625,
+        0.258544921875
+      ],
+      "ir_max": 0.5684435963630676,
+      "hps_at_ir_max": 0.258544921875,
+      "div_pix": 0.0565,
+      "div_clip": 0.008,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.4,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.6725,
+        1.4644,
+        3.4297,
+        1.6146,
+        2.0373
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.5086,
+        0.2317,
+        0.4274,
+        0.6132
+      ]
+    },
+    {
+      "prompt_id": "007109-0000",
+      "prompt": "cartoon character in a style of adventure time cartoon",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024013,
+      "ir": [
+        -0.18477684259414673,
+        -0.2772519886493683,
+        -0.054184626787900925,
+        -0.1595110446214676
+      ],
+      "hps": [
+        0.207763671875,
+        0.2113037109375,
+        0.210205078125,
+        0.2122802734375
+      ],
+      "ir_max": -0.054184626787900925,
+      "hps_at_ir_max": 0.210205078125,
+      "div_pix": 0.1005,
+      "div_clip": 0.0077,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.7,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0022,
+        2.503,
+        1.9607,
+        3.4469,
+        3.2184
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.1092,
+        -0.2203,
+        -0.018,
+        -0.1095
+      ]
+    },
+    {
+      "prompt_id": "007029-0027",
+      "prompt": "a full body portrait of a good - lookiung girl wearing long loose gown, high, detail, cleary see face, by gaston bussiere, bayard wu, greg rutkowski, odd nerdrum, maxim verehin, dan dos santos, masterpiece, focus, cinematic lightning",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024014,
+      "ir": [
+        1.4861277341842651,
+        1.2907686233520508,
+        1.384785532951355,
+        1.6114294528961182
+      ],
+      "hps": [
+        0.274658203125,
+        0.244873046875,
+        0.252685546875,
+        0.2432861328125
+      ],
+      "ir_max": 1.6114294528961182,
+      "hps_at_ir_max": 0.2432861328125,
+      "div_pix": 0.0486,
+      "div_clip": 0.0138,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.4626,
+        1.4699,
+        1.0042,
+        2.8896,
+        1.4997
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.3239,
+        1.2589,
+        1.2443,
+        1.6028
+      ]
+    },
+    {
+      "prompt_id": "007086-0024",
+      "prompt": "photograph of a futuristic cyberpunk flying car at night in the rain",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024015,
+      "ir": [
+        1.0560150146484375,
+        1.570948600769043,
+        1.2744470834732056,
+        1.444272518157959
+      ],
+      "hps": [
+        0.2342529296875,
+        0.229248046875,
+        0.231689453125,
+        0.232666015625
+      ],
+      "ir_max": 1.570948600769043,
+      "hps_at_ir_max": 0.229248046875,
+      "div_pix": 0.1022,
+      "div_clip": 0.0083,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0201,
+        1.8619,
+        2.6086,
+        3.1522,
+        2.2184
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.1267,
+        1.5401,
+        1.2372,
+        1.5029
+      ]
+    },
+    {
+      "prompt_id": "007109-0002",
+      "prompt": "Portrait of an old sea captain, male, detailed face, fantasy, highly detailed, cinematic, art painting by greg rutkowski",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024016,
+      "ir": [
+        1.2811310291290283,
+        1.1475582122802734,
+        1.5429197549819946,
+        1.357810616493225
+      ],
+      "hps": [
+        0.315185546875,
+        0.299072265625,
+        0.30810546875,
+        0.310302734375
+      ],
+      "ir_max": 1.5429197549819946,
+      "hps_at_ir_max": 0.30810546875,
+      "div_pix": 0.0738,
+      "div_clip": 0.0089,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.5,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0002,
+        1.9611,
+        2.5419,
+        1.8212,
+        1.9477
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.2773,
+        1.1891,
+        1.5357,
+        1.3718
+      ]
+    },
+    {
+      "prompt_id": "007045-0013",
+      "prompt": "classic model of atoms, made out of glass marbles and chrome steel rods, studio",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024017,
+      "ir": [
+        1.1062989234924316,
+        0.17939458787441254,
+        0.9590569734573364,
+        0.868269145488739
+      ],
+      "hps": [
+        0.216552734375,
+        0.190185546875,
+        0.2015380859375,
+        0.2095947265625
+      ],
+      "ir_max": 1.1062989234924316,
+      "hps_at_ir_max": 0.216552734375,
+      "div_pix": 0.0998,
+      "div_clip": 0.0145,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.3,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0,
+        1.0212,
+        4.0,
+        4.0,
+        1.9673
+      ],
+      "n_resamplings": 2,
+      "ir_guide": [
+        1.0506,
+        0.3368,
+        0.9959,
+        0.7338
+      ]
+    },
+    {
+      "prompt_id": "007135-0056",
+      "prompt": "A majestic landscape featuring a river, mountains and a forest, A small group of birds is flying in the sky, Harsh winter, very windy, There is a man walking in a deep snow, Cinematic, very, beautiful, painting, in the, style, of Lord of the rings",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024018,
+      "ir": [
+        1.8510733842849731,
+        1.754807949066162,
+        1.8186346292495728,
+        1.826846718788147
+      ],
+      "hps": [
+        0.2293701171875,
+        0.234619140625,
+        0.242919921875,
+        0.2279052734375
+      ],
+      "ir_max": 1.8510733842849731,
+      "hps_at_ir_max": 0.2293701171875,
+      "div_pix": 0.0715,
+      "div_clip": 0.0131,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.4,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0061,
+        1.0188,
+        1.0,
+        3.6698,
+        3.885
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.8741,
+        1.8045,
+        1.8525,
+        1.8441
+      ]
+    },
+    {
+      "prompt_id": "007133-0110",
+      "prompt": "3D render of a cute tribal anime boy in a loincloth, fantasy, artwork, fluffy hair, mid -, winning, very very very beautiful",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024019,
+      "ir": [
+        -0.5193163156509399,
+        -0.04117588326334953,
+        -0.3536907732486725,
+        -0.5274242758750916
+      ],
+      "hps": [
+        0.2161865234375,
+        0.221435546875,
+        0.209228515625,
+        0.2347412109375
+      ],
+      "ir_max": -0.04117588326334953,
+      "hps_at_ir_max": 0.221435546875,
+      "div_pix": 0.0651,
+      "div_clip": 0.0058,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.5,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.582,
+        1.1809,
+        1.1713,
+        4.0,
+        1.6515
+      ],
+      "n_resamplings": 3,
+      "ir_guide": [
+        -0.3713,
+        -0.0058,
+        -0.2582,
+        -0.4601
+      ]
+    },
+    {
+      "prompt_id": "000539-0052",
+      "prompt": "old man ( long white beard and a hood ) riding on lions back",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024020,
+      "ir": [
+        1.4421558380126953,
+        1.817205786705017,
+        1.5760936737060547,
+        1.7739450931549072
+      ],
+      "hps": [
+        0.29833984375,
+        0.309326171875,
+        0.310302734375,
+        0.305419921875
+      ],
+      "ir_max": 1.817205786705017,
+      "hps_at_ir_max": 0.309326171875,
+      "div_pix": 0.0765,
+      "div_clip": 0.0088,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0,
+        1.0981,
+        1.0071,
+        3.9923,
+        2.1605
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.3902,
+        1.8059,
+        1.5556,
+        1.7534
+      ]
+    },
+    {
+      "prompt_id": "007019-0095",
+      "prompt": "astronaut drifting afloat in space, in the darkness away from anyone else, alone, black background dotted with stars, realistic",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024021,
+      "ir": [
+        1.166322946548462,
+        1.4143095016479492,
+        1.318366289138794,
+        1.4516607522964478
+      ],
+      "hps": [
+        0.2408447265625,
+        0.2366943359375,
+        0.2303466796875,
+        0.2392578125
+      ],
+      "ir_max": 1.4516607522964478,
+      "hps_at_ir_max": 0.2392578125,
+      "div_pix": 0.064,
+      "div_clip": 0.0022,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0013,
+        2.24,
+        1.1932,
+        3.7755,
+        3.1247
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.2005,
+        1.4387,
+        1.3371,
+        1.4435
+      ]
+    },
+    {
+      "prompt_id": "007129-0041",
+      "prompt": "extremely detailed stunning beautiful futuristic smooth curvilinear museum interior, colorful, hyper, real",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024022,
+      "ir": [
+        1.0813825130462646,
+        0.7869336009025574,
+        0.6912736892700195,
+        0.6798525452613831
+      ],
+      "hps": [
+        0.268310546875,
+        0.26904296875,
+        0.2646484375,
+        0.267333984375
+      ],
+      "ir_max": 1.0813825130462646,
+      "hps_at_ir_max": 0.268310546875,
+      "div_pix": 0.1704,
+      "div_clip": 0.0234,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.6,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0008,
+        1.5084,
+        1.7902,
+        3.5492,
+        1.9882
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.0954,
+        0.7687,
+        0.6493,
+        0.6646
+      ]
+    },
+    {
+      "prompt_id": "007214-0194",
+      "prompt": "beautiful prince, male, golden hair, high, fantasy, art by anato finnstark, joseph leyendecker, peter mohrbacher, ruan jia, marc simonetti, ayami kojima, cedric peyravernay, finnian macmanus, alphonse mucha, victo ngai",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024023,
+      "ir": [
+        0.8887650370597839,
+        1.1768670082092285,
+        1.3180334568023682,
+        0.8511148691177368
+      ],
+      "hps": [
+        0.262939453125,
+        0.26123046875,
+        0.261962890625,
+        0.251953125
+      ],
+      "ir_max": 1.3180334568023682,
+      "hps_at_ir_max": 0.261962890625,
+      "div_pix": 0.0326,
+      "div_clip": 0.005,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.092,
+        1.2083,
+        1.0319,
+        1.0181,
+        1.2955
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.0368,
+        1.0865,
+        1.3288,
+        0.69
+      ]
+    },
+    {
+      "prompt_id": "007178-0111",
+      "prompt": "alien landscape with futuristic portal to another alien planet, astronaut stepping through the portal",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024024,
+      "ir": [
+        1.168502688407898,
+        1.5037403106689453,
+        1.3933290243148804,
+        1.2636592388153076
+      ],
+      "hps": [
+        0.2315673828125,
+        0.23193359375,
+        0.237548828125,
+        0.1983642578125
+      ],
+      "ir_max": 1.5037403106689453,
+      "hps_at_ir_max": 0.23193359375,
+      "div_pix": 0.0517,
+      "div_clip": 0.0083,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.4,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0381,
+        1.4047,
+        1.0067,
+        4.0,
+        2.2522
+      ],
+      "n_resamplings": 3,
+      "ir_guide": [
+        1.1641,
+        1.5235,
+        1.4382,
+        1.3664
+      ]
+    },
+    {
+      "prompt_id": "007191-0058",
+      "prompt": "full body portrait of cute girl wearing gown, d &, fantasy, portrait, highly detailed, digital painting, illustration, art by artgerm and greg rutkowski and magali villeneuve",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024025,
+      "ir": [
+        1.7631690502166748,
+        1.8312606811523438,
+        1.698204517364502,
+        1.736655354499817
+      ],
+      "hps": [
+        0.2978515625,
+        0.298095703125,
+        0.289794921875,
+        0.288818359375
+      ],
+      "ir_max": 1.8312606811523438,
+      "hps_at_ir_max": 0.298095703125,
+      "div_pix": 0.0583,
+      "div_clip": 0.0116,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.4,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0085,
+        1.0005,
+        1.1998,
+        2.8856,
+        3.2093
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.7499,
+        1.8207,
+        1.643,
+        1.6962
+      ]
+    },
+    {
+      "prompt_id": "007242-0101",
+      "prompt": "a portrait of a cat dog",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024026,
+      "ir": [
+        -0.5085760354995728,
+        -0.5841212272644043,
+        -0.6222536563873291,
+        -0.8680139780044556
+      ],
+      "hps": [
+        0.236572265625,
+        0.2578125,
+        0.23876953125,
+        0.18310546875
+      ],
+      "ir_max": -0.5085760354995728,
+      "hps_at_ir_max": 0.236572265625,
+      "div_pix": 0.2935,
+      "div_clip": 0.0595,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.9,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        3
+      ],
+      "n_lineages": 2,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.5661,
+        4.0,
+        4.0,
+        4.0,
+        1.9662
+      ],
+      "n_resamplings": 1,
+      "ir_guide": [
+        -0.5176,
+        -0.649,
+        -0.7433,
+        -0.8885
+      ]
+    },
+    {
+      "prompt_id": "007268-0100",
+      "prompt": "tumultuous plunging waves, anime, artwork, studio ghibli, stylized, in an anime format",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024027,
+      "ir": [
+        0.8573970198631287,
+        1.0315663814544678,
+        0.7047591805458069,
+        0.8056350350379944
+      ],
+      "hps": [
+        0.2432861328125,
+        0.2427978515625,
+        0.2376708984375,
+        0.2291259765625
+      ],
+      "ir_max": 1.0315663814544678,
+      "hps_at_ir_max": 0.2427978515625,
+      "div_pix": 0.0813,
+      "div_clip": 0.0128,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.9,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0099,
+        1.0115,
+        1.0944,
+        4.0,
+        1.496
+      ],
+      "n_resamplings": 3,
+      "ir_guide": [
+        0.8253,
+        1.0059,
+        0.6055,
+        0.7235
+      ]
+    },
+    {
+      "prompt_id": "007209-0011",
+      "prompt": "photo by josh pierce and prateek vatash and roman bratschi, a giant huge beautiful mid - century modern revival mansion palace with green plants and giant reflective windows on a huge scenic cliff overlooking the ocean, reflections, lighting and shadows, haze, light",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024028,
+      "ir": [
+        -1.2997664213180542,
+        -1.3437349796295166,
+        -1.365086555480957,
+        -1.3510761260986328
+      ],
+      "hps": [
+        0.2156982421875,
+        0.213623046875,
+        0.2138671875,
+        0.212646484375
+      ],
+      "ir_max": -1.2997664213180542,
+      "hps_at_ir_max": 0.2156982421875,
+      "div_pix": 0.0979,
+      "div_clip": 0.0173,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.8,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.6049,
+        1.3717,
+        1.5518,
+        1.7375,
+        1.3241
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -1.3082,
+        -1.5155,
+        -1.3823,
+        -1.3974
+      ]
+    },
+    {
+      "prompt_id": "007171-0040",
+      "prompt": "A foggy forest with cherry blossom leaves on the ground, liminal, quiet",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024029,
+      "ir": [
+        1.3875283002853394,
+        1.3862481117248535,
+        1.3637754917144775,
+        1.361315131187439
+      ],
+      "hps": [
+        0.307373046875,
+        0.298828125,
+        0.301025390625,
+        0.30126953125
+      ],
+      "ir_max": 1.3875283002853394,
+      "hps_at_ir_max": 0.307373046875,
+      "div_pix": 0.07,
+      "div_clip": 0.0093,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.9,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0,
+        4.0,
+        1.0342,
+        2.398,
+        3.8707
+      ],
+      "n_resamplings": 3,
+      "ir_guide": [
+        1.4185,
+        1.4058,
+        1.381,
+        1.3888
+      ]
+    },
+    {
+      "prompt_id": "007204-0161",
+      "prompt": "dramatically lit, intricate fractal sculpture of an ancient, weathered, mossy marble sculpture of a dragonfly",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024030,
+      "ir": [
+        0.3313172459602356,
+        0.10135315358638763,
+        0.09000539779663086,
+        0.15286412835121155
+      ],
+      "hps": [
+        0.27490234375,
+        0.279052734375,
+        0.28173828125,
+        0.2939453125
+      ],
+      "ir_max": 0.3313172459602356,
+      "hps_at_ir_max": 0.27490234375,
+      "div_pix": 0.0894,
+      "div_clip": 0.0132,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.5,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0005,
+        1.1475,
+        1.9406,
+        1.143,
+        1.7929
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.544,
+        0.1621,
+        0.1317,
+        0.0111
+      ]
+    },
+    {
+      "prompt_id": "007205-0046",
+      "prompt": "a modern, contemporary studio apartment interior",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024031,
+      "ir": [
+        -0.24867627024650574,
+        -0.21795488893985748,
+        -0.07887419313192368,
+        -0.34306132793426514
+      ],
+      "hps": [
+        0.2685546875,
+        0.263916015625,
+        0.265380859375,
+        0.26953125
+      ],
+      "ir_max": -0.07887419313192368,
+      "hps_at_ir_max": 0.265380859375,
+      "div_pix": 0.1083,
+      "div_clip": 0.012,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.6,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.096,
+        1.053,
+        3.1232,
+        3.5805,
+        2.9496
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.1863,
+        -0.2082,
+        -0.1249,
+        -0.3115
+      ]
+    },
+    {
+      "prompt_id": "007249-0011",
+      "prompt": "futuristic spaceship escaping event horizon of black hole, by rossdraws, by marc simonetti, by matt rutkowski, dystopian lost in space, nebula, supernova, exploding galaxy, micro detail, fantasy",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024032,
+      "ir": [
+        1.3688371181488037,
+        1.4717774391174316,
+        1.4542956352233887,
+        1.520877718925476
+      ],
+      "hps": [
+        0.2177734375,
+        0.2086181640625,
+        0.2099609375,
+        0.214599609375
+      ],
+      "ir_max": 1.520877718925476,
+      "hps_at_ir_max": 0.214599609375,
+      "div_pix": 0.0516,
+      "div_clip": 0.0059,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.6,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.4113,
+        1.0591,
+        1.0266,
+        1.7879,
+        3.5409
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.3786,
+        1.3962,
+        1.4547,
+        1.4239
+      ]
+    },
+    {
+      "prompt_id": "007171-0104",
+      "prompt": "a bag of frozen breaded scampi with maerl spilling out",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024033,
+      "ir": [
+        -1.1851900815963745,
+        -0.8732653856277466,
+        -1.1129010915756226,
+        -1.1315393447875977
+      ],
+      "hps": [
+        0.24267578125,
+        0.2529296875,
+        0.2491455078125,
+        0.252685546875
+      ],
+      "ir_max": -0.8732653856277466,
+      "hps_at_ir_max": 0.2529296875,
+      "div_pix": 0.0793,
+      "div_clip": 0.0203,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.0677,
+        3.5797,
+        1.0618,
+        3.4484,
+        2.3025
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -1.2533,
+        -1.0415,
+        -1.0617,
+        -1.1753
+      ]
+    },
+    {
+      "prompt_id": "007206-0148",
+      "prompt": "mountains range with waterfall, purple haze, art by greg rutkowski and magali villeneuve",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024034,
+      "ir": [
+        1.8718929290771484,
+        1.7859402894973755,
+        1.8376582860946655,
+        1.803415298461914
+      ],
+      "hps": [
+        0.286376953125,
+        0.277099609375,
+        0.248046875,
+        0.254150390625
+      ],
+      "ir_max": 1.8718929290771484,
+      "hps_at_ir_max": 0.286376953125,
+      "div_pix": 0.1449,
+      "div_clip": 0.0219,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0,
+        2.2975,
+        2.2479,
+        3.8918,
+        3.3212
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.8617,
+        1.7266,
+        1.8236,
+        1.7964
+      ]
+    },
+    {
+      "prompt_id": "007187-0044",
+      "prompt": "an underwater rollercoaster, cinematic, dramatic, -",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024035,
+      "ir": [
+        1.2661538124084473,
+        1.4632142782211304,
+        1.2679882049560547,
+        0.9957168102264404
+      ],
+      "hps": [
+        0.26123046875,
+        0.256103515625,
+        0.26513671875,
+        0.2568359375
+      ],
+      "ir_max": 1.4632142782211304,
+      "hps_at_ir_max": 0.256103515625,
+      "div_pix": 0.0979,
+      "div_clip": 0.015,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.3,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0093,
+        1.2936,
+        1.0225,
+        3.494,
+        2.1593
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.152,
+        1.4003,
+        1.3741,
+        0.8272
+      ]
+    },
+    {
+      "prompt_id": "007202-0104",
+      "prompt": "futuristic city street where it is raining, a row of shops including a mcdonalds are all abandoned and vandalised windows are broken, dark lighting with storm clouds",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024036,
+      "ir": [
+        1.6469342708587646,
+        1.7271941900253296,
+        1.698056697845459,
+        1.638386845588684
+      ],
+      "hps": [
+        0.30615234375,
+        0.308349609375,
+        0.29638671875,
+        0.319091796875
+      ],
+      "ir_max": 1.7271941900253296,
+      "hps_at_ir_max": 0.308349609375,
+      "div_pix": 0.1236,
+      "div_clip": 0.0145,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.0054,
+        1.8007,
+        1.938,
+        2.2953,
+        2.9463
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.686,
+        1.7336,
+        1.6724,
+        1.6689
+      ]
+    },
+    {
+      "prompt_id": "007258-0005",
+      "prompt": "desert, art by joseph, leyendecker, peter mohrbacher, ivan aivazovsky, ruan jia, reza afshar, marc simonetti",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024037,
+      "ir": [
+        0.5413231253623962,
+        0.6044105291366577,
+        0.6335464715957642,
+        0.6075277328491211
+      ],
+      "hps": [
+        0.1920166015625,
+        0.1871337890625,
+        0.18359375,
+        0.1923828125
+      ],
+      "ir_max": 0.6335464715957642,
+      "hps_at_ir_max": 0.18359375,
+      "div_pix": 0.0308,
+      "div_clip": 0.0076,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0001,
+        1.3976,
+        2.3513,
+        1.6697,
+        1.6488
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.5066,
+        0.527,
+        0.6388,
+        0.6574
+      ]
+    },
+    {
+      "prompt_id": "007654-0033",
+      "prompt": "wood logs in the shape of a square",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024038,
+      "ir": [
+        1.0421109199523926,
+        0.9197167158126831,
+        0.8571341037750244,
+        1.1476556062698364
+      ],
+      "hps": [
+        0.27294921875,
+        0.2626953125,
+        0.26416015625,
+        0.25927734375
+      ],
+      "ir_max": 1.1476556062698364,
+      "hps_at_ir_max": 0.25927734375,
+      "div_pix": 0.0836,
+      "div_clip": 0.0071,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.4,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.4751,
+        1.0015,
+        2.6594,
+        1.4162,
+        1.1872
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.0306,
+        0.8153,
+        0.8095,
+        0.9814
+      ]
+    },
+    {
+      "prompt_id": "007726-0050",
+      "prompt": "fancy treehouse mansion on top of a mountain overlooking a view of the valley magical realism detailed painting",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024039,
+      "ir": [
+        1.7412834167480469,
+        1.7188206911087036,
+        1.7403351068496704,
+        1.7543399333953857
+      ],
+      "hps": [
+        0.3447265625,
+        0.346435546875,
+        0.343017578125,
+        0.3408203125
+      ],
+      "ir_max": 1.7543399333953857,
+      "hps_at_ir_max": 0.3408203125,
+      "div_pix": 0.0979,
+      "div_clip": 0.0185,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.0,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.3967,
+        2.1428,
+        1.0124,
+        3.8067,
+        3.6727
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.7423,
+        1.725,
+        1.7134,
+        1.7435
+      ]
+    },
+    {
+      "prompt_id": "007837-0019",
+      "prompt": "plants, flowers, trees being mixed in a bowl",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024040,
+      "ir": [
+        -0.08558932691812515,
+        0.02127974107861519,
+        -0.2230590134859085,
+        0.18121473491191864
+      ],
+      "hps": [
+        0.28466796875,
+        0.286376953125,
+        0.294189453125,
+        0.287353515625
+      ],
+      "ir_max": 0.18121473491191864,
+      "hps_at_ir_max": 0.287353515625,
+      "div_pix": 0.0467,
+      "div_clip": 0.0058,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.1212,
+        1.6588,
+        1.0286,
+        1.5151,
+        1.4791
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.0522,
+        0.021,
+        -0.0979,
+        0.2665
+      ]
+    },
+    {
+      "prompt_id": "007749-0112",
+      "prompt": "delicious plate of food",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024041,
+      "ir": [
+        -0.1439415067434311,
+        -0.4823230803012848,
+        -0.5988191962242126,
+        -0.8286436796188354
+      ],
+      "hps": [
+        0.26904296875,
+        0.25244140625,
+        0.25146484375,
+        0.252685546875
+      ],
+      "ir_max": -0.1439415067434311,
+      "hps_at_ir_max": 0.26904296875,
+      "div_pix": 0.1196,
+      "div_clip": 0.0252,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.0,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.9715,
+        1.1123,
+        2.691,
+        4.0,
+        1.146
+      ],
+      "n_resamplings": 3,
+      "ir_guide": [
+        -0.3985,
+        -0.6083,
+        -0.7023,
+        -0.896
+      ]
+    },
+    {
+      "prompt_id": "008247-0049",
+      "prompt": "botanical illustrations of many multicolored flowers",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024042,
+      "ir": [
+        1.4375523328781128,
+        1.5265504121780396,
+        1.5067402124404907,
+        1.477950930595398
+      ],
+      "hps": [
+        0.271484375,
+        0.27197265625,
+        0.277099609375,
+        0.280517578125
+      ],
+      "ir_max": 1.5265504121780396,
+      "hps_at_ir_max": 0.27197265625,
+      "div_pix": 0.0852,
+      "div_clip": 0.0087,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.1667,
+        1.5149,
+        1.0333,
+        1.7808,
+        2.0371
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.4036,
+        1.4898,
+        1.5036,
+        1.4627
+      ]
+    },
+    {
+      "prompt_id": "008251-0021",
+      "prompt": "view from earth atmosphere to the stars sci fi",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024043,
+      "ir": [
+        0.6158924698829651,
+        0.5687952041625977,
+        0.5472248792648315,
+        -0.12642188370227814
+      ],
+      "hps": [
+        0.2440185546875,
+        0.24609375,
+        0.2403564453125,
+        0.236328125
+      ],
+      "ir_max": 0.6158924698829651,
+      "hps_at_ir_max": 0.2440185546875,
+      "div_pix": 0.0702,
+      "div_clip": 0.0101,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.6,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.7095,
+        1.3353,
+        1.5557,
+        1.4484,
+        2.9716
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.5484,
+        0.5247,
+        0.4767,
+        -0.1163
+      ]
+    },
+    {
+      "prompt_id": "008173-0073",
+      "prompt": "small red wooden cottage by the lake, lanterns on the porch, smoke coming out of the chimney, dusk, birch trees, tranquility, two swans swimming on the lake, a wooden rowing boat, cumulus clouds, by charlie bowater, by greg rutkowski",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024044,
+      "ir": [
+        -0.21386168897151947,
+        -0.2154691517353058,
+        0.21059991419315338,
+        -0.08994635194540024
+      ],
+      "hps": [
+        0.26171875,
+        0.259765625,
+        0.2578125,
+        0.262451171875
+      ],
+      "ir_max": 0.21059991419315338,
+      "hps_at_ir_max": 0.2578125,
+      "div_pix": 0.0373,
+      "div_clip": 0.0067,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.6245,
+        2.3846,
+        2.882,
+        1.0045,
+        1.8235
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.2929,
+        -0.1932,
+        0.1627,
+        0.2365
+      ]
+    },
+    {
+      "prompt_id": "008222-0061",
+      "prompt": "frosted glass sphere sitting on a wooden table, high, complex",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024045,
+      "ir": [
+        1.6598100662231445,
+        1.6879035234451294,
+        1.7059475183486938,
+        1.682737946510315
+      ],
+      "hps": [
+        0.2491455078125,
+        0.2431640625,
+        0.23876953125,
+        0.23876953125
+      ],
+      "ir_max": 1.7059475183486938,
+      "hps_at_ir_max": 0.23876953125,
+      "div_pix": 0.0665,
+      "div_clip": 0.0084,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0778,
+        1.0766,
+        3.981,
+        3.9988,
+        3.8389
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.6622,
+        1.6902,
+        1.7005,
+        1.6984
+      ]
+    },
+    {
+      "prompt_id": "008317-0143",
+      "prompt": "a beautiful cyborg mermaid with a long fish tail, the body has shimmering fish scales, submerged underwater, dark ocean, light filtering through, the body is entwined in seaweed and coral, highly detailed, hyper - realistic, futuristic",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024046,
+      "ir": [
+        0.8079420924186707,
+        0.9019525647163391,
+        0.6306543350219727,
+        0.7997241020202637
+      ],
+      "hps": [
+        0.2457275390625,
+        0.252685546875,
+        0.250244140625,
+        0.2454833984375
+      ],
+      "ir_max": 0.9019525647163391,
+      "hps_at_ir_max": 0.252685546875,
+      "div_pix": 0.0626,
+      "div_clip": 0.0071,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0005,
+        1.0007,
+        1.1396,
+        1.9838,
+        1.4568
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.8091,
+        0.8131,
+        0.6261,
+        0.7275
+      ]
+    },
+    {
+      "prompt_id": "008265-0060",
+      "prompt": "a coin bag item from a videogame ui",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024047,
+      "ir": [
+        0.4567909836769104,
+        -0.01732858270406723,
+        -0.34381556510925293,
+        0.6885583996772766
+      ],
+      "hps": [
+        0.2242431640625,
+        0.226806640625,
+        0.223388671875,
+        0.22607421875
+      ],
+      "ir_max": 0.6885583996772766,
+      "hps_at_ir_max": 0.22607421875,
+      "div_pix": 0.0298,
+      "div_clip": 0.0045,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.0,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0943,
+        1.2466,
+        1.4681,
+        1.4868,
+        1.1815
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.4568,
+        0.1217,
+        -0.3288,
+        0.6803
+      ]
+    },
+    {
+      "prompt_id": "008569-0060",
+      "prompt": "cute cats in Conceptual art style",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024048,
+      "ir": [
+        0.7602273225784302,
+        0.8499882817268372,
+        0.8616100549697876,
+        0.398313969373703
+      ],
+      "hps": [
+        0.26025390625,
+        0.2685546875,
+        0.26513671875,
+        0.252197265625
+      ],
+      "ir_max": 0.8616100549697876,
+      "hps_at_ir_max": 0.26513671875,
+      "div_pix": 0.1065,
+      "div_clip": 0.0081,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0612,
+        1.6634,
+        1.8019,
+        2.7277,
+        3.863
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.9299,
+        0.9527,
+        0.8947,
+        0.4231
+      ]
+    },
+    {
+      "prompt_id": "008614-0134",
+      "prompt": "a checoslovaquian wolfdog, black and white painting",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024049,
+      "ir": [
+        1.549147605895996,
+        1.6461541652679443,
+        1.6679973602294922,
+        1.6288681030273438
+      ],
+      "hps": [
+        0.2646484375,
+        0.270751953125,
+        0.272705078125,
+        0.26611328125
+      ],
+      "ir_max": 1.6679973602294922,
+      "hps_at_ir_max": 0.272705078125,
+      "div_pix": 0.1623,
+      "div_clip": 0.0103,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 88.9,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.078,
+        2.7681,
+        3.4705,
+        3.3429,
+        3.6596
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.5432,
+        1.6456,
+        1.6458,
+        1.6051
+      ]
+    },
+    {
+      "prompt_id": "008775-0090",
+      "prompt": "beautiful girl with curly hair, watercolor style, colorful, pastel colors, ultra detailed",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024050,
+      "ir": [
+        1.7238154411315918,
+        1.7195510864257812,
+        1.508492350578308,
+        1.0766844749450684
+      ],
+      "hps": [
+        0.2685546875,
+        0.2890625,
+        0.267578125,
+        0.2578125
+      ],
+      "ir_max": 1.7238154411315918,
+      "hps_at_ir_max": 0.2685546875,
+      "div_pix": 0.2349,
+      "div_clip": 0.0154,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.2449,
+        2.7346,
+        4.0,
+        3.8971,
+        2.2534
+      ],
+      "n_resamplings": 3,
+      "ir_guide": [
+        1.7717,
+        1.6948,
+        1.5223,
+        1.0574
+      ]
+    },
+    {
+      "prompt_id": "008866-0195",
+      "prompt": "natural suburb with multiple low rise apartment buildings in a park like setting with green hilly lawns and lush trees, pine wooden walls, rustic, large glass windows, cobblestone, grass, white, natural pathways, natural materials, minimalist, swedish design, bright, feng shui, modern, technology, frank lloyd wright",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024051,
+      "ir": [
+        -1.3509072065353394,
+        -1.6724861860275269,
+        -1.4650452136993408,
+        -1.4621473550796509
+      ],
+      "hps": [
+        0.255859375,
+        0.253173828125,
+        0.259521484375,
+        0.266357421875
+      ],
+      "ir_max": -1.3509072065353394,
+      "hps_at_ir_max": 0.255859375,
+      "div_pix": 0.1925,
+      "div_clip": 0.0333,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.0,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 2,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.9997,
+        3.9016,
+        3.4025,
+        2.0397,
+        2.3991
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -1.3862,
+        -1.6646,
+        -1.5074,
+        -1.3856
+      ]
+    },
+    {
+      "prompt_id": "009624-0144",
+      "prompt": "photograph of table shaped like an avocado, product, intricate detail",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024052,
+      "ir": [
+        -0.6240949630737305,
+        -0.5255937576293945,
+        -0.6381394267082214,
+        -0.5991659760475159
+      ],
+      "hps": [
+        0.268310546875,
+        0.26806640625,
+        0.2744140625,
+        0.269775390625
+      ],
+      "ir_max": -0.5255937576293945,
+      "hps_at_ir_max": 0.26806640625,
+      "div_pix": 0.0575,
+      "div_clip": 0.0103,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.4,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.0827,
+        1.0495,
+        3.1022,
+        3.3171,
+        3.3052
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.6694,
+        -0.5038,
+        -0.6636,
+        -0.6296
+      ]
+    },
+    {
+      "prompt_id": "009606-0136",
+      "prompt": "logo for a coffee chain",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024053,
+      "ir": [
+        1.0689888000488281,
+        0.9837844371795654,
+        0.9875021576881409,
+        1.1138800382614136
+      ],
+      "hps": [
+        0.221923828125,
+        0.2203369140625,
+        0.22412109375,
+        0.2110595703125
+      ],
+      "ir_max": 1.1138800382614136,
+      "hps_at_ir_max": 0.2110595703125,
+      "div_pix": 0.0822,
+      "div_clip": 0.0112,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.0,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.2237,
+        1.7923,
+        3.8603,
+        4.0,
+        1.7012
+      ],
+      "n_resamplings": 3,
+      "ir_guide": [
+        1.045,
+        1.0644,
+        0.9419,
+        1.1162
+      ]
+    },
+    {
+      "prompt_id": "009639-0195",
+      "prompt": "the sea, sunset, colorful, clear water, digital",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024054,
+      "ir": [
+        -0.2554668188095093,
+        -0.21030302345752716,
+        -0.09222961217164993,
+        -0.06307397037744522
+      ],
+      "hps": [
+        0.2763671875,
+        0.28369140625,
+        0.28125,
+        0.27880859375
+      ],
+      "ir_max": -0.06307397037744522,
+      "hps_at_ir_max": 0.27880859375,
+      "div_pix": 0.0814,
+      "div_clip": 0.0081,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.9473,
+        2.1464,
+        2.4967,
+        3.4832,
+        3.6562
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.3449,
+        -0.2696,
+        -0.1036,
+        -0.0732
+      ]
+    },
+    {
+      "prompt_id": "009662-0003",
+      "prompt": "minimalist watercolor art of paris, illustration, vector",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024055,
+      "ir": [
+        0.9086195826530457,
+        0.7612389922142029,
+        0.717300295829773,
+        0.7363430261611938
+      ],
+      "hps": [
+        0.2440185546875,
+        0.244873046875,
+        0.2410888671875,
+        0.2484130859375
+      ],
+      "ir_max": 0.9086195826530457,
+      "hps_at_ir_max": 0.2440185546875,
+      "div_pix": 0.1236,
+      "div_clip": 0.0113,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 88.9,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0001,
+        1.6387,
+        2.8523,
+        2.5729,
+        2.2457
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.789,
+        0.7113,
+        0.7064,
+        0.7381
+      ]
+    },
+    {
+      "prompt_id": "010374-0099",
+      "prompt": "cat with bunny ears",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024056,
+      "ir": [
+        1.753268837928772,
+        1.7497081756591797,
+        1.8230174779891968,
+        1.725997805595398
+      ],
+      "hps": [
+        0.307373046875,
+        0.3134765625,
+        0.31591796875,
+        0.2998046875
+      ],
+      "ir_max": 1.8230174779891968,
+      "hps_at_ir_max": 0.31591796875,
+      "div_pix": 0.2293,
+      "div_clip": 0.0316,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        2
+      ],
+      "n_lineages": 2,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.9353,
+        2.5954,
+        1.1087,
+        3.8229,
+        3.484
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.7582,
+        1.7583,
+        1.8129,
+        1.709
+      ]
+    },
+    {
+      "prompt_id": "010482-0092",
+      "prompt": "a retro arcade game",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024057,
+      "ir": [
+        0.6661812663078308,
+        0.6350740790367126,
+        0.6161404252052307,
+        0.46402832865715027
+      ],
+      "hps": [
+        0.26025390625,
+        0.25439453125,
+        0.26708984375,
+        0.27001953125
+      ],
+      "ir_max": 0.6661812663078308,
+      "hps_at_ir_max": 0.26025390625,
+      "div_pix": 0.134,
+      "div_clip": 0.0148,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0007,
+        2.5072,
+        1.946,
+        4.0,
+        3.1328
+      ],
+      "n_resamplings": 3,
+      "ir_guide": [
+        0.7277,
+        0.6747,
+        0.6275,
+        0.5128
+      ]
+    },
+    {
+      "prompt_id": "010490-0075",
+      "prompt": "portrait of a cute cyberpunk cat, realistic, professional",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024058,
+      "ir": [
+        1.7429449558258057,
+        1.7498153448104858,
+        1.6008154153823853,
+        1.5882899761199951
+      ],
+      "hps": [
+        0.30859375,
+        0.31494140625,
+        0.30908203125,
+        0.310546875
+      ],
+      "ir_max": 1.7498153448104858,
+      "hps_at_ir_max": 0.31494140625,
+      "div_pix": 0.1748,
+      "div_clip": 0.0182,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0067,
+        2.1911,
+        1.8752,
+        3.5271,
+        3.9101
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.7281,
+        1.7184,
+        1.6375,
+        1.6139
+      ]
+    },
+    {
+      "prompt_id": "010366-0012",
+      "prompt": "a photo of a very fat green parrot",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024059,
+      "ir": [
+        0.670750617980957,
+        0.8404214382171631,
+        0.6827415823936462,
+        0.7007280588150024
+      ],
+      "hps": [
+        0.307373046875,
+        0.315185546875,
+        0.313232421875,
+        0.31201171875
+      ],
+      "ir_max": 0.8404214382171631,
+      "hps_at_ir_max": 0.315185546875,
+      "div_pix": 0.0662,
+      "div_clip": 0.0041,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.0,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0038,
+        1.6111,
+        3.4068,
+        1.8544,
+        2.997
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.6324,
+        0.8065,
+        0.6445,
+        0.7094
+      ]
+    },
+    {
+      "prompt_id": "010361-0095",
+      "prompt": "retro sci fi art of an astronaut next to jupiter in a car",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024060,
+      "ir": [
+        1.1771936416625977,
+        1.2688453197479248,
+        1.156151294708252,
+        0.6714182496070862
+      ],
+      "hps": [
+        0.250732421875,
+        0.255859375,
+        0.258544921875,
+        0.25439453125
+      ],
+      "ir_max": 1.2688453197479248,
+      "hps_at_ir_max": 0.255859375,
+      "div_pix": 0.0726,
+      "div_clip": 0.0085,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.0,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.0621,
+        1.0003,
+        1.645,
+        3.562,
+        1.7026
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.153,
+        1.2727,
+        1.0017,
+        0.5802
+      ]
+    },
+    {
+      "prompt_id": "010525-0074",
+      "prompt": "a nova scotia duck tolling retriever with white chest and pink nose, professional, photography, of, very",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024061,
+      "ir": [
+        0.5204627513885498,
+        -0.04691947251558304,
+        -0.022347887977957726,
+        0.5709482431411743
+      ],
+      "hps": [
+        0.2252197265625,
+        0.2286376953125,
+        0.231689453125,
+        0.2333984375
+      ],
+      "ir_max": 0.5709482431411743,
+      "hps_at_ir_max": 0.2333984375,
+      "div_pix": 0.0677,
+      "div_clip": 0.0129,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.1197,
+        1.3498,
+        1.0039,
+        2.9101,
+        1.8436
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.5543,
+        0.0315,
+        0.206,
+        0.493
+      ]
+    },
+    {
+      "prompt_id": "010795-0050",
+      "prompt": "a portrait oil painting of a smart man in his mid - 4 0 s, brown hair, blue eyes, salt and pepper beard, full beard, red skin, big eye brows, highly detailed, artistic, intricate",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024062,
+      "ir": [
+        0.5418816208839417,
+        0.5203908085823059,
+        0.41302376985549927,
+        0.5223945379257202
+      ],
+      "hps": [
+        0.279541015625,
+        0.2457275390625,
+        0.275146484375,
+        0.270751953125
+      ],
+      "ir_max": 0.5418816208839417,
+      "hps_at_ir_max": 0.279541015625,
+      "div_pix": 0.0946,
+      "div_clip": 0.0134,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.0,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.4785,
+        1.004,
+        4.0,
+        3.9997,
+        2.8963
+      ],
+      "n_resamplings": 3,
+      "ir_guide": [
+        0.3878,
+        0.4679,
+        0.3957,
+        0.5354
+      ]
+    },
+    {
+      "prompt_id": "010873-0040",
+      "prompt": "face icon stylized minimalist trigun, loftis, cory behance hd by jesper ejsing, by rhads, makoto shinkai and lois van baarle, ilya kuvshinov, rossdraws global illumination",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024063,
+      "ir": [
+        0.9960751533508301,
+        0.8967244029045105,
+        0.9084554314613342,
+        0.9670618772506714
+      ],
+      "hps": [
+        0.2227783203125,
+        0.21728515625,
+        0.21044921875,
+        0.2164306640625
+      ],
+      "ir_max": 0.9960751533508301,
+      "hps_at_ir_max": 0.2227783203125,
+      "div_pix": 0.0546,
+      "div_clip": 0.004,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0,
+        2.0872,
+        1.0749,
+        2.872,
+        1.7115
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.9902,
+        0.9618,
+        0.8753,
+        0.9535
+      ]
+    },
+    {
+      "prompt_id": "010856-0009",
+      "prompt": "funny peanut butter",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024064,
+      "ir": [
+        1.3786933422088623,
+        0.881960928440094,
+        0.028528958559036255,
+        1.3935712575912476
+      ],
+      "hps": [
+        0.228271484375,
+        0.2265625,
+        0.2274169921875,
+        0.24072265625
+      ],
+      "ir_max": 1.3935712575912476,
+      "hps_at_ir_max": 0.24072265625,
+      "div_pix": 0.0644,
+      "div_clip": 0.0155,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.9996,
+        1.0,
+        4.0,
+        4.0,
+        1.7305
+      ],
+      "n_resamplings": 2,
+      "ir_guide": [
+        1.462,
+        0.9825,
+        0.0348,
+        1.3745
+      ]
+    },
+    {
+      "prompt_id": "011041-0080",
+      "prompt": "cinematic movie scene, beautiful Product shot film still of a Syd Mead futuristic modern sleek automobile speeding down a wet street at night in cyperpunk city, motion, hard surface modeling, soft, style of Stanley Kubrick cinematography",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024065,
+      "ir": [
+        0.7343177795410156,
+        0.3855903446674347,
+        0.2199310064315796,
+        0.20851582288742065
+      ],
+      "hps": [
+        0.247314453125,
+        0.2403564453125,
+        0.229248046875,
+        0.2303466796875
+      ],
+      "ir_max": 0.7343177795410156,
+      "hps_at_ir_max": 0.247314453125,
+      "div_pix": 0.1352,
+      "div_clip": 0.0145,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.3,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.6937,
+        1.2187,
+        4.0,
+        1.1048,
+        1.0666
+      ],
+      "n_resamplings": 3,
+      "ir_guide": [
+        0.6885,
+        0.3849,
+        0.2298,
+        0.2252
+      ]
+    },
+    {
+      "prompt_id": "010984-0022",
+      "prompt": "video game, art",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024066,
+      "ir": [
+        -0.3745713233947754,
+        -0.205276221036911,
+        -0.3281598687171936,
+        -0.14761993288993835
+      ],
+      "hps": [
+        0.2080078125,
+        0.2122802734375,
+        0.205322265625,
+        0.210693359375
+      ],
+      "ir_max": -0.14761993288993835,
+      "hps_at_ir_max": 0.210693359375,
+      "div_pix": 0.0458,
+      "div_clip": 0.0047,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.7,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.9915,
+        1.9738,
+        2.2954,
+        1.0474,
+        3.7958
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.2722,
+        -0.2436,
+        -0.2629,
+        -0.2143
+      ]
+    },
+    {
+      "prompt_id": "001251-0073",
+      "prompt": "really cool sketchy logo, edgy aesthetic, trending",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024067,
+      "ir": [
+        -0.5971876978874207,
+        -0.30771851539611816,
+        -0.144379124045372,
+        -0.194129079580307
+      ],
+      "hps": [
+        0.1939697265625,
+        0.19873046875,
+        0.2001953125,
+        0.19873046875
+      ],
+      "ir_max": -0.144379124045372,
+      "hps_at_ir_max": 0.2001953125,
+      "div_pix": 0.1488,
+      "div_clip": 0.0104,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0046,
+        3.9165,
+        1.883,
+        3.0714,
+        2.3326
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.6425,
+        -0.3574,
+        -0.1773,
+        -0.2102
+      ]
+    },
+    {
+      "prompt_id": "001161-0086",
+      "prompt": "a photograph of a mouldy and messy burger",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024068,
+      "ir": [
+        -0.849277675151825,
+        -1.1091266870498657,
+        -0.8803215622901917,
+        -0.7339851260185242
+      ],
+      "hps": [
+        0.289794921875,
+        0.292724609375,
+        0.29345703125,
+        0.29296875
+      ],
+      "ir_max": -0.7339851260185242,
+      "hps_at_ir_max": 0.29296875,
+      "div_pix": 0.0653,
+      "div_clip": 0.0056,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.4,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.114,
+        2.8838,
+        1.5466,
+        1.0903,
+        3.0445
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.9354,
+        -1.2063,
+        -0.982,
+        -0.9437
+      ]
+    },
+    {
+      "prompt_id": "001173-0078",
+      "prompt": "antique marble statue of gigachad",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024069,
+      "ir": [
+        0.9204403162002563,
+        0.751693606376648,
+        0.6614874005317688,
+        0.7268833518028259
+      ],
+      "hps": [
+        0.230224609375,
+        0.2257080078125,
+        0.2216796875,
+        0.2279052734375
+      ],
+      "ir_max": 0.9204403162002563,
+      "hps_at_ir_max": 0.230224609375,
+      "div_pix": 0.052,
+      "div_clip": 0.0075,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0502,
+        2.0086,
+        1.9002,
+        1.9519,
+        1.8923
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.9079,
+        0.7504,
+        0.6548,
+        0.6468
+      ]
+    },
+    {
+      "prompt_id": "001238-0091",
+      "prompt": "atmospheric psychedelic breathtaking translucent ethereal",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024070,
+      "ir": [
+        0.012192009948194027,
+        0.01372253242880106,
+        0.2671600878238678,
+        -0.11503159254789352
+      ],
+      "hps": [
+        0.2470703125,
+        0.2427978515625,
+        0.25146484375,
+        0.24609375
+      ],
+      "ir_max": 0.2671600878238678,
+      "hps_at_ir_max": 0.25146484375,
+      "div_pix": 0.1057,
+      "div_clip": 0.0176,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.5,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.9974,
+        2.5697,
+        3.1651,
+        1.8029,
+        1.478
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.0069,
+        0.0509,
+        0.2654,
+        -0.069
+      ]
+    },
+    {
+      "prompt_id": "001230-0030",
+      "prompt": "beautiful rainbow clouds, oil painting",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024071,
+      "ir": [
+        0.215484157204628,
+        0.20365799963474274,
+        0.29665088653564453,
+        0.3533269762992859
+      ],
+      "hps": [
+        0.275390625,
+        0.288818359375,
+        0.26708984375,
+        0.274169921875
+      ],
+      "ir_max": 0.3533269762992859,
+      "hps_at_ir_max": 0.274169921875,
+      "div_pix": 0.0627,
+      "div_clip": 0.0151,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.6,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.2087,
+        2.4518,
+        1.0479,
+        2.3313,
+        2.3263
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.2159,
+        0.2463,
+        0.3357,
+        0.432
+      ]
+    },
+    {
+      "prompt_id": "001227-0027",
+      "prompt": "footage of an astronaut in a tropical beach",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024072,
+      "ir": [
+        1.909457802772522,
+        1.923608422279358,
+        1.9329948425292969,
+        1.9355436563491821
+      ],
+      "hps": [
+        0.3251953125,
+        0.321533203125,
+        0.30615234375,
+        0.319091796875
+      ],
+      "ir_max": 1.9355436563491821,
+      "hps_at_ir_max": 0.319091796875,
+      "div_pix": 0.1284,
+      "div_clip": 0.0098,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.4,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0,
+        2.033,
+        2.7358,
+        3.9067,
+        3.9789
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.8974,
+        1.9232,
+        1.9371,
+        1.9346
+      ]
+    },
+    {
+      "prompt_id": "001205-0101",
+      "prompt": "A realistic photo of a man with big ears",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024073,
+      "ir": [
+        1.5094889402389526,
+        1.565402865409851,
+        1.5945295095443726,
+        1.5858025550842285
+      ],
+      "hps": [
+        0.261962890625,
+        0.26123046875,
+        0.270263671875,
+        0.267333984375
+      ],
+      "ir_max": 1.5945295095443726,
+      "hps_at_ir_max": 0.270263671875,
+      "div_pix": 0.1233,
+      "div_clip": 0.0221,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0,
+        3.8999,
+        3.966,
+        3.4473,
+        3.9134
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.4904,
+        1.5783,
+        1.6087,
+        1.6163
+      ]
+    },
+    {
+      "prompt_id": "001273-0046",
+      "prompt": "a red car",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024074,
+      "ir": [
+        0.7174549102783203,
+        0.876763105392456,
+        0.9279235601425171,
+        0.7693914175033569
+      ],
+      "hps": [
+        0.259521484375,
+        0.263671875,
+        0.254638671875,
+        0.26318359375
+      ],
+      "ir_max": 0.9279235601425171,
+      "hps_at_ir_max": 0.254638671875,
+      "div_pix": 0.0803,
+      "div_clip": 0.0089,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.9,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.727,
+        1.0216,
+        3.5452,
+        3.9993,
+        2.8241
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.7377,
+        0.8759,
+        0.8745,
+        0.7839
+      ]
+    },
+    {
+      "prompt_id": "001637-0022",
+      "prompt": "The End, digital art, trending",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024075,
+      "ir": [
+        0.6217805743217468,
+        0.8363140225410461,
+        0.7913389205932617,
+        0.875379204750061
+      ],
+      "hps": [
+        0.226806640625,
+        0.2330322265625,
+        0.2364501953125,
+        0.23486328125
+      ],
+      "ir_max": 0.875379204750061,
+      "hps_at_ir_max": 0.23486328125,
+      "div_pix": 0.0845,
+      "div_clip": 0.0102,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.8,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.2172,
+        1.0024,
+        2.9087,
+        3.9179,
+        2.3949
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.587,
+        0.8501,
+        0.8174,
+        0.9157
+      ]
+    },
+    {
+      "prompt_id": "002298-0089",
+      "prompt": "trending on artstation",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024076,
+      "ir": [
+        -0.1563882976770401,
+        -0.33373507857322693,
+        0.17174416780471802,
+        0.0744638666510582
+      ],
+      "hps": [
+        0.1827392578125,
+        0.1778564453125,
+        0.1866455078125,
+        0.1842041015625
+      ],
+      "ir_max": 0.17174416780471802,
+      "hps_at_ir_max": 0.1866455078125,
+      "div_pix": 0.1074,
+      "div_clip": 0.0118,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.7,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.2486,
+        1.0414,
+        1.8964,
+        2.1351,
+        1.5101
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.0683,
+        -0.3505,
+        0.1968,
+        0.1127
+      ]
+    },
+    {
+      "prompt_id": "005633-0081",
+      "prompt": "February 2022",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024077,
+      "ir": [
+        0.9247779250144958,
+        0.9581116437911987,
+        0.8864672183990479,
+        0.9494837522506714
+      ],
+      "hps": [
+        0.2275390625,
+        0.2327880859375,
+        0.2249755859375,
+        0.2330322265625
+      ],
+      "ir_max": 0.9581116437911987,
+      "hps_at_ir_max": 0.2327880859375,
+      "div_pix": 0.0679,
+      "div_clip": 0.0145,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.9845,
+        1.1021,
+        3.9564,
+        3.7136,
+        3.9526
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.965,
+        0.9363,
+        0.8951,
+        0.9554
+      ]
+    },
+    {
+      "prompt_id": "012203-0031",
+      "prompt": "technology",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024078,
+      "ir": [
+        0.038685329258441925,
+        0.07247578352689743,
+        -0.07906753569841385,
+        0.18848535418510437
+      ],
+      "hps": [
+        0.2423095703125,
+        0.2440185546875,
+        0.23583984375,
+        0.2340087890625
+      ],
+      "ir_max": 0.18848535418510437,
+      "hps_at_ir_max": 0.2340087890625,
+      "div_pix": 0.1511,
+      "div_clip": 0.0238,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.4,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0017,
+        2.3801,
+        3.3084,
+        3.7769,
+        2.5432
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.0274,
+        0.0278,
+        -0.0807,
+        0.1341
+      ]
+    },
+    {
+      "prompt_id": "001973-0059",
+      "prompt": "a beautiful plant, aesthetic, oil, painting, pale",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024079,
+      "ir": [
+        0.8617926836013794,
+        0.7576507925987244,
+        0.8329191207885742,
+        0.6416405439376831
+      ],
+      "hps": [
+        0.25439453125,
+        0.264892578125,
+        0.265380859375,
+        0.26171875
+      ],
+      "ir_max": 0.8617926836013794,
+      "hps_at_ir_max": 0.25439453125,
+      "div_pix": 0.0549,
+      "div_clip": 0.0113,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.7,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.8882,
+        1.1004,
+        2.3488,
+        2.0923,
+        3.0875
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.8343,
+        0.7342,
+        0.8007,
+        0.6549
+      ]
+    },
+    {
+      "prompt_id": "001720-0044",
+      "prompt": "field of light blue lotus flowers, minimalistic art, elegant",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024080,
+      "ir": [
+        0.08743461966514587,
+        -0.32522088289260864,
+        -0.06274430453777313,
+        -0.019710557535290718
+      ],
+      "hps": [
+        0.255126953125,
+        0.25146484375,
+        0.253173828125,
+        0.25244140625
+      ],
+      "ir_max": 0.08743461966514587,
+      "hps_at_ir_max": 0.255126953125,
+      "div_pix": 0.0156,
+      "div_clip": 0.0023,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.5,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0,
+        4.0,
+        1.1573,
+        1.4979,
+        2.8752
+      ],
+      "n_resamplings": 3,
+      "ir_guide": [
+        0.0213,
+        -0.1698,
+        -0.0318,
+        -0.0928
+      ]
+    },
+    {
+      "prompt_id": "008707-0095",
+      "prompt": "aerial photography forest",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024081,
+      "ir": [
+        0.9354419112205505,
+        1.0055793523788452,
+        1.0516555309295654,
+        0.9759154319763184
+      ],
+      "hps": [
+        0.276123046875,
+        0.266845703125,
+        0.26708984375,
+        0.27099609375
+      ],
+      "ir_max": 1.0516555309295654,
+      "hps_at_ir_max": 0.26708984375,
+      "div_pix": 0.1081,
+      "div_clip": 0.0119,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.5,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.7525,
+        1.0203,
+        1.0049,
+        2.4932,
+        3.4131
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.8655,
+        0.9024,
+        0.9606,
+        0.925
+      ]
+    },
+    {
+      "prompt_id": "000246-0117",
+      "prompt": "surface of an alien planet",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024082,
+      "ir": [
+        -0.7946816682815552,
+        -0.7538130283355713,
+        -0.8199669718742371,
+        -0.753454864025116
+      ],
+      "hps": [
+        0.21826171875,
+        0.21337890625,
+        0.2144775390625,
+        0.2174072265625
+      ],
+      "ir_max": -0.753454864025116,
+      "hps_at_ir_max": 0.2174072265625,
+      "div_pix": 0.0766,
+      "div_clip": 0.0083,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.3,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.4306,
+        1.0116,
+        1.7327,
+        2.5333,
+        2.3494
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.8138,
+        -0.8251,
+        -0.8253,
+        -0.6994
+      ]
+    },
+    {
+      "prompt_id": "001369-0084",
+      "prompt": "greek or roman sculpture in marble of a philosopher holding a skull, in a museum background, hyperrealistic photograph in the style of bernini, golden hour",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024083,
+      "ir": [
+        -0.5990076661109924,
+        -0.6204100251197815,
+        -0.6474952697753906,
+        -0.8414011001586914
+      ],
+      "hps": [
+        0.2322998046875,
+        0.2252197265625,
+        0.2186279296875,
+        0.2113037109375
+      ],
+      "ir_max": -0.5990076661109924,
+      "hps_at_ir_max": 0.2322998046875,
+      "div_pix": 0.1857,
+      "div_clip": 0.0132,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.7,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0005,
+        2.6787,
+        3.4217,
+        3.5871,
+        3.4028
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.6296,
+        -0.585,
+        -0.6288,
+        -0.808
+      ]
+    },
+    {
+      "prompt_id": "011729-0165",
+      "prompt": "roman temple ruin, soft grey and blue natural light, crepuscular rays, intricate, digital painting, illustration, art by greg rutkowski and luis rollo and uang guangjian and gil elvgren, symmetry",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024084,
+      "ir": [
+        1.291081428527832,
+        1.1012362241744995,
+        1.1648080348968506,
+        1.2168394327163696
+      ],
+      "hps": [
+        0.269775390625,
+        0.274658203125,
+        0.28271484375,
+        0.274169921875
+      ],
+      "ir_max": 1.291081428527832,
+      "hps_at_ir_max": 0.269775390625,
+      "div_pix": 0.0501,
+      "div_clip": 0.0056,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.6,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0001,
+        1.2967,
+        2.2528,
+        1.0858,
+        2.8943
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.197,
+        0.988,
+        1.2665,
+        1.2152
+      ]
+    },
+    {
+      "prompt_id": "000606-0024",
+      "prompt": "frozen food logo",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024085,
+      "ir": [
+        1.3353568315505981,
+        1.515882134437561,
+        1.65195631980896,
+        1.54598867893219
+      ],
+      "hps": [
+        0.251708984375,
+        0.261962890625,
+        0.275146484375,
+        0.24951171875
+      ],
+      "ir_max": 1.65195631980896,
+      "hps_at_ir_max": 0.275146484375,
+      "div_pix": 0.1298,
+      "div_clip": 0.0219,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.3,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0019,
+        3.0337,
+        2.4085,
+        3.294,
+        2.8259
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.3297,
+        1.5963,
+        1.6788,
+        1.5077
+      ]
+    },
+    {
+      "prompt_id": "000304-0153",
+      "prompt": "chicken",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024086,
+      "ir": [
+        1.0007071495056152,
+        0.9475379586219788,
+        0.8685001134872437,
+        1.0155534744262695
+      ],
+      "hps": [
+        0.282958984375,
+        0.2822265625,
+        0.287353515625,
+        0.280517578125
+      ],
+      "ir_max": 1.0155534744262695,
+      "hps_at_ir_max": 0.280517578125,
+      "div_pix": 0.0815,
+      "div_clip": 0.0053,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.9,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.875,
+        1.2179,
+        1.9854,
+        1.3894,
+        1.5
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.0275,
+        0.962,
+        0.9948,
+        1.0511
+      ]
+    },
+    {
+      "prompt_id": "005456-0082",
+      "prompt": "packs of bubblegum from the fifties",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024087,
+      "ir": [
+        0.05544286221265793,
+        0.39157435297966003,
+        0.45061004161834717,
+        0.2169472575187683
+      ],
+      "hps": [
+        0.2178955078125,
+        0.2303466796875,
+        0.23193359375,
+        0.2279052734375
+      ],
+      "ir_max": 0.45061004161834717,
+      "hps_at_ir_max": 0.23193359375,
+      "div_pix": 0.0751,
+      "div_clip": 0.0124,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.7,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.0791,
+        2.0985,
+        1.0149,
+        4.0,
+        1.8766
+      ],
+      "n_resamplings": 3,
+      "ir_guide": [
+        0.112,
+        0.4559,
+        0.254,
+        0.3228
+      ]
+    },
+    {
+      "prompt_id": "011623-0101",
+      "prompt": "A cheeseburger",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024088,
+      "ir": [
+        1.4766757488250732,
+        1.4751101732254028,
+        1.4669021368026733,
+        1.3447599411010742
+      ],
+      "hps": [
+        0.305908203125,
+        0.30615234375,
+        0.300537109375,
+        0.318359375
+      ],
+      "ir_max": 1.4766757488250732,
+      "hps_at_ir_max": 0.305908203125,
+      "div_pix": 0.1058,
+      "div_clip": 0.0189,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.7,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.4041,
+        2.3739,
+        3.9963,
+        1.8842,
+        2.9165
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.4824,
+        1.4692,
+        1.4466,
+        1.4252
+      ]
+    },
+    {
+      "prompt_id": "001737-0018",
+      "prompt": "a car chilling on the beach, sunset",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024089,
+      "ir": [
+        1.47581148147583,
+        1.5562760829925537,
+        1.4955440759658813,
+        1.5842245817184448
+      ],
+      "hps": [
+        0.307861328125,
+        0.289794921875,
+        0.295166015625,
+        0.302490234375
+      ],
+      "ir_max": 1.5842245817184448,
+      "hps_at_ir_max": 0.302490234375,
+      "div_pix": 0.1024,
+      "div_clip": 0.0113,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.3,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.3751,
+        2.1043,
+        3.6966,
+        2.7754,
+        3.2424
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.4989,
+        1.5871,
+        1.5012,
+        1.5943
+      ]
+    },
+    {
+      "prompt_id": "004971-0071",
+      "prompt": "a sports car, motion blur",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024090,
+      "ir": [
+        1.3037488460540771,
+        1.4413291215896606,
+        1.3058016300201416,
+        1.3983445167541504
+      ],
+      "hps": [
+        0.2198486328125,
+        0.224365234375,
+        0.2275390625,
+        0.2239990234375
+      ],
+      "ir_max": 1.4413291215896606,
+      "hps_at_ir_max": 0.224365234375,
+      "div_pix": 0.1569,
+      "div_clip": 0.0096,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.5,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.1624,
+        1.8205,
+        4.0,
+        4.0,
+        3.5822
+      ],
+      "n_resamplings": 2,
+      "ir_guide": [
+        1.2974,
+        1.3746,
+        1.4164,
+        1.4725
+      ]
+    },
+    {
+      "prompt_id": "005351-0071",
+      "prompt": "vintage classic motorcycle, moebius and ralph mcquarrie style, retro sci - fi, pulp sci - fi, technical",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024091,
+      "ir": [
+        0.6815598011016846,
+        0.6336390972137451,
+        0.6163787841796875,
+        0.7587759494781494
+      ],
+      "hps": [
+        0.22998046875,
+        0.2374267578125,
+        0.2296142578125,
+        0.2288818359375
+      ],
+      "ir_max": 0.7587759494781494,
+      "hps_at_ir_max": 0.2288818359375,
+      "div_pix": 0.1132,
+      "div_clip": 0.012,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.6,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        3,
+        3,
+        3,
+        3
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0,
+        1.3923,
+        2.7261,
+        2.9895,
+        3.6336
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.6533,
+        0.649,
+        0.6777,
+        0.7532
+      ]
+    },
+    {
+      "prompt_id": "000969-0041",
+      "prompt": "Beatiful Cameraphone photograph of inside a room within an empty mall",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024092,
+      "ir": [
+        0.3406331539154053,
+        0.40504419803619385,
+        0.34091803431510925,
+        0.2569118142127991
+      ],
+      "hps": [
+        0.25927734375,
+        0.26318359375,
+        0.26220703125,
+        0.258056640625
+      ],
+      "ir_max": 0.40504419803619385,
+      "hps_at_ir_max": 0.26318359375,
+      "div_pix": 0.048,
+      "div_clip": 0.0037,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.3,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.9596,
+        1.0567,
+        3.1532,
+        1.1344,
+        2.5561
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.3784,
+        0.5055,
+        0.4286,
+        0.2515
+      ]
+    },
+    {
+      "prompt_id": "003940-0078",
+      "prompt": "the grand hall of the sacred library oil painting by james gurney",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024093,
+      "ir": [
+        0.8986412882804871,
+        0.9103164672851562,
+        0.9746252298355103,
+        0.7630335688591003
+      ],
+      "hps": [
+        0.2900390625,
+        0.296142578125,
+        0.295166015625,
+        0.29296875
+      ],
+      "ir_max": 0.9746252298355103,
+      "hps_at_ir_max": 0.295166015625,
+      "div_pix": 0.082,
+      "div_clip": 0.0142,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.7,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.9661,
+        1.565,
+        1.0042,
+        3.3367,
+        2.6923
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.8361,
+        0.9029,
+        0.9873,
+        0.6985
+      ]
+    },
+    {
+      "prompt_id": "003532-0061",
+      "prompt": "hyperdetailed samsung store, oak parquet, black walls, digital walls, plants, light corona octane",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024094,
+      "ir": [
+        1.241695761680603,
+        1.3226087093353271,
+        1.52461576461792,
+        1.4926201105117798
+      ],
+      "hps": [
+        0.244140625,
+        0.24658203125,
+        0.248046875,
+        0.25537109375
+      ],
+      "ir_max": 1.52461576461792,
+      "hps_at_ir_max": 0.248046875,
+      "div_pix": 0.0527,
+      "div_clip": 0.0054,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.3,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.2096,
+        1.1179,
+        1.0674,
+        1.4083,
+        2.8517
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.1861,
+        1.2947,
+        1.448,
+        1.4828
+      ]
+    },
+    {
+      "prompt_id": "002870-0080",
+      "prompt": "a modern style living room in a big mansion next to a giant window overlooking the pool",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024095,
+      "ir": [
+        -0.640438437461853,
+        -0.5827451944351196,
+        -0.5129119157791138,
+        -0.18611294031143188
+      ],
+      "hps": [
+        0.2626953125,
+        0.2578125,
+        0.265869140625,
+        0.263427734375
+      ],
+      "ir_max": -0.18611294031143188,
+      "hps_at_ir_max": 0.263427734375,
+      "div_pix": 0.0591,
+      "div_clip": 0.0093,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.7,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.1981,
+        2.3105,
+        2.5633,
+        1.1076,
+        1.7554
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.6111,
+        -0.7258,
+        -0.5418,
+        -0.3905
+      ]
+    },
+    {
+      "prompt_id": "001013-0094",
+      "prompt": "modern oil painting Atelier",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024096,
+      "ir": [
+        0.7575182318687439,
+        0.7520318031311035,
+        0.8202691078186035,
+        0.6119255423545837
+      ],
+      "hps": [
+        0.2626953125,
+        0.264892578125,
+        0.261474609375,
+        0.2489013671875
+      ],
+      "ir_max": 0.8202691078186035,
+      "hps_at_ir_max": 0.261474609375,
+      "div_pix": 0.0947,
+      "div_clip": 0.0103,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.5,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0315,
+        1.065,
+        3.3656,
+        2.4666,
+        3.7818
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.6537,
+        0.6864,
+        0.7032,
+        0.5887
+      ]
+    },
+    {
+      "prompt_id": "002188-0054",
+      "prompt": "photo of a interior taken with a cheap digital camera at night flash lighting",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024097,
+      "ir": [
+        -0.022539939731359482,
+        -0.26259344816207886,
+        -0.1896781325340271,
+        0.18028225004673004
+      ],
+      "hps": [
+        0.2396240234375,
+        0.2276611328125,
+        0.234130859375,
+        0.2352294921875
+      ],
+      "ir_max": 0.18028225004673004,
+      "hps_at_ir_max": 0.2352294921875,
+      "div_pix": 0.0674,
+      "div_clip": 0.0103,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.8,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.4228,
+        2.7912,
+        1.6654,
+        2.7527,
+        1.4424
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.2213,
+        -0.3611,
+        -0.1533,
+        0.1093
+      ]
+    },
+    {
+      "prompt_id": "000324-0042",
+      "prompt": "water bottle",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024098,
+      "ir": [
+        0.721109926700592,
+        0.6334551572799683,
+        0.6556754112243652,
+        0.6447605490684509
+      ],
+      "hps": [
+        0.25048828125,
+        0.246337890625,
+        0.255859375,
+        0.2548828125
+      ],
+      "ir_max": 0.721109926700592,
+      "hps_at_ir_max": 0.25048828125,
+      "div_pix": 0.0753,
+      "div_clip": 0.0281,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.6,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.0649,
+        3.7047,
+        3.6487,
+        3.2978,
+        3.6676
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.7666,
+        0.7114,
+        0.6191,
+        0.6611
+      ]
+    },
+    {
+      "prompt_id": "000562-0011",
+      "prompt": "a coffee mug made of cardboard",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024099,
+      "ir": [
+        1.668404221534729,
+        1.7097179889678955,
+        1.5246968269348145,
+        1.6383086442947388
+      ],
+      "hps": [
+        0.283935546875,
+        0.29150390625,
+        0.276123046875,
+        0.27685546875
+      ],
+      "ir_max": 1.7097179889678955,
+      "hps_at_ir_max": 0.29150390625,
+      "div_pix": 0.0961,
+      "div_clip": 0.0188,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 89.4,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "root_slots": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "n_lineages": 1,
+      "lam_schedule": "constant",
+      "lam_placement": "terminal",
+      "lam_at_schedule": [
+        10.0,
+        10.0,
+        10.0,
+        10.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.7652,
+        1.6451,
+        2.8418,
+        3.6037,
+        3.1752
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.6699,
+        1.7333,
+        1.5044,
+        1.6611
+      ]
+    }
+  ]
+}
