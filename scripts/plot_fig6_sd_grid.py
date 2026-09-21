@@ -168,9 +168,20 @@ def main():
 
     fig.suptitle(f"Figure 6 — SD v1.5 : ce que {', '.join(ordre)} ont produit sur le même x_T",
                  fontsize=12, color=INK, x=0.012, ha="left", y=0.995)
+    # Une ligne par variante : sans ça le lecteur lit les quatre bandes comme du lambda constant.
+    rampe = {"constant": "λ constant", "linear": "λ_t = λ_T p", "quad": "λ_t = λ_T p²"}
+    conf = []
+    for name in ordre:
+        if name not in VARIANTES:
+            continue
+        o = VARIANTES[name][1]
+        conf.append(f"{name} : {rampe[o.get('fk_lam_schedule', args.fk_lam_schedule)]}, "
+                    f"seuil {o.get('fk_threshold', args.fk_threshold):g}, "
+                    f"{o.get('fk_lam_placement', args.fk_lam_placement)}")
     fig.text(0.012, 0.004,
              "score = ImageReward recalculé sur l'image régénérée  ·  cadre = particule que l'ImageReward désigne  ·  "
-             f"λ={args.lam:g}, MAX, calendrier {args.fk_schedule}  ·  même générateur par échantillonneur",
+             f"λ_T={args.lam:g}, MAX, calendrier {args.fk_schedule}  ·  fk4 : λ constant, seuil {args.fk_threshold:g}"
+             + ("  ·  " + "  ·  ".join(conf) if conf else ""),
              fontsize=8, color=INK_LIGHT, family="monospace")
     fig.tight_layout(rect=(0, 0.025, 1, 0.94))
     out = Path(args.out)

@@ -265,15 +265,61 @@ taught, kept as rules:
   terminal path's `logG` byte-identical, since it is what the running screen
   imports.
 
+## What the screen says (21/09, 00:15)
+
+The reference regenerated with the two fields gives the scale that was missing:
+**`fk4` ends on 1.00 lineage out of 4 on all twenty prompts**, `div_pix` 0.0910
+against best-of-4's 0.3269. The four images of an `fk4` run are one image, which
+is what figure 6 was showing.
+
+Eight ramps, paired on the same $x_T$ against that `fk4`:
+
+| tag | placement | IR - fk4 | div_pix - fk4 | lineages | gap to bon4 closed |
+|---|---|---|---|---|---|
+| `T1` | terminal | +0.034 +/- 0.053 | +0.007 +/- 0.010 | 1.10 | 3% |
+| `T1t` | tempering | +0.012 +/- 0.048 | +0.036 +/- 0.014 | 1.35 | 15% |
+| `T1A05` | terminal | +0.033 +/- 0.058 | +0.008 +/- 0.012 | 1.25 | 3% |
+| `T1tA05` | tempering | +0.002 +/- 0.049 | +0.045 +/- 0.016 | 1.55 | 19% |
+| `T2` | terminal | -0.100 +/- 0.092 | +0.048 +/- 0.018 | 1.55 | 20% |
+| `T2t` | tempering | +0.030 +/- 0.054 | +0.050 +/- 0.019 | 1.50 | 21% |
+| `T2A05` | terminal | -0.023 +/- 0.070 | +0.081 +/- 0.017 | 1.95 | 34% |
+| `T2tA05` | tempering | -0.034 +/- 0.081 | +0.090 +/- 0.018 | 2.05 | 38% |
+
+**Two findings, and they are not the same claim.**
+
+On `ir_max`, nothing beats `fk4`: all eight differences sit inside one standard
+error of zero. A time-dependent lambda is not the lever for the reward, which is
+what the first screen had already said of a constant one. `S60` at +0.094 stays
+the only candidate for the table.
+
+On the collapse, the improvement is real and measured. `T2tA05` doubles the
+lineages and closes 38% of the diversity gap to best-of-4, at 5 standard errors
+from zero. The tempering placement is what buys it: at equal ramp and threshold
+it wins on `div_pix` in all four pairs, +0.007 -> +0.036, +0.008 -> +0.045,
++0.048 -> +0.050, +0.081 -> +0.090. On `ir_max` it pulls the variant back toward
+`fk4`, which costs where the terminal placement was ahead and rescues `T2`,
+-0.100 -> +0.030.
+
+**The prediction written before the run was half wrong.** Tempering kept
+`T2A05`'s diversity and added to it, 34% -> 38%, as expected. It did not lift
+`ir_max` back above zero the way it did for `T2`: -0.023 -> -0.034, a move
+smaller than its own error bar. The rescue does not reproduce once the 0.5
+threshold is already in place, which says the two mechanisms — catch-up term and
+skipped resamplings — overlap rather than add.
+
+Figure: `figures/fig6_sd_collapse.png`, rows `bon4` / `fk4` / `T2A05` /
+`T2tA05`, on a win (`007086-0024`, div +0.26, 4 lineages out of 4), a median
+(`007045-0013`, +0.08) and a loss (`007086-0087`, -0.04, still one lineage).
+
 ## What remains, in order
 
-1. `smc/fk.py` and `tests/test_fk.py` per the rules above, by hand: restore the
-   two deleted tests (`git show HEAD:tests/test_fk.py`) and see them green, then
-   merge `potentials`, green again.
-2. After the queue (about 01:00): `compare_sd_variants.py`, read `ir_max` against
-   `fk4` and `bon4`, and `n_lineages` / `div_pix` against the regenerated
-   reference. Figure 6 for the best variant with a win, a median and a loss —
-   not three winners.
-3. The one or two ahead go to 100 prompts x 3 seeds and enter the table as a
-   stated deviation; the write-up says whether the claim is about `ir_max` or
-   about collapse.
+1. The claim to defend has to be named before the 100-prompt run: `ir_max`, where
+   `S60` is ahead and no ramp is, or the collapse, where `T2tA05` is. They do not
+   point at the same variant and the write-up cannot have both.
+2. Whichever goes to 100 prompts x 3 seeds enters the table as a stated deviation
+   from the paper's constant lambda. At 100 prompts the paired standard error
+   falls to about 0.026, which is what would settle the `ir_max` question that
+   20 prompts can only rank.
+3. `div_pix` is a pixel proxy. If diversity becomes the claim, it needs a
+   perceptual metric behind it — LPIPS or CLIP distance — and neither is in the
+   sd venv today.
