@@ -130,3 +130,41 @@ appear nowhere in its source.
 
 Seven constats, each recomputed from the files or from `potentials()`. It takes a
 few seconds and needs no GPU.
+
+## What to change, and what a test should pin
+
+Two corrections follow from the findings, cheapest first. Both land in files the
+code contract reserves to the author, so what follows is where and why, not the
+Python.
+
+**First, run `difference` on SD.** It is the one potential never tried on this
+stack, it is what the paper's appendix says produced the numbers table 1 prints,
+and it is not a ratchet: its statistic is the current reward, which keeps moving,
+so selection continues past the first step instead of stopping there. That is
+visible on CIFAR, where it resamples 74 times against `max`'s 1.7 and moves the
+reward 0.66 to 10.45 against 0.66 to 2.61.
+
+Where: `sample_fk` in `scripts/run_sd_baseline.py` passes the literal `"max"` to
+`fk_steer`. It needs the potential as an argument, plumbed from a flag defaulting
+to `max`, and written into every record so the JSON still says what produced it.
+Then one run at the paper's recipe, 20 prompts at seed 2024, paired against the
+existing `fk4` on shared x_T, about 20 minutes.
+
+**Second, if that does not close it, decouple lambda from the degeneracy.**
+Bisect lambda_t at each scheduled step so the ESS after reweighting equals k/2,
+with lambda_T = 10 imposed so the target `exp(10 r(x_0))` is unchanged: adaptive
+tempering, Chopin and Papaspiliopoulos ch. 17, Jasra, Stephens, Doucet and
+Tsagaris 2011. It lands where `lam_schedule[i]` is read in `smc/fk.py`, which
+makes the schedule a callable rather than a list. What it does that the ramps did
+not is *raise* lambda at the later steps, where the ratchet currently leaves no
+selection at all; the ramps only lowered it early, and that half is already known
+to buy nothing. It cannot rescue a step where every increment is zero.
+
+**The property worth pinning, because it is the failure itself.** On a schedule
+where `max` never resamples, `fk_steer` returns exactly what `best_of_n` returns
+from the same generator: finding 3 above is that statement, measured. A test that
+asserts it turns "max degenerates to best-of-k" from an observation into an
+invariant, and it would fail the moment a change makes `max` select again, which
+is the point of making the change. The existing telescoping and lambda = 0
+neutrality tests stay green either way; the first is what says a per-step lambda
+has not broken the product constraint.
