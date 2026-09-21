@@ -75,7 +75,11 @@ def sample_fk(pipe, prompt, n, generator, args):
     anc = info["ancestors"]
     for i in range(anc.shape[0] - 1, -1, -1):
         slots = anc[i][slots]
-    extra = {"lam": args.lam, "potential": "max", "threshold": args.fk_threshold,
+    root_slots = slots.tolist()
+    extra = {"lam": args.lam,
+             "potential": "max",
+             "threshold": args.fk_threshold,
+             "root_slots": root_slots,
              "n_lineages": int(torch.unique(slots).numel()),
              "lam_schedule": args.fk_lam_schedule, "lam_placement": args.fk_lam_placement,
              "lam_at_schedule": [round(args.lam if lam_schedule is None else lam_schedule[i], 3) for i in schedule],
@@ -103,6 +107,42 @@ def diversite(images, taille=64):
 # images PIL, et éventuellement un dict de champs à verser dans l'enregistrement.
 SAMPLERS = {"k1": (sample_independent, 1), "bon4": (sample_independent, 4), "fk4": (sample_fk, 4),
             "bon8": (sample_independent, 8), "fk8": (sample_fk, 8)}
+
+
+def div_clip(images):
+    """Distance cosinus moyenne par paires sous l'encodeur d'images de HPS v2.1.
+
+    Rend None pour N < 2 (k1). Lève une RuntimeError si les structures de HPSv2
+    ne sont pas chargées en mémoire après le passage du juge.
+    """
+    if len(images) < 2:
+        return None
+
+    from hpsv2.img_score import model_dict
+
+    if "model" not in model_dict or "preprocess_val" not in model_dict:
+        raise RuntimeError(
+            "div_clip appelé sans modèle HPSv2 initialisé : l'appel à hpsv2.score "
+            "doit précéder div_clip."
+        )
+
+    model = model_dict["model"]
+    preprocess = model_dict["preprocess_val"]
+
+    # Prétraitement natif HPSv2 (ViT-H/14, fp32 sur CUDA)
+    tensors = torch.stack([preprocess(im) for im in images]).to("cuda")
+
+    with torch.no_grad():
+        feats = model.encode_image(tensors)
+        feats = feats / feats.norm(dim=-1, keepdim=True)
+        sims = torch.mm(feats, feats.t())
+
+    # Triangle supérieur strict (paires distinctes i < j)
+    n = len(images)
+    idx = torch.triu_indices(n, n, offset=1)
+    pairwise_dist = 1.0 - sims[idx[0], idx[1]]
+
+    return round(float(pairwise_dist.mean().item()), 4)
 
 
 def main():
@@ -197,16 +237,21 @@ def main():
                 best = max(range(len(images)), key=lambda i: ir_scores[i])
 
                 records.append({
-                    "prompt_id": pid, "prompt": prompt, "sampler": name, "n": n, "seed": seed, "seed_effective": effective,
-                    "ir": ir_scores, "hps": hps,
-                    # la table reporte la particule choisie par IR : son HPS, et non le max de HPS
-                    "ir_max": ir_scores[best], "hps_at_ir_max": hps[best],
-                    "div_pix": diversite(images),
-                    "n_unet_calls": compteur["calls"], "n_unet_rows": compteur["rows"],
-                    "unet_batch": compteur["batch"],
-                    "seconds": round(dt, 1), **commun, **extra,
-                })
-                out.write_text(json.dumps({"runs": records}, indent=2))
+                        "prompt_id": pid, "prompt": prompt, "sampler": name, "n": n, "seed": seed, "seed_effective": effective,
+                        "ir": ir_scores, "hps": hps,
+                        "ir_max": ir_scores[best], "hps_at_ir_max": hps[best],
+                        "div_pix": diversite(images),
+                        "div_clip": div_clip(images),
+                        "n_unet_calls": compteur["calls"], "n_unet_rows": compteur["rows"],
+                        "unet_batch": compteur["batch"],
+                        "seconds": round(dt, 1), **commun, **extra,
+                    })
+                # Ecriture atomique : Onyxia suspend le service en scalant a 0, et le
+                # SIGKILL tombe 30 s apres sans que le process nohup voie le SIGTERM.
+                # En plein write_text le fichier serait tronque et la reprise perdrait tout.
+                tmp = out.with_suffix(".json.tmp")
+                tmp.write_text(json.dumps({"runs": records}, indent=2))
+                tmp.replace(out)
                 # SD, ImageReward et le ViT-H de hpsv2 tiennent la VRAM ensemble, et
                 # hpsv2.score recharge son checkpoint a chaque appel : sans ca la
                 # fragmentation finit par declencher un OOM en pleine nuit.
