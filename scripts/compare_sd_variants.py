@@ -40,7 +40,7 @@ def main():
     ref_fk, ref_bon = par_cle(base, "fk4"), par_cle(base, "bon4")
 
     print(f"{'variante':8s} {'n':>3s}  {'IR vs fk4':>18s} {'gagnés':>7s}  {'IR vs best-of-N':>18s} {'gagnés':>7s}  "
-          f"{'HPS vs fk4':>18s}  {'ESS t=80':>8s} {'nres':>5s} {'lign.':>5s} {'div_pix':>7s} {'s/run':>6s}")
+          f"{'HPS vs fk4':>18s}  {'ESS 1er':>9s} {'nres':>5s} {'lign.':>5s} {'div_pix':>7s} {'s/run':>6s}")
     for f in sorted(Path(args.variants).glob("*.json")):
         runs = json.loads(f.read_text())["runs"]
         fk_name = "fk8" if any(r["sampler"] == "fk8" for r in runs) else "fk4"
@@ -51,7 +51,10 @@ def main():
         m1, s1, w1, n = apparie(var, ref_fk, "ir_max")
         m2, s2, w2, _ = apparie(var, bon, "ir_max")
         m3, s3, w3, _ = apparie(var, ref_fk, "hps_at_ir_max")
-        ess80 = st.median(r["ess_at_schedule"][0] for r in var.values())
+        # index 0 de ess_at_schedule = le plus petit indice de boucle = le plus grand t.
+        # S60, S40, S80 et D10 ne commencent pas a t = 80 : on affiche le t reel.
+        ess1 = st.median(r["ess_at_schedule"][0] for r in var.values())
+        t1 = max(next(iter(var.values()))["schedule_t"])
         nres = st.mean(r["n_resamplings"] for r in var.values())
         sec = st.mean(r["seconds"] for r in var.values())
         # diversité des k finales : racines x_T distinctes et RMSE pixel moyenne entre paires ;
@@ -61,7 +64,7 @@ def main():
         lign_s = f"{st.mean(lign):5.2f}" if lign else "    -"
         div_s = f"{st.mean(div):7.4f}" if div else "      -"
         print(f"{f.stem:8s} {n:3d}  {m1:+.4f} ± {s1:.4f}  {w1:3d}/{n:<3d}  {m2:+.4f} ± {s2:.4f}  {w2:3d}/{n:<3d}  "
-              f"{m3:+.4f} ± {s3:.4f}  {ess80:8.2f} {nres:5.2f} {lign_s} {div_s} {sec:6.1f}")
+              f"{m3:+.4f} ± {s3:.4f}  {ess1:5.2f}@{t1:<3d} {nres:5.2f} {lign_s} {div_s} {sec:6.1f}")
 
     # la référence elle-même, sur les mêmes prompts, pour lire l'écran à la bonne échelle
     communs = {k for f in Path(args.variants).glob("*.json")

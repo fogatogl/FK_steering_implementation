@@ -84,7 +84,7 @@ def figure(ess, gain, out):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--baseline", default=str(ROOT / "results" / "sd_baseline.json"))
-    p.add_argument("--fk", default=None,
+    p.add_argument("--fk", nargs="+", default=None,
                    help="un JSON dont les enregistrements fk4 portent root_slots, pour le taux de mauvaise racine")
     p.add_argument("--draws", type=int, default=10000)
     p.add_argument("--out", default=str(ROOT / "figures" / "fig7_ess_vs_gain.png"))
@@ -129,11 +129,11 @@ def main():
           f"({s_bon / 4:.1f} s par échantillon)")
 
     # 4. la racine gardée contre celle que best-of-4 aurait choisie
-    if args.fk:
-        var = par_cle(json.loads(Path(args.fk).read_text())["runs"], "fk4")
+    for chemin in (args.fk or []):
+        var = par_cle(json.loads(Path(chemin).read_text())["runs"], "fk4")
         avec = {c: r for c, r in var.items() if "root_slots" in r and c in bon}
         if not avec:
-            print(f"\n{args.fk} : aucun enregistrement fk4 avec root_slots")
+            print(f"\n{chemin} : aucun enregistrement fk4 avec root_slots")
         else:
             # le slot i de bon4 et le slot i de fk4 partent du même x_T : le
             # wrapper reproduit la pipeline au bit près à lambda = 0 (run 11).
@@ -141,7 +141,7 @@ def main():
             mauvaises = [max(range(len(bon[c]["ir"])), key=lambda j: bon[c]["ir"][j])
                          not in set(avec[c]["root_slots"]) for c in sorted(avec)]
             lign = st.mean(len(set(avec[c]["root_slots"])) for c in sorted(avec))
-            print(f"\nracine gardée, sur {len(mauvaises)} runs de {Path(args.fk).name} :")
+            print(f"\nracine gardée, sur {len(mauvaises)} runs de {Path(chemin).name} :")
             print(f"  {sum(mauvaises)}/{len(mauvaises)} ({st.mean(mauvaises):.0%}) ne contiennent pas "
                   f"l'argmax de bon4 ; {lign:.2f} racines distinctes par run")
             print(f"  au hasard sur k = 4, un tirage de {lign:.2f} racines en manquerait "
