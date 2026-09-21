@@ -4,7 +4,163 @@ Three stacks run in this repository, and one sampler drives all three. What
 changes from one to the next is the network that denoises, the network that
 scores, and the space the two of them meet in. This file says what each network
 is, where it runs, and which value every parameter takes. Why a value was chosen
-is in `docs/decisions.md`; what it gave is in `docs/results.md`.
+is in `docs/decisions.md`; what it gave is in `docs/results.md`. The first
+section states the method the sampler implements, with its source; the parameter
+values it is run at are in "FK Steering, parameter by parameter" below.
+
+## FK Steering, the method
+
+The source for this section is Singhal et al., *A General Framework for
+Inference-time Scaling and Steering of Diffusion Models*, ICML 2025,
+arXiv 2501.06848, section 3 and algorithm 1. The repository's own choices are in
+`docs/decisions.md`.
+
+**The target.** A reward $r(x_0)$ says what a good sample is. The method does not
+retrain the diffusion model; it samples from a tilted version of it:
+
+$$p_{\text{target}}(x_0 \mid c) = \frac{1}{Z}\, p_\theta(x_0 \mid c)\,
+\exp\big(\lambda\, r(x_0, c)\big).$$
+
+$\lambda$ sets how hard the tilt pulls. At $\lambda = 0$ the target is the model
+itself. Large $\lambda$ concentrates the target on rare high-reward samples.
+
+**Why not plain importance sampling.** Draw $k$ samples from the model, then
+resample them with weights $\exp(\lambda r(x_0^i))$. This is correct, and the
+paper keeps it as the degenerate case, $G_t = 1$ for $t \geq 1$ and
+$G_0 = \exp(\lambda r(x_0))$. It is also weak:
+every sample is drawn blind, and a high-reward sample is rare under $p_\theta$,
+so most of the budget is spent on particles that were never going to win.
+
+**The Feynman-Kac construction.** Instead of scoring once at the end, score along
+the way. The method defines a sequence of distributions over partial paths,
+each one tilting the model by a *potential* $G_t$:
+
+$$\pi_t^{\text{FK}}(x_T, \dots, x_t \mid c) = \frac{1}{Z_t}\,
+p_\theta(x_T, \dots, x_t \mid c) \prod_{s=T}^{t} G_s .$$
+
+One constraint makes this legitimate. The potentials must multiply, along a
+whole path, to the tilt that was wanted in the first place:
+
+$$\prod_{t=T}^{0} G_t = \exp\big(\lambda\, r(x_0, c)\big).$$
+
+Any family of potentials satisfying it targets the same $p_{\text{target}}$. The
+paper says so explicitly, and the repository's telescoping test is that sentence
+turned into an assertion. What the choice changes is not the target but which
+particles survive to the end, and therefore how many particles are needed.
+
+**The algorithm.** Algorithm 1 of the paper, with $\tau$ the proposal that
+extends a path by one step:
+
+1. Draw $k$ particles $x_T^i \sim \tau$, and score them, $G_T^i$.
+2. At each step $t$: **resample** $k$ indices with probabilities proportional to
+   the $G_t^i$; **propose** $x_{t-1}^i \sim \tau(\cdot \mid x_t^i)$; **re-weight**,
+   $G_{t-1}^i = \frac{p_\theta(x_{t-1}^i \mid x_t^i)}{\tau(x_{t-1}^i \mid x_t^i)}\,
+   G_{t-1}(x_T^i, \dots, x_{t-1}^i)$.
+3. Return the $k$ particles $x_0^i$.
+
+The proposal here is the diffusion model's own transition kernel, which is the
+paper's simplest choice. Then $p_\theta / \tau = 1$ and the importance ratio
+disappears: the weight is the potential and nothing else. `smc/fk.py` cuts the
+same cycle at a different point, propose then re-weight then resample, which is
+the same loop read from one step later.
+
+**The three potentials.** $r_\phi(x_t)$ is the reward read at an intermediate
+state, $r(x_0)$ the reward at the finished sample.
+
+| potential | $G_t$ for $t \geq 1$ | terminal $G_0$ | what it prefers |
+|---|---|---|---|
+| `difference` | $\exp\big(\lambda(r_\phi(x_t) - r_\phi(x_{t+1}))\big)$, $G_T = 1$ | telescopes on its own | particles whose reward is still rising |
+| `max` | $\exp\big(\lambda \max_{s \geq t} r_\phi(x_s)\big)$ | $\exp(\lambda r(x_0)) \big(\prod_{t \geq 1} G_t\big)^{-1}$ | particles that peaked highest anywhere on the path |
+| `sum` | $\exp\big(\lambda \sum_{s \geq t} r_\phi(x_s)\big)$ | $\exp(\lambda r(x_0)) \big(\prod_{t \geq 1} G_t\big)^{-1}$ | particles with the highest accumulated reward |
+
+`difference` telescopes by construction: consecutive terms cancel and the
+product collapses to the two ends of the path, $\exp(\lambda(r(x_0) -
+r_\phi(x_T)))$. `smc/fk.py` starts its running gate at zero, which drops the far
+end and leaves $\exp(\lambda\, r(x_0))$ exactly. `max` and
+`sum` do not telescope, so the paper defines $G_0$ to divide out the running
+product. That terminal factor is not an implementation detail. It is what keeps
+all three on the same target, and it is why `fk_steer` refuses to run when the
+resampling schedule omits the last step.
+
+The paper reports a trade-off between the first two. `max` scores best on prompt
+fidelity across the models it tests. `max` also costs diversity, because
+resampling on a running maximum favours the leading particle more sharply than a
+difference does. `difference` has the opposite weakness: a reward with a ceiling,
+such as ImageReward on $[-2, 2]$, gives a particle that saturates early no
+further increments to earn, so it is scored as if it had stalled. The SD runs
+here use `max` and pay that diversity cost in full, one lineage out of four
+(run 14 of `docs/results.md`).
+
+**Interval resampling.** Between $x_t$ and $x_{t+1}$ little changes, so scoring
+at every step buys little. The paper defines a resampling schedule
+$R = \{t_r, \dots, t_1\}$ with $t_1 = 0$: off the schedule $G_t = 1$, on it the
+potential is the real one. The terminal step is in $R$ by definition, which is
+the same requirement as above seen from another side.
+
+**The intermediate reward.** $r_\phi$ can be anything; the approximation stays
+consistent. The choice used here, and the paper's own for its image
+experiments, is to read the ordinary reward at the model's estimate of the
+finished sample, $r_\phi(x_t) = r(\hat x_t)$ with
+$\hat x_t \approx \mathbb{E}[x_0 \mid x_t]$. This is the Tweedie estimate,
+`predict_x0` in the code and in the diagrams below. Early in the trajectory it is
+close to noise. That is where the guidance is least reliable, and where the
+particle cloud collapses in the runs here.
+
+**Against best-of-N.** Best-of-$N$ draws $N$ independent samples and keeps the
+one the reward likes best. It is the paper's baseline, and a fair one: at
+$N = k$ both methods pay for $k$ trajectories. The difference is when the budget
+is committed. Best-of-$N$ commits everything up front and selects once, at the
+end, when nothing can be changed. FK Steering spends the same trajectories but
+reallocates them during generation, dropping particles that look unpromising and
+duplicating those that do. That reallocation is also its failure mode: a
+duplicated particle is one lineage where best-of-$N$ still has $N$, which is the
+collapse this repository measures.
+
+Table 1 of the paper states the baseline as best-of-$N$ with four independent
+samples, and says nothing about seeds. The appendix, where samples are shown
+side by side, is where the two are compared on the same seed, "thus providing a
+counterfactual generation". The protocol here pairs the seeds for every run and
+matches the budget on U-Net rows rather than on calls (`docs/protocol_sd.md`).
+
+**Where this repository departs from the paper.** Each line is a deviation to
+declare, not a bug.
+
+| | the paper | here |
+|---|---|---|
+| resampler | multinomial, in algorithm 1 | systematic, multinomial kept and compared (run 3) |
+| when to resample | every step in algorithm 1, an adaptive rule in the appendix | every scheduled step at threshold 1.0, the $\mathrm{ESS}$ rule as a measured variant |
+| `max` and `sum` potential | $G_t = \exp(\lambda S_t)$ | $G_t = \exp(\lambda(S_t - S_{t-1}))$, same target |
+| decoder for $r_\phi$ on SD | not stated | `stabilityai/sd-vae-ft-mse` |
+| $\lambda$ | constant | constant reproduced, time-dependent ramps measured |
+
+One point is unresolved rather than chosen. The paper's appendix, "Adaptive
+Resampling", defines $\mathrm{ESS}_t = 1/\sum_i (\widehat{G}_t^i)^2$ and then
+writes that the resampling step is *skipped* when $\mathrm{ESS}_t < k/2$,
+because that "encourages particle diversity". `smc/weights.py` implements the
+opposite and standard rule: resample when the ESS has fallen below the
+threshold, because a low ESS is what says the weights have degenerated. That is the rule in the two SMC references the paper itself cites,
+Naesseth, Lindsten and Schön, *Elements of Sequential Monte Carlo* (2019), and
+Chopin and Papaspiliopoulos, *An Introduction to Sequential Monte Carlo* (2020).
+Which of the two readings the paper's released code applies has not been checked
+here.
+
+A second point is unresolved in the same way, and it is about the potentials
+themselves. The paper writes `max` as $G_t = \exp(\lambda \max_{s \geq t}
+r_\phi(x_s))$, the running maximum itself. `smc/fk.py` computes the increment of
+that running maximum, $\log G_t = \lambda\,(m_t - m_{t-1})$; `sum` likewise
+reduces to $\log G_t = \lambda\, r_\phi(x_t)$. Both forms satisfy the product
+constraint, so both target $\exp(\lambda\, r(x_0))$ and the telescoping test
+passes under either. They differ in the weight a particle carries at a scheduled
+step: $\exp(\lambda m_t)$ under the paper's form, $\exp(\lambda(m_t - m_{t-1}))$
+under the code's. A particle that peaked early keeps the larger weight
+indefinitely in the first and carries weight 1 in the second.
+
+Read that way the three potentials of `smc/fk.py` are one family,
+$G_t = \exp(\lambda(S_t - S_{t-1}))$ with $S_t$ the last reward, the running
+maximum or the running sum. Their intermediate targets are
+$\pi_t \propto p(x)\exp(\lambda S_t)$, which is the form `docs/protocol_sd.md`
+derives under the name tempering, at constant $\lambda$. Which form the paper's
+released code uses has not been checked here.
 
 ## The contract the sampler asks for
 
@@ -308,6 +464,8 @@ PG-DLM.
 
 ## FK Steering, parameter by parameter
 
+The definitions behind these names are in "FK Steering, the method" above.
+
 **On the two pixel stacks** the reward is cheap, so it is evaluated at every step
 of the trajectory and the resampling rule is adaptive, $\mathrm{ESS} < k/2$.
 
@@ -328,7 +486,7 @@ steps. The reproduction setting is the SD row of the paper's table 1.
 | parameter | value | flag | why |
 |---|---|---|---|
 | $\lambda$ | 10 | `--lam` | the paper's value |
-| potential | `max` | fixed in `sample_fk` | the paper's MAX, corrective term included |
+| potential | `max` | fixed in `sample_fk` | MAX as `smc/fk.py` computes it, corrective term included |
 | $k$ | 4 | sampler name `fk4` | matched against `bon4` on U-Net rows |
 | schedule | $t \in \{0, 20, 40, 60, 80\}$ | `--fk-schedule` | the paper's five steps |
 | threshold | 1.0 | `--fk-threshold` | resample at every scheduled step |
@@ -394,8 +552,8 @@ the quadratic one. Constant passes no `lam_schedule` at all, so `fk_steer` keeps
 its original code path byte for byte.
 
 **Where the deficit is paid.** With $m_i$ the running max of the reward, a
-constant $\lambda$ gives $\log G_i = \lambda\,(m_i - m_{i-1})$ and the products
-telescope. A rising $\lambda_i$ leaves a deficit
+constant $\lambda$ gives $\log G_i = \lambda\,(m_i - m_{i-1})$ in `smc/fk.py`
+and the products telescope. A rising $\lambda_i$ leaves a deficit
 $\sum_{i<T}(\lambda_T - \lambda_i)(m_i - m_{i-1})$, and the two placements differ
 only in when it is settled.
 
