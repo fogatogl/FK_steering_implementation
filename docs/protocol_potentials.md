@@ -208,10 +208,11 @@ one's own record. It is exactly zero in 3.3 %, 7.7 % and 14.0 % of steps at
 t = 60, 40 and 20, where the resampling is a literal no-op, and
 `4 - (no-op steps) == n_resamplings` in 299 of 300 runs.
 
-**When it does not resample it is best-of-k, bit for bit.** Run 8, CIFAR,
-classifier reward: wherever `n_resamplings` is 0 the `r_max` of `max` equals
-best-of-k's to every digit, -2.3716 at k = 4, -0.1080 at k = 8, -0.0200 at
-k = 16. Run 3 says the same on the red reward, where `max` returns best-of-16's
+**When it does not resample it gives back best-of-k.** Run 8, CIFAR, classifier
+reward: wherever `n_resamplings` is 0 the `r_max` of `max` returns best-of-k's own
+value to the precision of the stored float, the largest gap over the eleven
+matching runs being 1.4e-06; seed-averaged the cells are equal at four decimals,
+-2.3716 at k = 4, -0.1080 at k = 8, -0.0200 at k = 16. Run 3 says the same on the red reward, where `max` returns best-of-16's
 own 2.184 at every lambda up to 4. The potential is not weak there, it is absent.
 
 **On SD the root it keeps is no better than random.** Run 17 measured the

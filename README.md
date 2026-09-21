@@ -213,6 +213,7 @@ docs/architecture.md          the three stacks, every network and every paramete
 docs/decisions.md             why each choice, one short entry each
 docs/results.md               one block per run: what it tested, what it cost, what it gave
 docs/chronology.md            the thread from one stage to the next, and the questions that drove it
+docs/max_potential.md         why the max potential underperforms, and what was ruled out
 docs/protocol_potentials.md   the two paper-code mismatches, and the run that settles the second
 docs/protocol_sd.md           the SD block, written before it was launched, predictions included
 docs/ONYXIA_setup.md          bringing an ephemeral instance back

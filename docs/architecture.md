@@ -87,8 +87,8 @@ step its weight is $\lambda \max(0, r_\phi(x_t) - m_{t-1})$, which pays only for
 particle beating its own record. Once the running maximum saturates it is shared
 by every clone, the across-particle spread goes to zero, and the resampling
 becomes a no-op: on CIFAR `max` resamples 1.7 times in 1000 steps, and wherever it
-resamples not at all its result equals best-of-k bit for bit.
-`docs/protocol_potentials.md` carries the measurements.
+resamples not at all its result gives back best-of-k to float precision.
+`docs/max_potential.md` carries the measurements.
 
 The paper reports a trade-off between the first two. `max` scores best on prompt
 fidelity across the models it tests. `max` also costs diversity, because
