@@ -168,3 +168,82 @@ invariant, and it would fail the moment a change makes `max` select again, which
 is the point of making the change. The existing telescoping and lambda = 0
 neutrality tests stay green either way; the first is what says a per-step lambda
 has not broken the product constraint.
+
+## What changed in the code (21/09)
+
+Four things, none of which alters the behaviour of any run already on disk. The
+defaults reproduce the 300 records of `sd_baseline.json` exactly.
+
+**`smc/fk.py` gains a `potential_form` axis.** `"increment"` is the historical
+behaviour, $\log G_t = \lambda(S_t - S_{t-1})$, and stays the default.
+`"statistic"` is $\log G_t = \lambda S_t$ with $G_0$ closing the product through
+`acc`, which is what the paper writes and what the authors' released code
+computes: `fkd_class.py` forms `w = exp(lmbda * max(r_t, population_rs))` and
+divides by `product_of_potentials` at the terminal step. That settles a question
+`docs/protocol_potentials.md` had left open. The form refuses to combine with
+`lam_placement="tempering"`, since that pairing is a ramp on the increment form
+rather than the paper's potential.
+
+The two forms are not interchangeable. They coincide only where every particle
+carries the same running statistic, which a resampling gives only when it
+collapses to a single ancestor; where two or more survive, the gap between the
+forms varies across particles and the weights differ. The ESS trace makes several
+survivors likely at t = 60, 40 and 20, so this is a measured comparison rather
+than a fidelity gesture.
+
+**`scripts/run_sd_baseline.py` takes `--fk-potential {max,difference,sum}` and
+`--fk-potential-form {increment,statistic}`** in place of the literal `"max"` that
+`sample_fk` used to hard-code, and writes both into every record. Records written
+before 21/09 have no `potential_form`; read a missing value as `"increment"`.
+
+**`fk_steer` returns `r_at_schedule`**, the per-slot $r_\phi(\hat x_0)$ at every
+scheduled step, read before that step's resampling, together with
+`schedule_idx`. The SD record carries it. This is the column this file said could
+not be computed: followed through `ancestors`, it gives the correlation between
+the early reward and the final one, which is the paper's `fig:reward-corr` and a
+figure whose values its source never prints.
+
+**`fk_steer` also gains `adaptive_lam`**, bisecting $\lambda_t$ at each scheduled
+non-terminal step so the ESS after reweighting meets `ess_target`, default $k/2$,
+capped at `lam_max`. The terminal step keeps $\lambda$, so the target is
+unchanged and `acc` carries the correction. `bisect_lambda` returns the default
+$\lambda$ when the base has no across-particle spread, since no $\lambda$ can
+separate particles whose increments are all equal, and that is exactly the
+ratchet's failure: it shows up in `lam_trace` instead of being disguised as
+`lam_max`. It is not yet reachable from `run_sd_baseline.py`.
+
+**Guards, all green before launching.** The suite is at 42 passed and 1 skipped.
+The telescoping property holds for the three potentials crossed with both forms
+and with `adaptive_lam` on and off, twelve combinations, maximum lineage error
+1.9e-05. The $\lambda = 0$ neutrality holds under both forms. The last row of
+`r_at_schedule` equals `ir_guide`.
+
+## What to run next, and how to read it
+
+Two runs, each paired against the existing `fk4` on shared $x_T$, 20 prompts at
+seed 2024, about 20 minutes each:
+
+    python scripts/run_sd_baseline.py --samplers fk4 --limit 20 \
+      --fk-potential difference --out results/sd_variants/fk4_diff.json
+    python scripts/run_sd_baseline.py --samplers fk4 --limit 20 \
+      --fk-potential-form statistic --out results/sd_variants/fk4_stat.json
+
+Read on each the paired difference in `ir_max` against `fk4`, `n_resamplings`,
+`ess_at_schedule`, `n_lineages` and `div_pix`.
+
+**The problem is solved** if `difference` closes a useful part of the 0.078: the
+FK row is then rebuilt on `difference`, and everything in this file becomes a
+documented failure mode of `max` rather than a reproduction gap. **It is not
+solved** if `difference` lands inside one standard error of `fk4`, about 0.05 to
+0.08 at 20 prompts; the potential is then ruled out and the search moves to the
+released code's other differences, `reward_min_value = 0`, the terminal
+resampling, and the early `5..30` schedule.
+
+`r_at_schedule` gives the direct test of the mechanism: the Spearman correlation
+between the t = 80 reward of each final particle's root and its $r(x_0)$, over
+the 20 runs. Near zero means the early selection picks on noise and the ratchet
+has nothing left to correct it with; clearly positive means the signal is fine
+and the loss is in what happens after the first step. On the `statistic` run
+`n_resamplings` should sit between 3.75 and 4.00, and
+`4 - (steps with ESS = k) == n_resamplings` should still hold; if it does not,
+`potential_form` is not doing what it claims.

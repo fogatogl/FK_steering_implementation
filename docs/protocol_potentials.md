@@ -70,21 +70,28 @@ surviving lineage the way `tests/test_fk.py` does, the lineage total matches
 $\lambda\, r(x_0)$ to 1.5e-05 over 400 toy runs at $\lambda = 10$, $k = 4$. The
 terminal `acc` branch closes the product as intended.
 
-**The two forms are algebraically identical on a one-step epoch.** Right after a
-resampling every particle carries the same running maximum $S_{a-1}$, so
-$\lambda S_t$ and $\lambda(S_t - S_{a-1})$ differ by a constant, and
-normalisation removes it. Checked directly: same weights, same ESS to 1e-6. The
-two forms can diverge only over an epoch spanning two or more scheduled steps,
-that is, only after a resampling has been skipped.
+**The two forms are identical only when every particle carries the same running
+statistic.** When a resampling collapses to one ancestor, all the $S_{a-1}$ are
+equal, so $\lambda S_t$ and $\lambda(S_t - S_{a-1})$ differ by a constant that
+normalisation removes: same weights, same ESS to 1e-6, checked directly.
 
-**Which almost never changes an `fk4` image.** Over the 300 records of
-`results/sd_baseline.json`:
+**Corrected 21/09.** This section first stated that condition as "a one-step
+epoch", which is wrong. What the argument needs is a *shared* $S_{a-1}$, and a
+resampling that leaves two or more ancestors alive does not give one. With
+running maxima of 0.8, 1.1, 0.8, 1.1 the gap between the forms reads 8, 11, 8, 11,
+which is not constant, and the weights differ in earnest: ESS 1.015 against
+1.209. The table below counts one-step epochs and therefore counts the wrong
+thing; per-step ancestry is not stored in any record, so the right count cannot
+be recovered from disk and will come from the `statistic` run.
+
+**One-step epochs over the 300 records of `results/sd_baseline.json`**, which is
+a necessary condition for the two forms to coincide and not a sufficient one:
 
 | | runs |
 |---|---|
-| one-step epochs throughout, provably identical under both forms | 236 (78.7 %) |
+| one-step epochs throughout | 236 (78.7 %) |
 | the only skipped resampling is at $t = 20$, inert for the images | 30 (10.0 %) |
-| a skipped resampling at $t$ = 80, 60 or 40, so the images could differ | 34 (11.3 %) |
+| a skipped resampling at $t$ = 80, 60 or 40 | 34 (11.3 %) |
 
 A skip at $t = 20$ cannot change anything: no resampling follows it, and the
 particle is picked by argmax ImageReward.
@@ -99,7 +106,9 @@ over best-of-$k$ differs between the forms by less than one standard error:
 +0.4836 against +0.4940. The statistic form does resample more often, 2.17 to
 2.95 and 3.34 to 4.20, and that is all it does.
 
-**Verdict: the statistic form is not a fix.** `max` under-resamples because the
+**Verdict, on the measurements rather than the algebra: the statistic form is not
+a fix.** The four simulated regimes stand; the analytic claim that it could
+hardly ever differ does not, and the 20-minute run is what settles it.  `max` under-resamples because the
 running maximum saturates and is then shared by every clone, which drives its
 across-particle spread to zero. Both forms are functions of that same saturated
 statistic, so neither restores the spread. The 0.078 on the FK row is unexplained
