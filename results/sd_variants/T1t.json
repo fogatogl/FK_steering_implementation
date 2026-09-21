@@ -1,0 +1,1524 @@
+{
+  "runs": [
+    {
+      "prompt_id": "005695-0057",
+      "prompt": "a concept art of a vehicle, cyberpunk",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024000,
+      "ir": [
+        1.0136650800704956,
+        1.0711066722869873,
+        1.284586787223816,
+        1.2456786632537842
+      ],
+      "hps": [
+        0.24853515625,
+        0.264892578125,
+        0.251220703125,
+        0.259033203125
+      ],
+      "ir_max": 1.284586787223816,
+      "hps_at_ir_max": 0.251220703125,
+      "div_pix": 0.166,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 58.4,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.0696,
+        2.8281,
+        3.5193,
+        2.0562,
+        3.3959
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.9745,
+        1.0575,
+        1.2266,
+        1.2273
+      ]
+    },
+    {
+      "prompt_id": "005784-0093",
+      "prompt": "desolate space, 4, octane, beautifully, epic, magical, cinematic, masterpiece",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024001,
+      "ir": [
+        -0.13372786343097687,
+        -0.02497890405356884,
+        0.1302001178264618,
+        -0.17867891490459442
+      ],
+      "hps": [
+        0.17041015625,
+        0.18310546875,
+        0.189208984375,
+        0.185302734375
+      ],
+      "ir_max": 0.1302001178264618,
+      "hps_at_ir_max": 0.189208984375,
+      "div_pix": 0.0855,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.5,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.7482,
+        2.4941,
+        3.4973,
+        1.9279,
+        1.9348
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.135,
+        -0.1512,
+        0.0766,
+        -0.1929
+      ]
+    },
+    {
+      "prompt_id": "005848-0000",
+      "prompt": "a beautiful painting of the jungle in the morning with lots of smoke, fantasy art, matte painting",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024002,
+      "ir": [
+        1.0079705715179443,
+        0.9505717754364014,
+        0.7785947322845459,
+        0.8965857625007629
+      ],
+      "hps": [
+        0.251220703125,
+        0.256591796875,
+        0.2430419921875,
+        0.249267578125
+      ],
+      "ir_max": 1.0079705715179443,
+      "hps_at_ir_max": 0.251220703125,
+      "div_pix": 0.0462,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 60.5,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.9539,
+        1.2646,
+        1.5263,
+        1.2823,
+        3.309
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.8789,
+        0.9209,
+        0.7633,
+        0.9224
+      ]
+    },
+    {
+      "prompt_id": "005765-0094",
+      "prompt": "anthropomorphic crow werecreature, photograph captured in a forest",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024003,
+      "ir": [
+        0.8833214044570923,
+        0.8529544472694397,
+        0.9074739217758179,
+        0.8554256558418274
+      ],
+      "hps": [
+        0.302978515625,
+        0.2646484375,
+        0.275634765625,
+        0.28466796875
+      ],
+      "ir_max": 0.9074739217758179,
+      "hps_at_ir_max": 0.275634765625,
+      "div_pix": 0.2738,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 60.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 3,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.7818,
+        3.5539,
+        3.4132,
+        2.7319,
+        3.451
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.8368,
+        0.7356,
+        0.8032,
+        0.8476
+      ]
+    },
+    {
+      "prompt_id": "005846-0102",
+      "prompt": "a beautiful portrait of a beautiful woman in the jungle surrounded by pink flowers, shamanism, matte painting, fantasy art",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024004,
+      "ir": [
+        1.791995644569397,
+        1.9571139812469482,
+        1.9779490232467651,
+        1.8770884275436401
+      ],
+      "hps": [
+        0.328125,
+        0.327880859375,
+        0.3115234375,
+        0.3388671875
+      ],
+      "ir_max": 1.9779490232467651,
+      "hps_at_ir_max": 0.3115234375,
+      "div_pix": 0.1903,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.9,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.7771,
+        1.0002,
+        3.8733,
+        3.8691,
+        3.2959
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.7734,
+        1.9487,
+        1.9713,
+        1.8602
+      ]
+    },
+    {
+      "prompt_id": "005937-0170",
+      "prompt": "a cute cat",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024005,
+      "ir": [
+        0.9356412291526794,
+        1.1378121376037598,
+        0.8853336572647095,
+        0.8243595361709595
+      ],
+      "hps": [
+        0.283203125,
+        0.293701171875,
+        0.28271484375,
+        0.28955078125
+      ],
+      "ir_max": 1.1378121376037598,
+      "hps_at_ir_max": 0.293701171875,
+      "div_pix": 0.052,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.5,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.5517,
+        3.0064,
+        2.4668,
+        2.01,
+        2.6372
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.9382,
+        1.1381,
+        0.9618,
+        1.0117
+      ]
+    },
+    {
+      "prompt_id": "005895-0035",
+      "prompt": "close up photo of anthropomorphic fox animal dressed in white shirt and khaki cargo pants, fox animal, glasses",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024006,
+      "ir": [
+        -0.7336056232452393,
+        -0.6456367373466492,
+        -0.41973039507865906,
+        -0.20007270574569702
+      ],
+      "hps": [
+        0.3212890625,
+        0.32763671875,
+        0.301513671875,
+        0.293212890625
+      ],
+      "ir_max": -0.20007270574569702,
+      "hps_at_ir_max": 0.293212890625,
+      "div_pix": 0.2314,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.3,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 2,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.7601,
+        2.0364,
+        3.9993,
+        3.9993,
+        1.13
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.7011,
+        -0.5824,
+        -0.4104,
+        -0.1177
+      ]
+    },
+    {
+      "prompt_id": "005937-0167",
+      "prompt": "a painting of an ocean with clouds and birds, day, depth, field",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024007,
+      "ir": [
+        0.9838107824325562,
+        0.856231689453125,
+        0.9563741683959961,
+        1.0093168020248413
+      ],
+      "hps": [
+        0.25341796875,
+        0.267333984375,
+        0.251220703125,
+        0.267333984375
+      ],
+      "ir_max": 1.0093168020248413,
+      "hps_at_ir_max": 0.267333984375,
+      "div_pix": 0.0945,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.9621,
+        1.0063,
+        3.1241,
+        3.4832,
+        3.6465
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.9772,
+        0.8528,
+        0.9708,
+        1.0715
+      ]
+    },
+    {
+      "prompt_id": "005912-0052",
+      "prompt": "medieval old king, character, hearthstone, fantasy, elegant, highly, illustration, art by artgerm and greg rutkowski and alphonse mucha",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024008,
+      "ir": [
+        1.4887851476669312,
+        1.5469468832015991,
+        1.608731746673584,
+        1.5058650970458984
+      ],
+      "hps": [
+        0.305908203125,
+        0.298828125,
+        0.295166015625,
+        0.301513671875
+      ],
+      "ir_max": 1.608731746673584,
+      "hps_at_ir_max": 0.295166015625,
+      "div_pix": 0.0683,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.4,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.89,
+        1.4586,
+        2.0211,
+        2.2003,
+        3.4455
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.4363,
+        1.5559,
+        1.6142,
+        1.4963
+      ]
+    },
+    {
+      "prompt_id": "005903-0142",
+      "prompt": "landscape photography by marc adamus, mountains with some forests, small lake in the center, fog in the background, sunrays, golden hour, high",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024009,
+      "ir": [
+        1.0142403841018677,
+        1.2544291019439697,
+        1.3451160192489624,
+        1.2870361804962158
+      ],
+      "hps": [
+        0.2469482421875,
+        0.27490234375,
+        0.276123046875,
+        0.269287109375
+      ],
+      "ir_max": 1.3451160192489624,
+      "hps_at_ir_max": 0.276123046875,
+      "div_pix": 0.2053,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 2,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.6557,
+        1.4924,
+        2.8069,
+        3.4164,
+        1.6154
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.0616,
+        1.2542,
+        1.2813,
+        1.3203
+      ]
+    },
+    {
+      "prompt_id": "005895-0048",
+      "prompt": "symmetry!! a hybrid medieval exquisite complex and beautiful double hatchet in the fog of magic light, painting, illustration, art by artgerm and greg rutkowski and alphonse mucha",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024010,
+      "ir": [
+        0.5097507238388062,
+        0.14220580458641052,
+        0.4132026433944702,
+        -0.018436025828123093
+      ],
+      "hps": [
+        0.198974609375,
+        0.197509765625,
+        0.207275390625,
+        0.19970703125
+      ],
+      "ir_max": 0.5097507238388062,
+      "hps_at_ir_max": 0.198974609375,
+      "div_pix": 0.0536,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.9943,
+        2.0164,
+        2.3883,
+        1.5965,
+        1.8991
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.501,
+        0.2352,
+        0.3931,
+        0.0414
+      ]
+    },
+    {
+      "prompt_id": "007048-0049",
+      "prompt": "victorian lady, painting by rossetti, daniel gerhartz, alphonse mucha, bouguereau, detailed art",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024011,
+      "ir": [
+        0.6820822358131409,
+        0.9115768074989319,
+        0.5028282403945923,
+        0.7128167748451233
+      ],
+      "hps": [
+        0.323974609375,
+        0.31640625,
+        0.301025390625,
+        0.314697265625
+      ],
+      "ir_max": 0.9115768074989319,
+      "hps_at_ir_max": 0.31640625,
+      "div_pix": 0.1023,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.9376,
+        1.2725,
+        2.6083,
+        3.3835,
+        1.9765
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.6769,
+        0.7845,
+        0.4734,
+        0.6988
+      ]
+    },
+    {
+      "prompt_id": "007086-0087",
+      "prompt": "an alien planet viewed from space, extremely, beautiful, dynamic, creative, cinematic",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024012,
+      "ir": [
+        0.22947470843791962,
+        0.2910333573818207,
+        0.29137110710144043,
+        -0.07455725967884064
+      ],
+      "hps": [
+        0.2275390625,
+        0.233642578125,
+        0.2388916015625,
+        0.2149658203125
+      ],
+      "ir_max": 0.29137110710144043,
+      "hps_at_ir_max": 0.2388916015625,
+      "div_pix": 0.0575,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.1466,
+        2.3907,
+        1.6794,
+        2.4951,
+        2.0499
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.2186,
+        0.2277,
+        0.2845,
+        -0.1966
+      ]
+    },
+    {
+      "prompt_id": "007109-0000",
+      "prompt": "cartoon character in a style of adventure time cartoon",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024013,
+      "ir": [
+        -0.2928484082221985,
+        0.3475416302680969,
+        0.17165903747081757,
+        0.001557258190587163
+      ],
+      "hps": [
+        0.2232666015625,
+        0.192626953125,
+        0.20849609375,
+        0.2037353515625
+      ],
+      "ir_max": 0.3475416302680969,
+      "hps_at_ir_max": 0.192626953125,
+      "div_pix": 0.2455,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 2,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.8793,
+        1.539,
+        3.8765,
+        3.6923,
+        1.8742
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.2693,
+        0.2919,
+        0.1552,
+        -0.0212
+      ]
+    },
+    {
+      "prompt_id": "007029-0027",
+      "prompt": "a full body portrait of a good - lookiung girl wearing long loose gown, high, detail, cleary see face, by gaston bussiere, bayard wu, greg rutkowski, odd nerdrum, maxim verehin, dan dos santos, masterpiece, focus, cinematic lightning",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024014,
+      "ir": [
+        0.9403573870658875,
+        0.7911020517349243,
+        1.052045226097107,
+        1.0132147073745728
+      ],
+      "hps": [
+        0.2578125,
+        0.2587890625,
+        0.260498046875,
+        0.251953125
+      ],
+      "ir_max": 1.052045226097107,
+      "hps_at_ir_max": 0.260498046875,
+      "div_pix": 0.0534,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.7659,
+        2.2661,
+        3.6746,
+        1.3946,
+        2.6861
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        0.8504,
+        0.7167,
+        1.0177,
+        1.0276
+      ]
+    },
+    {
+      "prompt_id": "007086-0024",
+      "prompt": "photograph of a futuristic cyberpunk flying car at night in the rain",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024015,
+      "ir": [
+        1.7853362560272217,
+        1.8161797523498535,
+        1.8159441947937012,
+        1.8507349491119385
+      ],
+      "hps": [
+        0.2822265625,
+        0.289306640625,
+        0.27685546875,
+        0.274169921875
+      ],
+      "ir_max": 1.8507349491119385,
+      "hps_at_ir_max": 0.274169921875,
+      "div_pix": 0.0827,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.0,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.167,
+        1.407,
+        1.0799,
+        3.603,
+        3.7869
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.7946,
+        1.845,
+        1.8104,
+        1.8327
+      ]
+    },
+    {
+      "prompt_id": "007109-0002",
+      "prompt": "Portrait of an old sea captain, male, detailed face, fantasy, highly detailed, cinematic, art painting by greg rutkowski",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024016,
+      "ir": [
+        1.3280894756317139,
+        1.4485355615615845,
+        1.4202827215194702,
+        1.4311540126800537
+      ],
+      "hps": [
+        0.2998046875,
+        0.300048828125,
+        0.298095703125,
+        0.3115234375
+      ],
+      "ir_max": 1.4485355615615845,
+      "hps_at_ir_max": 0.300048828125,
+      "div_pix": 0.1878,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.2,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 2,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        2.9795,
+        2.7949,
+        2.9557,
+        1.5877,
+        1.7674
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.3216,
+        1.4278,
+        1.4126,
+        1.4584
+      ]
+    },
+    {
+      "prompt_id": "007045-0013",
+      "prompt": "classic model of atoms, made out of glass marbles and chrome steel rods, studio",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024017,
+      "ir": [
+        1.1866313219070435,
+        1.2021877765655518,
+        1.2615668773651123,
+        0.9522935748100281
+      ],
+      "hps": [
+        0.219970703125,
+        0.2249755859375,
+        0.223388671875,
+        0.2293701171875
+      ],
+      "ir_max": 1.2615668773651123,
+      "hps_at_ir_max": 0.223388671875,
+      "div_pix": 0.0667,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.159,
+        1.0925,
+        2.6991,
+        3.4815,
+        3.9587
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.1744,
+        1.2126,
+        1.2171,
+        0.9861
+      ]
+    },
+    {
+      "prompt_id": "007135-0056",
+      "prompt": "A majestic landscape featuring a river, mountains and a forest, A small group of birds is flying in the sky, Harsh winter, very windy, There is a man walking in a deep snow, Cinematic, very, beautiful, painting, in the, style, of Lord of the rings",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024018,
+      "ir": [
+        1.1695367097854614,
+        0.7859384417533875,
+        1.0242162942886353,
+        0.7092595100402832
+      ],
+      "hps": [
+        0.2144775390625,
+        0.2139892578125,
+        0.227783203125,
+        0.2364501953125
+      ],
+      "ir_max": 1.1695367097854614,
+      "hps_at_ir_max": 0.2144775390625,
+      "div_pix": 0.075,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.1,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 1,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        3.9837,
+        1.3974,
+        1.2562,
+        3.9658,
+        1.8961
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        1.138,
+        0.7819,
+        1.0427,
+        0.7068
+      ]
+    },
+    {
+      "prompt_id": "007133-0110",
+      "prompt": "3D render of a cute tribal anime boy in a loincloth, fantasy, artwork, fluffy hair, mid -, winning, very very very beautiful",
+      "sampler": "fk4",
+      "n": 4,
+      "seed": 2024,
+      "seed_effective": 2024019,
+      "ir": [
+        -0.5683369040489197,
+        -0.519393801689148,
+        -1.482124924659729,
+        -1.7387893199920654
+      ],
+      "hps": [
+        0.2254638671875,
+        0.2293701171875,
+        0.232666015625,
+        0.2115478515625
+      ],
+      "ir_max": -0.519393801689148,
+      "hps_at_ir_max": 0.2293701171875,
+      "div_pix": 0.2074,
+      "n_unet_calls": 100,
+      "n_unet_rows": 800,
+      "unet_batch": 8,
+      "seconds": 59.3,
+      "model": "stable-diffusion-v1-5/stable-diffusion-v1-5",
+      "dtype": "fp16",
+      "steps": 100,
+      "guidance": 7.5,
+      "eta": 1.0,
+      "size": 512,
+      "scheduler": "ddim",
+      "lam": 10.0,
+      "potential": "max",
+      "threshold": 1.0,
+      "n_lineages": 2,
+      "lam_schedule": "linear",
+      "lam_placement": "tempering",
+      "lam_at_schedule": [
+        2.0,
+        4.0,
+        6.0,
+        8.0,
+        10.0
+      ],
+      "schedule_mode": "fixed",
+      "schedule_t": [
+        0,
+        20,
+        40,
+        60,
+        80
+      ],
+      "schedule_idx": [
+        19,
+        39,
+        59,
+        79,
+        99
+      ],
+      "ess_at_schedule": [
+        1.4554,
+        2.8024,
+        3.1106,
+        3.4137,
+        1.7098
+      ],
+      "n_resamplings": 4,
+      "ir_guide": [
+        -0.46,
+        -0.4784,
+        -1.4225,
+        -1.7036
+      ]
+    }
+  ]
+}
