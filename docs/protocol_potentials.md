@@ -193,3 +193,51 @@ $\lambda$, and the paper's form has intermediate targets
 $\pi_t \propto p(x)\exp(\lambda \sum_{s \geq t} S_s)$, so that section would have
 needed re-deriving rather than re-running. Runs using `difference`, which is runs
 5, 6 and most of 8, were unaffected throughout.
+
+## Why `max` underperforms (21/09)
+
+The question the two mismatches left open. `max` is the weakest of the three
+potentials here and the paper's best everywhere it tests. Four findings, all from
+records already on disk, and a fifth from the paper's source.
+
+**`max` compares levels once and never again.** At the first scheduled step
+`gate` is empty, so `logG = lambda * r_t`: the only step in the run where
+particles are ranked on the *level* of the reward. Every later step is
+`lambda * max(0, r_t - own running max)`, a ratchet that pays only for beating
+one's own record. It is exactly zero in 3.3 %, 7.7 % and 14.0 % of steps at
+t = 60, 40 and 20, where the resampling is a literal no-op, and
+`4 - (no-op steps) == n_resamplings` in 299 of 300 runs.
+
+**When it does not resample it is best-of-k, bit for bit.** Run 8, CIFAR,
+classifier reward: wherever `n_resamplings` is 0 the `r_max` of `max` equals
+best-of-k's to every digit, -2.3716 at k = 4, -0.1080 at k = 8, -0.0200 at
+k = 16. Run 3 says the same on the red reward, where `max` returns best-of-16's
+own 2.184 at every lambda up to 4. The potential is not weak there, it is absent.
+
+**On SD the root it keeps is no better than random.** Run 17 measured the
+wrong-root rate for the first time: the particle best-of-4 would have chosen is
+absent from the surviving roots in 72.7 % of 300 runs, against a chance level of
+72 %. `S80`, whose only selection is the early one, reads 50 % against 54 %.
+
+**And the early collapse does not predict the loss.** `spearman(first-step ESS,
+gain over bon4)` is +0.018 over 300 runs, and the most collapsed tercile gains the
+population mean. Three arms have now weakened or isolated that first pick: `T1`
+(lambda_1 = 2) gives +0.034 +/- 0.053, `T2` (lambda_1 = 0.4, so almost no early
+selection at all) is the worst arm at -0.100 +/- 0.092, and `S80`, which keeps
+only the early pick, loses 6 of 20. Whatever costs the reward, it is not the
+sharpness of the first evaluation.
+
+**The paper's headline may not be `max` either.** Its appendix states the
+diversity study uses the `difference` potential
+(`sections/appendix_experiments.tex:21`), yet that table's ImageReward maxima are
+bit-identical to table 1's FK column, which the main text attributes to `max`
+(`sections/experiments_new.tex:35`): 0.927 for SD v1.4, 1.006 for v2.1, 1.298 for
+SDXL. Three exact matches, and the GenEval side of the same table matches the
+`difference` row of the potential ablation for three of four models. One of those
+two sentences is wrong and the source does not say which.
+
+**`difference` has never been run on SD here.** `sample_fk` passes the literal
+`"max"` and no flag changes it, so all 20 SD result files carry `potential:
+"max"`. On CIFAR `difference` beats `max` 10.45 to 2.61. It is the cheapest thing
+that could close 0.820 to 0.898 and it is untested, which makes it the next run
+rather than another ramp.
