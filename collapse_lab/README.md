@@ -18,6 +18,7 @@ rejouer.
     python collapse_lab/h_invariances.py    # ce qui peut bouger l'ESS, et ce qui ne le peut pas
     python collapse_lab/i_root100.py        # la racine gardee, sur 100 prompts
     python collapse_lab/j_decomposition.py  # d'ou vient le gain de fk4 sur bon4
+    python collapse_lab/l_target_ess.py     # combien de particules la cible porte-t-elle, a chaque lambda
 
 `commun.py` porte la regle anti-double-comptage : `fk4_stat.json` et
 `fk4_diff.json` sont les memes 20 prompts aux memes x_T, et leur premier pas est
