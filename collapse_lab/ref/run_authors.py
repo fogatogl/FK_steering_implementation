@@ -51,8 +51,8 @@ def main():
     p.add_argument("--no-smc", action="store_true",
                    help="leur pipeline sans FK (fkd_args=None) : quatre tirages libres, a comparer a bon4")
     p.add_argument("--generator", action="store_true",
-                   help="passe torch.Generator(seed_effective) au pipeline : memes x_T et meme bruit DDIM que "
-                        "bon4 / ctl / R1 (les tirages multinomiaux de leur FKD restent sur le RNG global)")
+                   help="passe torch.Generator(seed_effective) au pipeline ; avec --seed 2024, memes x_T et meme "
+                        "bruit DDIM que bon4 / ctl / R1 (les tirages multinomiaux de leur FKD restent sur le RNG global)")
     args = p.parse_args()
 
     sys.path.insert(0, str(Path(__file__).parent / "shim"))

@@ -27,7 +27,12 @@ days measures nothing. (4) The coalescence model predicts the lineages of fiftee
 from the recorded weights alone, and its pre-registered `thr05` prediction (1.84 roots)
 held against the plan's guess (2.4 to 2.8).
 
-**Corrected.** Nothing in the post. In the lab: the `--redo` of the six grid prompts
+**Corrected.** Nothing in the post. In the reference: the generator runs of the
+released code (`R0g`, `authors_free_g`) were seeded `42000 + i` by the driver's default,
+and a five-prompt "their pipeline does not pair with ours" verdict was drawn from that
+mismatch; rerun at seed 2024 their pipeline without FK returns `bon4` to the fourth
+decimal, the passages in `protocol_sd.md` and `ASSESSMENT.md` say so, and `R0g24` (their
+FK at seed 2024, 40 prompts) runs for the $x_T$-paired number. In the lab: the `--redo` of the six grid prompts
 had overwritten six session-A records of `ctl`, `floor2`, `lam0` with session-B values;
 `ctl` restored from `sd_ref_fields100.json` (without weight fields), the six of `floor2`
 and `lam0` lost, scripts read weights only where present.

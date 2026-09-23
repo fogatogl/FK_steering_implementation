@@ -184,7 +184,9 @@ for a in ORDRE:
 # le prix est-il plat ? un seul chiffre : pour chaque prompt, la moyenne d'ir_max sur tous les
 # bras de correction presents, contre ctl. C'est le test du "prix plat" du constat 13, qui
 # a plus de puissance que six IC separes qui frolent zero du meme cote.
-corr = [a for a in ORDRE if a not in ("ctl", "lam0")]
+# les corrections au sens du constat 14, pas les bras de bissection (stat0, multi, vae, idx, R1,
+# qui imitent le code publie) ni late (qui ne repare rien) ; floor2 est a n = 34 (ASSESSMENT.md)
+corr = [a for a in ("adapt", "floor", "lam2", "fadapt", "floor2", "thr05", "rise") if a in par]
 if ref and corr:
     com = sorted(c for c in ref if any(c in par[a] for a in corr))
     dm = [np.mean([par[a][c]["ir_max"] for a in corr if c in par[a]]) - ref[c]["ir_max"] for c in com]

@@ -6819,6 +6819,1401 @@
     "torch": "2.14.0+cu130",
     "fkd_commit": "9413005"
    }
+  },
+  {
+   "prompt_id": "005695-0057",
+   "prompt": "a concept art of a vehicle, cyberpunk",
+   "sampler": "authors_free_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024000,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.1099,
+    0.0483,
+    0.7826,
+    0.8685
+   ],
+   "ir_max": 1.1099,
+   "ir_mean": 0.7023,
+   "n_distinct_images": 4,
+   "div_pix": 0.3489,
+   "seconds": 49.8,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005784-0093",
+   "prompt": "desolate space, 4, octane, beautifully, epic, magical, cinematic, masterpiece",
+   "sampler": "authors_free_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024001,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    -0.6224,
+    -0.1895,
+    -1.2921,
+    -0.0798
+   ],
+   "ir_max": -0.0798,
+   "ir_mean": -0.546,
+   "n_distinct_images": 4,
+   "div_pix": 0.301,
+   "seconds": 51.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005848-0000",
+   "prompt": "a beautiful painting of the jungle in the morning with lots of smoke, fantasy art, matte painting",
+   "sampler": "authors_free_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024002,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.3891,
+    0.8554,
+    0.8361,
+    0.3695
+   ],
+   "ir_max": 0.8554,
+   "ir_mean": 0.6125,
+   "n_distinct_images": 4,
+   "div_pix": 0.3215,
+   "seconds": 52.3,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005765-0094",
+   "prompt": "anthropomorphic crow werecreature, photograph captured in a forest",
+   "sampler": "authors_free_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024003,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.6468,
+    0.9087,
+    0.7588,
+    0.7758
+   ],
+   "ir_max": 0.9087,
+   "ir_mean": 0.7725,
+   "n_distinct_images": 4,
+   "div_pix": 0.3318,
+   "seconds": 52.2,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005846-0102",
+   "prompt": "a beautiful portrait of a beautiful woman in the jungle surrounded by pink flowers, shamanism, matte painting, fantasy art",
+   "sampler": "authors_free_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024004,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.6955,
+    1.9438,
+    -0.9779,
+    1.3472
+   ],
+   "ir_max": 1.9438,
+   "ir_mean": 1.0021,
+   "n_distinct_images": 4,
+   "div_pix": 0.3612,
+   "seconds": 52.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005695-0057",
+   "prompt": "a concept art of a vehicle, cyberpunk",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024000,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.9081,
+    0.8453,
+    0.697,
+    0.856
+   ],
+   "ir_max": 0.9081,
+   "ir_mean": 0.8266,
+   "n_distinct_images": 4,
+   "div_pix": 0.0534,
+   "seconds": 57.0,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005784-0093",
+   "prompt": "desolate space, 4, octane, beautifully, epic, magical, cinematic, masterpiece",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024001,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    -1.171,
+    -1.9857,
+    -1.393,
+    -2.1358
+   ],
+   "ir_max": -1.171,
+   "ir_mean": -1.6714,
+   "n_distinct_images": 4,
+   "div_pix": 0.0733,
+   "seconds": 58.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005848-0000",
+   "prompt": "a beautiful painting of the jungle in the morning with lots of smoke, fantasy art, matte painting",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024002,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.8015,
+    0.8316,
+    0.6559,
+    0.4395
+   ],
+   "ir_max": 0.8316,
+   "ir_mean": 0.6821,
+   "n_distinct_images": 4,
+   "div_pix": 0.052,
+   "seconds": 58.9,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005765-0094",
+   "prompt": "anthropomorphic crow werecreature, photograph captured in a forest",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024003,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.8583,
+    0.9145,
+    0.9107,
+    0.8662
+   ],
+   "ir_max": 0.9145,
+   "ir_mean": 0.8874,
+   "n_distinct_images": 4,
+   "div_pix": 0.1111,
+   "seconds": 59.0,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005846-0102",
+   "prompt": "a beautiful portrait of a beautiful woman in the jungle surrounded by pink flowers, shamanism, matte painting, fantasy art",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024004,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.4987,
+    1.6512,
+    1.682,
+    1.4627
+   ],
+   "ir_max": 1.682,
+   "ir_mean": 1.5736,
+   "n_distinct_images": 4,
+   "div_pix": 0.0705,
+   "seconds": 59.3,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005937-0170",
+   "prompt": "a cute cat",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024005,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.5049,
+    0.5339,
+    0.5904,
+    0.4119
+   ],
+   "ir_max": 0.5904,
+   "ir_mean": 0.5103,
+   "n_distinct_images": 4,
+   "div_pix": 0.0541,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005895-0035",
+   "prompt": "close up photo of anthropomorphic fox animal dressed in white shirt and khaki cargo pants, fox animal, glasses",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024006,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    -0.5536,
+    -0.4624,
+    -0.4382,
+    -0.5362
+   ],
+   "ir_max": -0.4382,
+   "ir_mean": -0.4976,
+   "n_distinct_images": 4,
+   "div_pix": 0.0891,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005937-0167",
+   "prompt": "a painting of an ocean with clouds and birds, day, depth, field",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024007,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.9552,
+    0.8043,
+    0.9092,
+    0.903
+   ],
+   "ir_max": 0.9552,
+   "ir_mean": 0.8929,
+   "n_distinct_images": 4,
+   "div_pix": 0.0562,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005912-0052",
+   "prompt": "medieval old king, character, hearthstone, fantasy, elegant, highly, illustration, art by artgerm and greg rutkowski and alphonse mucha",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024008,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.2609,
+    1.4572,
+    1.3813,
+    1.2317
+   ],
+   "ir_max": 1.4572,
+   "ir_mean": 1.3328,
+   "n_distinct_images": 4,
+   "div_pix": 0.0492,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005903-0142",
+   "prompt": "landscape photography by marc adamus, mountains with some forests, small lake in the center, fog in the background, sunrays, golden hour, high",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024009,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.5113,
+    1.556,
+    1.5107,
+    1.4819
+   ],
+   "ir_max": 1.556,
+   "ir_mean": 1.515,
+   "n_distinct_images": 4,
+   "div_pix": 0.0869,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "005895-0048",
+   "prompt": "symmetry!! a hybrid medieval exquisite complex and beautiful double hatchet in the fog of magic light, painting, illustration, art by artgerm and greg rutkowski and alphonse mucha",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024010,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    -1.2681,
+    -1.6255,
+    -0.7727,
+    -1.8108
+   ],
+   "ir_max": -0.7727,
+   "ir_mean": -1.3693,
+   "n_distinct_images": 4,
+   "div_pix": 0.2317,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007048-0049",
+   "prompt": "victorian lady, painting by rossetti, daniel gerhartz, alphonse mucha, bouguereau, detailed art",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024011,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    -0.8837,
+    -0.6816,
+    -0.9219,
+    -0.5188
+   ],
+   "ir_max": -0.5188,
+   "ir_mean": -0.7515,
+   "n_distinct_images": 4,
+   "div_pix": 0.1508,
+   "seconds": 59.6,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007086-0087",
+   "prompt": "an alien planet viewed from space, extremely, beautiful, dynamic, creative, cinematic",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024012,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    -0.9274,
+    -0.959,
+    -0.5924,
+    -0.7333
+   ],
+   "ir_max": -0.5924,
+   "ir_mean": -0.803,
+   "n_distinct_images": 4,
+   "div_pix": 0.0742,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007109-0000",
+   "prompt": "cartoon character in a style of adventure time cartoon",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024013,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    -0.0784,
+    -0.271,
+    -0.3381,
+    -0.0723
+   ],
+   "ir_max": -0.0723,
+   "ir_mean": -0.19,
+   "n_distinct_images": 4,
+   "div_pix": 0.1372,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007029-0027",
+   "prompt": "a full body portrait of a good - lookiung girl wearing long loose gown, high, detail, cleary see face, by gaston bussiere, bayard wu, greg rutkowski, odd nerdrum, maxim verehin, dan dos santos, masterpiece, focus, cinematic lightning",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024014,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.6869,
+    1.6869,
+    1.6869,
+    1.6869
+   ],
+   "ir_max": 1.6869,
+   "ir_mean": 1.6869,
+   "n_distinct_images": 1,
+   "div_pix": 0.0,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007086-0024",
+   "prompt": "photograph of a futuristic cyberpunk flying car at night in the rain",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024015,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.8983,
+    1.9211,
+    1.9156,
+    1.8711
+   ],
+   "ir_max": 1.9211,
+   "ir_mean": 1.9015,
+   "n_distinct_images": 4,
+   "div_pix": 0.0486,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007109-0002",
+   "prompt": "Portrait of an old sea captain, male, detailed face, fantasy, highly detailed, cinematic, art painting by greg rutkowski",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024016,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.1426,
+    1.3275,
+    1.3246,
+    1.3426
+   ],
+   "ir_max": 1.3426,
+   "ir_mean": 1.2843,
+   "n_distinct_images": 4,
+   "div_pix": 0.0406,
+   "seconds": 59.6,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007045-0013",
+   "prompt": "classic model of atoms, made out of glass marbles and chrome steel rods, studio",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024017,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.1916,
+    0.9865,
+    1.0491,
+    0.8873
+   ],
+   "ir_max": 1.1916,
+   "ir_mean": 1.0286,
+   "n_distinct_images": 4,
+   "div_pix": 0.0445,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007135-0056",
+   "prompt": "A majestic landscape featuring a river, mountains and a forest, A small group of birds is flying in the sky, Harsh winter, very windy, There is a man walking in a deep snow, Cinematic, very, beautiful, painting, in the, style, of Lord of the rings",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024018,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.7356,
+    0.879,
+    0.9278,
+    0.3192
+   ],
+   "ir_max": 0.9278,
+   "ir_mean": 0.7154,
+   "n_distinct_images": 4,
+   "div_pix": 0.0791,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007133-0110",
+   "prompt": "3D render of a cute tribal anime boy in a loincloth, fantasy, artwork, fluffy hair, mid -, winning, very very very beautiful",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024019,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    -2.1202,
+    -1.2003,
+    -2.024,
+    -1.4004
+   ],
+   "ir_max": -1.2003,
+   "ir_mean": -1.6862,
+   "n_distinct_images": 4,
+   "div_pix": 0.054,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "000539-0052",
+   "prompt": "old man ( long white beard and a hood ) riding on lions back",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024020,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.9589,
+    1.9819,
+    1.9633,
+    1.9783
+   ],
+   "ir_max": 1.9819,
+   "ir_mean": 1.9706,
+   "n_distinct_images": 4,
+   "div_pix": 0.1136,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007019-0095",
+   "prompt": "astronaut drifting afloat in space, in the darkness away from anyone else, alone, black background dotted with stars, realistic",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024021,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.3104,
+    1.5314,
+    1.3877,
+    1.5264
+   ],
+   "ir_max": 1.5314,
+   "ir_mean": 1.439,
+   "n_distinct_images": 4,
+   "div_pix": 0.0925,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007129-0041",
+   "prompt": "extremely detailed stunning beautiful futuristic smooth curvilinear museum interior, colorful, hyper, real",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024022,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.0568,
+    1.2724,
+    1.2724,
+    1.2724
+   ],
+   "ir_max": 1.2724,
+   "ir_mean": 1.2185,
+   "n_distinct_images": 2,
+   "div_pix": 0.0534,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007214-0194",
+   "prompt": "beautiful prince, male, golden hair, high, fantasy, art by anato finnstark, joseph leyendecker, peter mohrbacher, ruan jia, marc simonetti, ayami kojima, cedric peyravernay, finnian macmanus, alphonse mucha, victo ngai",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024023,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.3098,
+    -0.7457,
+    0.3529,
+    -0.9127
+   ],
+   "ir_max": 0.3529,
+   "ir_mean": -0.2489,
+   "n_distinct_images": 4,
+   "div_pix": 0.0362,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007178-0111",
+   "prompt": "alien landscape with futuristic portal to another alien planet, astronaut stepping through the portal",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024024,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.2575,
+    1.0632,
+    0.9723,
+    1.3017
+   ],
+   "ir_max": 1.3017,
+   "ir_mean": 1.1487,
+   "n_distinct_images": 4,
+   "div_pix": 0.0745,
+   "seconds": 59.6,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007191-0058",
+   "prompt": "full body portrait of cute girl wearing gown, d &, fantasy, portrait, highly detailed, digital painting, illustration, art by artgerm and greg rutkowski and magali villeneuve",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024025,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.4667,
+    0.5706,
+    0.4845,
+    0.2319
+   ],
+   "ir_max": 0.5706,
+   "ir_mean": 0.4384,
+   "n_distinct_images": 4,
+   "div_pix": 0.1758,
+   "seconds": 59.6,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007242-0101",
+   "prompt": "a portrait of a cat dog",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024026,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.6053,
+    0.3783,
+    0.5806,
+    0.9052
+   ],
+   "ir_max": 0.9052,
+   "ir_mean": 0.6174,
+   "n_distinct_images": 4,
+   "div_pix": 0.0651,
+   "seconds": 59.6,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007268-0100",
+   "prompt": "tumultuous plunging waves, anime, artwork, studio ghibli, stylized, in an anime format",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024027,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.8874,
+    0.7735,
+    0.9474,
+    1.0383
+   ],
+   "ir_max": 1.0383,
+   "ir_mean": 0.9116,
+   "n_distinct_images": 4,
+   "div_pix": 0.123,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007209-0011",
+   "prompt": "photo by josh pierce and prateek vatash and roman bratschi, a giant huge beautiful mid - century modern revival mansion palace with green plants and giant reflective windows on a huge scenic cliff overlooking the ocean, reflections, lighting and shadows, haze, light",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024028,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.4408,
+    0.4564,
+    0.4318,
+    0.6441
+   ],
+   "ir_max": 0.6441,
+   "ir_mean": 0.4933,
+   "n_distinct_images": 4,
+   "div_pix": 0.0469,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007171-0040",
+   "prompt": "A foggy forest with cherry blossom leaves on the ground, liminal, quiet",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024029,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.6149,
+    1.6532,
+    1.6342,
+    1.5155
+   ],
+   "ir_max": 1.6532,
+   "ir_mean": 1.6045,
+   "n_distinct_images": 4,
+   "div_pix": 0.0683,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007204-0161",
+   "prompt": "dramatically lit, intricate fractal sculpture of an ancient, weathered, mossy marble sculpture of a dragonfly",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024030,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    -0.7868,
+    -0.5198,
+    -0.5652,
+    -0.5218
+   ],
+   "ir_max": -0.5198,
+   "ir_mean": -0.5984,
+   "n_distinct_images": 4,
+   "div_pix": 0.0371,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007205-0046",
+   "prompt": "a modern, contemporary studio apartment interior",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024031,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    -0.1693,
+    -0.1101,
+    -0.6514,
+    -0.3406
+   ],
+   "ir_max": -0.1101,
+   "ir_mean": -0.3178,
+   "n_distinct_images": 4,
+   "div_pix": 0.2798,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007249-0011",
+   "prompt": "futuristic spaceship escaping event horizon of black hole, by rossdraws, by marc simonetti, by matt rutkowski, dystopian lost in space, nebula, supernova, exploding galaxy, micro detail, fantasy",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024032,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.5067,
+    0.478,
+    0.3283,
+    -0.1616
+   ],
+   "ir_max": 0.5067,
+   "ir_mean": 0.2878,
+   "n_distinct_images": 4,
+   "div_pix": 0.0448,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007171-0104",
+   "prompt": "a bag of frozen breaded scampi with maerl spilling out",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024033,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    -1.9774,
+    -1.6739,
+    -1.8257,
+    -1.3867
+   ],
+   "ir_max": -1.3867,
+   "ir_mean": -1.7159,
+   "n_distinct_images": 4,
+   "div_pix": 0.0617,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007206-0148",
+   "prompt": "mountains range with waterfall, purple haze, art by greg rutkowski and magali villeneuve",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024034,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.8708,
+    1.864,
+    1.857,
+    1.8108
+   ],
+   "ir_max": 1.8708,
+   "ir_mean": 1.8506,
+   "n_distinct_images": 4,
+   "div_pix": 0.0794,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007187-0044",
+   "prompt": "an underwater rollercoaster, cinematic, dramatic, -",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024035,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.0075,
+    0.7195,
+    1.0075,
+    1.0075
+   ],
+   "ir_max": 1.0075,
+   "ir_mean": 0.9355,
+   "n_distinct_images": 2,
+   "div_pix": 0.0208,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007202-0104",
+   "prompt": "futuristic city street where it is raining, a row of shops including a mcdonalds are all abandoned and vandalised windows are broken, dark lighting with storm clouds",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024036,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.0991,
+    1.3546,
+    1.3631,
+    1.2308
+   ],
+   "ir_max": 1.3631,
+   "ir_mean": 1.2619,
+   "n_distinct_images": 4,
+   "div_pix": 0.078,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007258-0005",
+   "prompt": "desert, art by joseph, leyendecker, peter mohrbacher, ivan aivazovsky, ruan jia, reza afshar, marc simonetti",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024037,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.4164,
+    0.5369,
+    0.269,
+    0.4704
+   ],
+   "ir_max": 0.5369,
+   "ir_mean": 0.4232,
+   "n_distinct_images": 4,
+   "div_pix": 0.0353,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007654-0033",
+   "prompt": "wood logs in the shape of a square",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024038,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.2085,
+    1.2085,
+    1.0621,
+    1.0621
+   ],
+   "ir_max": 1.2085,
+   "ir_mean": 1.1353,
+   "n_distinct_images": 2,
+   "div_pix": 0.0348,
+   "seconds": 59.5,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
+  },
+  {
+   "prompt_id": "007726-0050",
+   "prompt": "fancy treehouse mansion on top of a mountain overlooking a view of the valley magical realism detailed painting",
+   "sampler": "authors_paper_g",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024039,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.7979,
+    1.8777,
+    1.8331,
+    1.8047
+   ],
+   "ir_max": 1.8777,
+   "ir_mean": 1.8283,
+   "n_distinct_images": 4,
+   "div_pix": 0.0935,
+   "seconds": 59.4,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu130",
+    "fkd_commit": "9413005"
+   }
   }
  ]
 }

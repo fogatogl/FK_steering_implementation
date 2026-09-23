@@ -293,12 +293,26 @@ celui des journaux `out/nuit2*.log`.
 sur `bon4` est tenue. Et le 0.31 entre les deux chemins de graine du meme code depasse tout
 ce que les graines font a best-of-4 (moins de 0.02).
 
-Leur pipeline **sans FK**, notre generateur, 5 prompts (`authors_free_g`) : il ne rend pas
-`bon4` case par case (ecarts de 0.33 a 2.69), la ou le pipeline diffusers standard le rend a la
-troisieme decimale. Leur copie du pipeline ne consomme pas l'aleatoire comme l'original ; rien
-de leur code ne s'apparie au notre par x_T, seulement par prompt. Deux runs en cours pour lire
-`R0` et `R0g` contre **leur propre** baseline libre : `authors_free` (leur graine, 40) et
-`authors_free_g` (notre generateur, 40). Predictions dans `protocol_sd.md` (05h15, 06h15).
+Leur pipeline **sans FK**, notre generateur, 5 prompts (`authors_free_g`) : d'abord lu comme
+« ne rend pas `bon4` case par case » (ecarts jusqu'a 2.69). **Erreur de ma part** : ces runs
+etaient a la graine 42000 + i (defaut du pilote), pas 2024000 + i. Rejoue avec `--seed 2024`,
+leur pipeline sans FK rend les quatre rewards de `bon4` **a la quatrieme decimale sur les cinq
+prompts** (20 cases a 0.0000) : leur sampleur de base est bit-compatible avec le pipeline
+diffusers qu'il copie. Consequence : `R0g` (graine 42) ne s'apparie a `bon4`, `ctl`, `R1` que
+par prompt ; `R0g - authors_free_g` est apparie par bruit (meme graine 42) ; un `R0g24`
+(graine 2024, 40 prompts) tourne pour la comparaison appariee par x_T, prediction dans
+`protocol_sd.md`. Les deux baselines libres (leur graine, notre generateur, toutes deux a 42)
+sont identiques au bit entre elles et ont la loi de `bon4`.
+
+*`R0g24`, 23/09 vers 06h30 : leur FK, configuration du papier, graine 2024000 + i, 40 prompts,
+apparie par x_T et par bruit DDIM a `bon4`, `ctl`, `R1`.* `ir_max` **0.720** ; contre `bon4`
+**-0.126 +/- 0.070** (19/40 gagnes) ; contre `ctl` -0.238 +/- 0.103 ; contre `R1` **-0.233 +/-
+0.085**. Predictions (dans +/- 0.06 de `bon4`, +/- 0.08 de `R1`) : **ratees**, les deux par le
+bas ; les doublons au pas terminal (10 % des runs) : tenue. Par particule, leurs quatre finales
+valent 0.564 contre 0.820 pour `R1` sur les memes x_T : leur boucle pilote moins bien que
+`smc/` avec les quatre memes choix, sur le meme bruit. La difference entre les deux codes est
+donc reelle et n'est pas dans la table de `reference_config.md` ; les quatre choix testes un a
+un dans `smc/` ne coutent que 0.05 a 0.06 chacun. A chercher chez eux, pas ici.
 
 *Leur baseline libre, 40 prompts (23/09, vers 05h20).* `authors_free` (leur pipeline sans FK,
 leur graine) : `ir_max` **0.824** contre 0.846 pour `bon4` sur les memes prompts (-0.022 +/-
@@ -365,18 +379,22 @@ Apparie a `ctl`, 40 prompts sauf `rise` (20). Predictions de `protocol_sd.md` (2
   plats) : le code publie perd des racines avant toute information.
 - *Le prix.* Toute correction qui garde des lignees a lambda = 10 rend `ir_max` au niveau de
   best-of-4 (`floor` -0.09, `fadapt` -0.11, `adapt` -0.10, `stat0` -0.05, `multi` -0.06 contre
-  `ctl` ; IC bootstrap a n = 40 couvrant zero un a un, moyenne des bras -0.05 [-0.17, +0.08]),
-  et l'`ir` moyen des quatre suit ce qu'on achete (-0.15 a -0.53). `late` seul ne paie pas
-  (+0.04 +/- 0.03 a n = 300) et ne repare rien.
+  `ctl` ; IC bootstrap a n = 40 couvrant zero un a un ; moyenne des sept corrections
+  -0.069 [-0.176, +0.041] a n = 40, avec `floor2` a 34 prompts biaise vers le haut, et -0.106
+  [-0.193, -0.019] sur les cinq premieres avant l'incident), et l'`ir` moyen des quatre suit ce
+  qu'on achete (-0.15 a -0.53). `late` seul ne paie pas (+0.04 +/- 0.03 a n = 300) et ne
+  repare rien.
 
 **La reference : l'ecart au papier est borne, pas ferme.** La configuration du papier est
-celle de ce depot. Le code publie sous cette configuration, sur les 100 prompts, rend 0.554 ;
-avec notre generateur 0.807 sur 40 ; son propre best-of-4 vaut 0.824 sur ces 40. Il ne depasse
-best-of-4 dans aucune lecture (-0.02 +/- 0.07 apparie par bruit, -0.33 +/- 0.08 sous son chemin
-de graine). `smc/` avec ses quatre choix d'implementation rend best-of-4 (`R1`, -0.01) ; avec
-les siens, +0.056. Le +0.161 de la table 1 n'est produit par aucune des deux implementations
-sur ce materiel. Le diagnostic montre le mecanisme : plancher, poids plats, drift, selection
-tardive.
+celle de ce depot. Le code publie sous cette configuration ne depasse best-of-4 dans aucune
+des trois lectures : **-0.13 +/- 0.07 apparie par x_T** (`R0g24`, 40 prompts), -0.02 +/- 0.07
+apparie par bruit a la graine 42 (`R0g` contre sa baseline libre), -0.33 +/- 0.08 sous son propre
+chemin de graine (`R0`, 100 prompts). `smc/` avec ses quatre choix d'implementation rend
+best-of-4 (`R1`, -0.01) ; avec les siens, +0.056. Le +0.161 de la table 1 n'est produit par
+aucune des deux implementations sur ce materiel. Le diagnostic montre le mecanisme de leur
+boucle : plancher, poids plats, drift, selection tardive ; et sur les memes x_T leur boucle
+pilote moins bien que `smc/` avec les memes choix (0.56 contre 0.82 par particule), pour une
+raison que la table ne liste pas.
 
 **Ce qui est tenu, rate, ouvert** (predictions de `protocol_sd.md`) :
 
@@ -390,13 +408,14 @@ tardive.
 | `bon4` du 20/09 rejouable | tenue (0.000) |
 | `R0` = 0.77 [0.72, 0.82] | ratee par le bas (0.554) |
 | `R1` - `ctl` = -0.08 +/- 0.05 | tenue (-0.067) |
-| `R1` - `R0` dans +/- 0.03 | ratee (+0.21 ; +0.15 avec notre generateur) |
+| `R1` - `R0` dans +/- 0.03 | ratee (+0.21 ; +0.23 +/- 0.09 apparie par x_T, `R0g24`) |
+| `R0g24` dans +/- 0.06 de `bon4` | ratee (-0.13 +/- 0.07) ; doublons terminaux 5-15 % : tenue (10 %) |
 | bissection : chaque choix sous 0.06 | tenue ; `vae` change la racine gardee dans 70 % des prompts (predit < 30 %) : ratee |
 | `rise` : lignees 2.0-2.3, pas au-dessus de `ctl` | tenue (1.9-2.0 ; +0.01) |
 | leur baseline libre = la notre en loi | tenue (0.824 / 0.846, 0.295 / 0.288) |
 
 Ouvert : (1) le 0.31 entre les deux chemins de graine du FK des auteurs, reproductible et
-inexplique ; (2) la non-reproductibilite inter-session du chemin `smc.models` (pipeline
+inexplique, et le 0.23 entre leur boucle et `smc/` a choix et bruit identiques (`R1 - R0g24`) ; (2) la non-reproductibilite inter-session du chemin `smc.models` (pipeline
 diffusers rejouable, notre modele non), cause non identifiee ; (3) les constats 3, 5 et 5 bis
 suspendus tant que `ctl` et `lam0` n'ont pas ete rejoues dans une meme session ; (4) `floor2`
 et `lam0` amputes de 6 prompts par l'incident du rejeu.

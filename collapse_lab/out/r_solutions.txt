@@ -84,8 +84,8 @@ R. Les corrections resolvent-elles l'effondrement ? Les trois criteres d'ASSESSM
    R1      100 |    -0.011 [-0.091, +0.071] |    +0.390 [+0.296, +0.491] | 55/100
    lam0     17 |    +0.034 [-0.205, +0.241] |    +0.022 [-0.162, +0.192] | 10/17
 
-   prix plat : moyenne d'ir_max sur les bras de correction (late, adapt, floor, lam2, fadapt, floor2, thr05, rise, stat0, multi, vae, idx, R1) - ctl, n=40 : -0.049 [-0.174, +0.082]
-   ecart-type entre bras du prix, par prompt, median : 0.208
+   prix plat : moyenne d'ir_max sur les bras de correction (adapt, floor, lam2, fadapt, floor2, thr05, rise) - ctl, n=40 : -0.069 [-0.176, +0.041]
+   ecart-type entre bras du prix, par prompt, median : 0.188
 
    entre bras, apparie : lignees, ESS ponderee, ir_max
    floor2 - lam2    n=34 | lignees +1.206 [+0.853, +1.529] | ESS pond. +1.099 [+0.747, +1.445] | ir_max -0.012 [-0.174, +0.156]

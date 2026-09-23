@@ -503,12 +503,22 @@ is defective on this setup, `R0`'s 0.554 is an artefact of that path, and `R0g` 
 reference number to report (their code at 0.04 under best-of-4, 0.15 under `R1`).
 
 *Added 23/09, about 04h05, before the run.* `authors_free_g` on five prompts: their pipeline without
-FK, with our generator, does **not** return `bon4`'s rewards; the slot gaps run from 0.33 to
-2.69, where the standard diffusers pipeline returns them to the third decimal (`m_latents.py`).
-Their copied pipeline consumes randomness differently from the one it copies; no run of their
-code pairs with ours by $x_T$, only by prompt. The question left is distributional:
-`authors_free_g` extended to 40 prompts (`nuit2h.sh`). Prediction: its per-particle mean is
-within 0.05 of `bon4`'s on the same prompts (0.288) and its best-of-4 within 0.08 of `bon4`'s
-(0.846); then their base sampler has the same law as ours, `R0g - bon4` = -0.04 stands as
-"their FK returns best-of-4's number", and the 0.31 between `R0` and `R0g` is to be read
-against `authors_free` (their seeding, `nuit2g.sh`) on the same footing.
+FK, with our generator, did not return `bon4`'s rewards (slot gaps 0.33 to 2.69). Question left
+distributional: `authors_free_g` extended to 40 prompts (`nuit2h.sh`). Prediction: per-particle
+mean within 0.05 of `bon4`'s (0.288), best-of-4 within 0.08 of `bon4`'s (0.846).
+
+*Correction, 23/09, about 06h20.* The generator runs above (`R0g`, `authors_free_g`) were seeded
+`42000 + i`, the driver's default, not `2024000 + i`: the five-prompt "does not return `bon4`"
+verdict compared two seeds. Rerun with `--seed 2024`, their pipeline without FK returns `bon4`'s
+four rewards **to the fourth decimal on all five prompts** (20 slots at 0.0000): their base
+sampler is bit-compatible with the diffusers pipeline it copies, and the seeding path is sound.
+`authors_free` and `authors_free_g` at seed 42 are bit-identical to each other (a CUDA generator
+and the global CUDA RNG seeded alike give the same stream), and both match `bon4` in law (0.824
+against 0.846 on the best of four, 0.295 against 0.288 per particle): the distributional
+prediction held. `R0g - authors_free_g` (-0.018 +/- 0.074) is a noise-paired comparison at seed
+42; `R0g - R1` and `R0g - bon4` above are prompt-paired only. **`R0g24`**: their FK, paper
+configuration, generator at `2024000 + i`, 40 prompts, so that their code shares $x_T$ and the
+DDIM stream with `bon4`, `ctl` and `R1`. Prediction: `R0g24 - bon4` within +/- 0.06 and
+`R0g24 - R1` within +/- 0.08, paired; fewer than four distinct final images in 5 to 15 % of runs.
+The 0.31 between `R0` (their seeding, shared stream) and `R0g` (generator stream) at seed 42
+stays unexplained by this run.

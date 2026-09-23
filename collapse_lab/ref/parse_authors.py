@@ -37,10 +37,11 @@ probe = json.loads((LAB / "out" / "probe.json").read_text())["runs"]
 R1 = {r["prompt_id"]: r for r in probe if r["arm"] == "R1"}
 
 print(__doc__.splitlines()[0], "\n")
-for cfg in sorted({r["sampler"] for r in R0}):
-    d = {r["prompt_id"]: r for r in R0 if r["sampler"] == cfg}
+for cfg, seed in sorted({(r["sampler"], r["seed"]) for r in R0}):
+    d = {r["prompt_id"]: r for r in R0 if r["sampler"] == cfg and r["seed"] == seed}
     ps = sorted(d)
-    print(f"{cfg} : {len(ps)} prompts, seed {d[ps[0]]['seed']}, {d[ps[0]]['config']}")
+    print(f"{cfg} (seed {seed}) : {len(ps)} prompts, {d[ps[0]]['config']}"
+          + ("  <- memes x_T que bon4 / ctl / R1" if seed == 2024 and "_g" in cfg else ""))
     print(f"   ir_max moyen {np.mean([d[p]['ir_max'] for p in ps]):.3f}   ir moyen des 4 {np.mean([d[p]['ir_mean'] for p in ps]):.3f}"
           f"   images distinctes {np.mean([d[p]['n_distinct_images'] for p in ps]):.2f}/4"
           f" (moins de 4 dans {np.mean([d[p]['n_distinct_images'] < 4 for p in ps]):.0%} des runs)"

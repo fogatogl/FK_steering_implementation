@@ -1,0 +1,53 @@
+Depouillement de R0 : le code des auteurs contre bon4, ctl et la table 1 du papier. 
+
+authors_free (seed 42) : 40 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}
+   ir_max moyen 0.824   ir moyen des 4 0.295   images distinctes 4.00/4 (moins de 4 dans 0% des runs)   div_pix 0.359   52 s/run
+   papier, SD v1.5 : k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_free - bon4 sur ir_max : -0.022 +/- 0.083 (n=40)   (20/40 gagnes)
+   authors_free - k1   sur ir_max : +0.516 +/- 0.120 (n=40)   (33/40 gagnes)
+   authors_free - ctl  sur ir_max : -0.134 +/- 0.063 (n=40)   (16/40 gagnes)
+   authors_free - R1   sur ir_max : -0.129 +/- 0.098 (n=40)   (memes choix d'implementation, codes differents)
+
+authors_free_g (seed 42) : 40 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}
+   ir_max moyen 0.824   ir moyen des 4 0.295   images distinctes 4.00/4 (moins de 4 dans 0% des runs)   div_pix 0.359   52 s/run
+   papier, SD v1.5 : k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_free_g - bon4 sur ir_max : -0.022 +/- 0.083 (n=40)   (20/40 gagnes)
+   authors_free_g - k1   sur ir_max : +0.516 +/- 0.120 (n=40)   (33/40 gagnes)
+   authors_free_g - ctl  sur ir_max : -0.134 +/- 0.063 (n=40)   (16/40 gagnes)
+   authors_free_g - R1   sur ir_max : -0.129 +/- 0.098 (n=40)   (memes choix d'implementation, codes differents)
+
+authors_free_g (seed 2024) : 5 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}  <- memes x_T que bon4 / ctl / R1
+   ir_max moyen 0.948   ir moyen des 4 0.509   images distinctes 4.00/4 (moins de 4 dans 0% des runs)   div_pix 0.333   52 s/run
+   papier, SD v1.5 : k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_free_g - bon4 sur ir_max : +0.000 +/- 0.000 (n=5)   (2/5 gagnes)
+   authors_free_g - k1   sur ir_max : +0.309 +/- 0.100 (n=5)   (4/5 gagnes)
+   authors_free_g - ctl  sur ir_max : -0.268 +/- 0.078 (n=5)   (0/5 gagnes)
+   authors_free_g - R1   sur ir_max : -0.038 +/- 0.150 (n=5)   (memes choix d'implementation, codes differents)
+
+authors_paper (seed 42) : 100 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}
+   ir_max moyen 0.554   ir moyen des 4 0.414   images distinctes 3.81/4 (moins de 4 dans 8% des runs)   div_pix 0.104   61 s/run
+   papier, SD v1.5 : k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_paper - bon4 sur ir_max : -0.216 +/- 0.061 (n=100)   (41/100 gagnes)
+   authors_paper - k1   sur ir_max : +0.330 +/- 0.083 (n=100)   (71/100 gagnes)
+   authors_paper - ctl  sur ir_max : -0.272 +/- 0.067 (n=100)   (34/100 gagnes)
+   authors_paper - R1   sur ir_max : -0.206 +/- 0.072 (n=100)   (memes choix d'implementation, codes differents)
+
+authors_paper_g (seed 42) : 40 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}
+   ir_max moyen 0.807   ir moyen des 4 0.674   images distinctes 3.67/4 (moins de 4 dans 12% des runs)   div_pix 0.091   59 s/run
+   papier, SD v1.5 : k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_paper_g - bon4 sur ir_max : -0.039 +/- 0.073 (n=40)   (20/40 gagnes)
+   authors_paper_g - k1   sur ir_max : +0.499 +/- 0.111 (n=40)   (35/40 gagnes)
+   authors_paper_g - ctl  sur ir_max : -0.152 +/- 0.072 (n=40)   (16/40 gagnes)
+   authors_paper_g - R1   sur ir_max : -0.147 +/- 0.092 (n=40)   (memes choix d'implementation, codes differents)
+
+authors_paper_g (seed 2024) : 40 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}  <- memes x_T que bon4 / ctl / R1
+   ir_max moyen 0.720   ir moyen des 4 0.564   images distinctes 3.77/4 (moins de 4 dans 10% des runs)   div_pix 0.079   59 s/run
+   papier, SD v1.5 : k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_paper_g - bon4 sur ir_max : -0.126 +/- 0.070 (n=40)   (19/40 gagnes)
+   authors_paper_g - k1   sur ir_max : +0.412 +/- 0.126 (n=40)   (31/40 gagnes)
+   authors_paper_g - ctl  sur ir_max : -0.238 +/- 0.103 (n=40)   (14/40 gagnes)
+   authors_paper_g - R1   sur ir_max : -0.233 +/- 0.085 (n=40)   (memes choix d'implementation, codes differents)
+
+R1 - bon4 apparie, 100 prompts : -0.011 +/- 0.041 (n=100) ; contre ctl : -0.067 +/- 0.055 (n=100)
+   regle : ecart au papier BORNE (seuil +0.12 ; papier +0.161 ; ctl - bon4 = +0.056 sur ces prompts)
+   R1 : lignees 1.19, une racine dans 81%, reech 4.00, t=80 inerte dans 81%
