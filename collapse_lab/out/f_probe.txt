@@ -1,0 +1,79 @@
+F. Depouillement de la sonde : quand les lignees meurent, et ce que le plancher change. 
+
+  bras presents : floor (40 prompts), ctl (34 prompts), lam0 (17 prompts), adapt (40 prompts), fadapt (40 prompts), lam2 (40 prompts), floor2 (34 prompts), late (20 prompts), R1 (100 prompts), stat0 (40 prompts), multi (40 prompts), vae (40 prompts), idx (40 prompts), thr05 (40 prompts), rise (20 prompts), lam0_b1 (6 prompts), ctl_b1 (6 prompts), floor2_b1 (6 prompts)
+
+0a. controle du pilote : ctl contre le fk4 de sd_ref_fields100.json, 34 prompts
+    ir_max, difference appariee -0.0000 +/- 0.0000 (identique a 0.0000 pres au pire)
+
+0b. controle d'appariement : lam=0 doit redonner les 4 tirages libres de bon4
+    ecart max sur les 4 ir, par prompt : median 1.2668, max 2.9647
+    -> si c'est nul, la case j de fk4 et la case j de bon4 partagent bien x_T,
+       ce qui est l'hypothese de la mesure d'information (script c_information.py)
+
+0c. ESS recalculee depuis logG contre ESS enregistree, les cinq lignes
+    R1       ecart max sur 100 runs x 5 lignes : 1.30e-04   <- arithmetique exacte
+    adapt    ecart max sur 40 runs x 5 lignes : 1.15e-04   <- arithmetique exacte
+    ctl      ecart max sur 34 runs x 5 lignes : 9.27e-05   <- arithmetique exacte
+    ctl_b1   ecart max sur 6 runs x 5 lignes : 8.19e-05   <- arithmetique exacte
+    fadapt   ecart max sur 40 runs x 5 lignes : 9.52e-05   <- arithmetique exacte
+    floor    ecart max sur 40 runs x 5 lignes : 9.86e-05   <- arithmetique exacte
+    floor2   ecart max sur 34 runs x 5 lignes : 1.01e-04   <- arithmetique exacte
+    floor2_b1 ecart max sur 6 runs x 5 lignes : 9.29e-05   <- arithmetique exacte
+    idx      ecart max sur 40 runs x 5 lignes : 8.83e-05   <- arithmetique exacte
+    lam0     ecart max sur 17 runs x 5 lignes : 0.00e+00   <- arithmetique exacte
+    lam0_b1  ecart max sur 6 runs x 5 lignes : 0.00e+00   <- arithmetique exacte
+    lam2     ecart max sur 40 runs x 5 lignes : 1.21e-04   <- arithmetique exacte
+    late     ecart max sur 20 runs x 5 lignes : 1.09e-04   <- arithmetique exacte
+    multi    ecart max sur 40 runs x 5 lignes : 1.12e-04   <- arithmetique exacte
+    rise     ecart max sur 20 runs x 5 lignes : 5.78e-05   <- arithmetique exacte
+    stat0    ecart max sur 40 runs x 5 lignes : 1.10e-04   <- arithmetique exacte
+    thr05    ecart max sur 40 runs x 5 lignes : 2.12e+00   <- A CREUSER
+    vae      ecart max sur 40 runs x 5 lignes : 1.20e-04   <- arithmetique exacte
+
+1. nombre de racines x_T distinctes apres chaque pas planifie (moyenne sur les prompts)
+   bras       lam  plancher | t=80    t=60    t=40    t=20    t=0     |  resampl  div_pix   ir_max
+   ctl       10.0     False | 1.74    1.21    1.09    1.06    1.06    |     3.74   0.0948  +0.8842
+   floor     10.0      True | 3.83    3.08    2.20    1.73    1.73    |     2.00   0.1505  +0.8674
+   adapt     10.0     False | 2.45    1.75    1.55    1.40    1.40    |     3.88   0.1530  +0.8588
+            lam_t    median | 3.53    4.14    5.59    10.00   10.00  
+   fadapt    10.0      True | 3.90    3.35    2.67    2.12    2.12    |     2.02   0.2003  +0.8520
+            lam_t    median | 10.00   10.00   10.00   10.00   10.00  
+   lam2       2.0     False | 3.00    2.25    1.90    1.82    1.82    |     3.95   0.2052  +0.9060
+   floor2     2.0      True | 3.97    3.56    3.21    2.94    2.94    |     1.94   0.2833  +0.8937
+   lam0       0.0     False | 4.00    4.00    4.00    4.00    4.00    |     0.00   0.3376  +0.8319
+
+2. pas planifies ou les poids sortent uniformes (aucune selection)
+   bras     | t=80    t=60    t=40    t=20    t=0    
+   ctl      | 0%      6%      9%      12%     0%     
+   floor    | 90%     52%     35%     22%     15%    
+   adapt    | 0%      2%      5%      5%      0%     
+   fadapt   | 90%     52%     32%     22%     15%    
+   lam2     | 0%      0%      0%      5%      0%     
+   floor2   | 88%     65%     32%     21%     15%    
+
+3. logG - lam * r_phi est-il CONSTANT entre les cases ? (alors le poids est exp(lam*r),
+   un classement sur le niveau, et la soustraction du potentiel ne protege de rien)
+   bras     | t=80    t=60    t=40    t=20    t=0       (part des runs)
+   ctl      | 100%    41%     21%     12%     18%    
+   floor    | 100%    98%     62%     48%     40%    
+   adapt    | 100%    0%      0%      0%      0%     
+   fadapt   | 100%    92%     55%     30%     18%    
+   lam2     | 100%    2%      5%      2%      0%     
+   floor2   | 100%    88%     71%     29%     18%    
+
+4. reward finale, differences appariees par prompt (ImageReward, max sur les 4)
+   floor    - ctl : -0.0596 +/- 0.0559  (11/34 prompts gagnes)
+   adapt    - ctl : -0.1013 +/- 0.0519  (10/34 prompts gagnes)
+   fadapt   - ctl : -0.0722 +/- 0.0608  (13/34 prompts gagnes)
+   lam2     - ctl : +0.0215 +/- 0.1087  (16/34 prompts gagnes)
+   floor2   - ctl : +0.0095 +/- 0.0895  (15/34 prompts gagnes)
+   lam0     - ctl : -0.0701 +/- 0.0822  (8/17 prompts gagnes)
+   ctl      - bon4: +0.0161 +/- 0.0887  (19/34 prompts gagnes)
+   floor    - bon4: +0.0214 +/- 0.0925  (27/40 prompts gagnes)
+   adapt    - bon4: +0.0128 +/- 0.0842  (22/40 prompts gagnes)
+   fadapt   - bon4: +0.0061 +/- 0.0904  (28/40 prompts gagnes)
+   lam2     - bon4: +0.0600 +/- 0.0790  (28/40 prompts gagnes)
+   floor2   - bon4: +0.0255 +/- 0.0512  (24/34 prompts gagnes)
+
+5. information du premier pas : r_phi(t=80) contre l'ir final de la meme racine
+   Kendall tau +0.078 +/- 0.056, top-1 24% contre 25 % au hasard, n=34

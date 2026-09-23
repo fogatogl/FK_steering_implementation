@@ -89,13 +89,27 @@ The two baselines land on the paper. FK beats best-of-4 at equal budget, by
 +0.062 on 100 paired prompts (2.4 standard errors, 69 prompts won), where the
 paper has +0.161; HPS, the judge nobody optimises, does not move. The
 diagnostics say where the rest went: at the first scheduled step the median ESS
-is 1.18 out of 4, and every FK run ends with its four particles descending from
-one initial noise. A screen of fifteen variants on 20 prompts
-(`docs/results.md`, runs 12 to 15) says that dropping the first scheduled step
-is the one change that helps the reward, that a lambda growing with the
-denoising does not, and that tempering the potential with such a ramp is what
-buys back the lineages: two lineages out of four and 38 % of the diversity gap
-to best-of-4 closed, at no change in ImageReward.
+is 1.18 out of 4, and 96 FK runs of 100 end with their four particles descending
+from one initial noise.
+
+The collapse has a mechanism and a price (`collapse_lab/FINDINGS.md`,
+`docs/results.md` block 18). Reweighting best-of-4's four free draws by
+exp(10 ir) already gives an ESS of 1.23 out of 4: at lambda = 10 the target
+itself carries about one particle. The number of roots that survive is a
+function of the recorded weights and the resampler alone, predicted within 0.07
+on fifteen arms without knowing anything about the steering. Of the corrections
+tried (the released code's floor at 0, a smaller lambda, a lambda bisected to
+hold the ESS, a threshold, a later schedule), one keeps the lineages, the floor
+with lambda = 2: 3.0 roots of 4, at -0.01 on the best image paired by x_T and
+-0.25 on the mean of the four. No configuration beats best-of-4 by more than the
+noise on the best image, while the diversity varies by a factor three.
+
+The reference: the paper's stated configuration is this repository's. The
+authors' released code, run from its own clone on the same prompts, returns
+best-of-4's rewards to the fourth decimal without its filter; with it, its four
+runs on 40 prompts land between -0.35 and +0.10 against best-of-4, -0.110 ± 0.036
+pooled over 220 run-prompts. The gap to the paper is bounded, not closed, and it
+does not live in the implementation.
 
 ## Getting started
 

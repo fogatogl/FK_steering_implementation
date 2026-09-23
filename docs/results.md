@@ -30,6 +30,7 @@ when the JSON has no timing key. The story that joins the runs is in
 | 15 | 20-21/09 | time-dependent lambda, tempering placement | `sd_variants/{T1t,T2t,T1tA05,T2tA05}.json` | 1 h 24 min | tempering buys back the lineages, not the reward |
 | 16 | 21/09 | the last two screen variants, `S80` and `D10` | `sd_variants/{S80,D10}.json` | 19 + 33 min | both predictions held; neither end of the schedule buys reward |
 | 17 | 21/09 | `S60` confirmatory, 100 prompts x 3 seeds | `sd_s60_full.json` | 7 h 28 min | +0.100 over best-of-4, not settled against `fk4`, root at chance |
+| 18 | 21-23/09 | the collapse lab and the reference night: fifteen arms, the released code, the coalescence model | `sd_ref_fields100.json`, `collapse_lab/out/probe.json`, `sd_authors_R0.json` | about 14 h | the paper's configuration is this repo's; nothing reaches +0.161; lineages are predicted from the weights alone |
 
 Not in the table: `smoke_hub.json` (2 runs, the Hub model's first FK run, 17/09),
 kept as the check that the wrapper worked before the sweeps.
@@ -688,3 +689,152 @@ best-of-4 at +0.1005 +/- 0.0311, which is the strongest paired result in the
 project, rather than `S60` against `fk4`, which the confirmatory declines to
 settle. And the wrong-root rate turns the collapse from a diversity cost into a
 statement about the selection itself.
+
+## 18. The collapse lab and the reference night (21/09 to 23/09)
+
+**Files.** `results/sd_ref_fields100.json` (the FK row regenerated on 21/09 with the
+collapse fields, 100 prompts, seed 2024), `collapse_lab/out/probe.json` (fifteen arms
+of `collapse_lab/probe.py`, seed 2024, paired to the reference by prompt; `ctl` is the
+reference itself, identical to `sd_ref_fields100.json` on all 40 of its prompts),
+`results/sd_authors_R0.json` (the released code, driven from its own clone by
+`collapse_lab/ref/run_authors.py`), `results/paper_table1_sd15.json` (the paper's
+row, with its source). Readouts: `collapse_lab/r_solutions.py`, `n_coalescence.py`,
+`ref/parse_authors.py`; the full account with the predictions written before each run
+is `collapse_lab/ASSESSMENT.md` and the last sections of `docs/protocol_sd.md`.
+
+**Cost.** About 14 h of T4 over two nights and a day, at 58 to 62 s per run.
+
+**Result, the collapse at the paper's setting.** On the 100 prompts of
+`sd_ref_fields100.json`, `n_lineages` is 1 in **96 runs of 100** and 2 in the
+other 4; mean ESS at the five scheduled steps 1.24, 1.57, 1.97, 2.94, 2.61 out
+of 4. Reweighting best-of-4's four free draws by exp(10 ir) gives a median ESS of
+1.23: at lambda = 10 the target itself puts about 90 % of its mass on one of four
+candidates.
+
+**Result, the corrections** (40 prompts unless stated, paired to `ctl` by prompt,
+`ctl` = 1.06 roots, 95 % single-root, `ir_max` 0.958 on these prompts, `ir` mean
+of the four 0.824):
+
+| arm | what | single-root | roots | div_pix | `ir_max` - `ctl` | `ir` mean - `ctl` |
+|---|---|---|---|---|---|---|
+| `late` | schedule without t = 80 (`sd_s60_full`, n = 300) | 86 % | 1.14 | 0.104 | +0.039 +/- 0.033 | |
+| `adapt` | lambda bisected to ESS = k/2 | 60 % | 1.40 | 0.153 | -0.099 +/- 0.044 | -0.171 |
+| `floor` | the released code's floor at 0 on the max statistic | 68 % | 1.73 | 0.150 | -0.091 +/- 0.055 | -0.153 |
+| `lam2` | lambda = 2 | 35 % | 1.82 | 0.205 | -0.052 +/- 0.103 | -0.138 |
+| `fadapt` | floor + bisected lambda | 30 % | 2.12 | 0.200 | -0.106 +/- 0.058 | -0.214 |
+| `floor2` | floor + lambda = 2 | **5 %** | **3.00** | **0.286** | -0.083 +/- 0.093 | -0.334 |
+| `thr05` | floor, resample only if ESS < k/2 | 62 % | 2.00 | 0.172 | -0.058 +/- 0.100 | -0.181 |
+| `rise` | floor, bisected lambda, cap 100 (n = 20) | 35 % | 1.95 | 0.170 | +0.007 +/- 0.109 | -0.135 |
+| `lam0` | free (n = 17) | 0 % | 4.00 | 0.338 | -0.070 +/- 0.082 | -0.557 |
+
+`floor2`'s row is the n = 40 readout of 22/09; a rerun on 23/09 overwrote six of its
+records with values from another session (see reproducibility below), so the file
+now holds 34 for that arm. Pooled over the seven corrections, `ir_max` - `ctl` is
+-0.069 [-0.176, +0.041] (bootstrap over prompts); over the five measured before the
+incident, -0.106 [-0.193, -0.019]. Against `bon4` on the same prompts, `ctl` is at
++0.112 +/- 0.091 and every correction between -0.01 and +0.06.
+
+**Result, the coalescence model** (`n_coalescence.py`). Replaying the recorded
+per-step weights through the systematic comb integrated over its offset (or through
+the multinomial draw at every scheduled step) predicts the mean number of final
+roots of all fifteen arms within 0.07 (`ctl` 1.08 against 1.06, `floor` 1.73 against
+1.73, `fadapt` 2.16 against 2.12, `floor2` 2.94 against 2.94, `R1` 1.25 against 1.19)
+and the single-root fraction within three points; per-run correlation 0.87 to 0.99 on
+the arms with spread. Under flat weights the comb is the identity and the multinomial
+is not: four flat multinomial passes leave 1.58 roots of 4. The pre-registered
+prediction for `thr05` (1.84 roots, 61 % single-root, 1.12 resamplings) came out
+2.00, 62 %, 0.97.
+
+**Result, the reference.** The paper's stated SD configuration (max potential,
+schedule [0, 20, 40, 60, 80], lambda 10, k 4, DDIM eta 1, 100 steps, guidance 7.5,
+ImageReward on the Tweedie estimate) is this repository's. The released script's
+defaults (`diff`, 5-30-5) are a different configuration that the paper's appendix
+scores lower. The released code differs in four unstated implementation choices:
+the max statistic floored at 0, multinomial resampling at every scheduled step
+including flat weights, adaptive resampling of the terminal population, and the
+pipeline VAE for the guide's decode. On the 100 prompts:
+
+| row | code | seeding | n | `ir_max` | `ir_max` - `bon4` (paired by prompt) |
+|---|---|---|---|---|---|
+| paper, Table 1 | | | | 0.898 | +0.161 |
+| `ctl` | `smc/` | generator 2024 | 100 | 0.826 | +0.056 +/- 0.052 |
+| `R1` | `smc/` with the four choices | generator 2024 | 100 | 0.756 | -0.011 +/- 0.041 |
+| `R0g24` | released code | generator 2024 (same x_T) | 40 | 0.720 | -0.126 +/- 0.070 |
+| `R0` | released code | its own, seed 42 | 100 | 0.554 | -0.216 +/- 0.061 |
+| `R0g` | released code | generator, seed 42 | 40 | 0.807 | -0.039 +/- 0.073 |
+| `R0` at seed 2024 | released code | its own path, seed 2024 (same x_T as ours) | 40 | 0.949 | **+0.103 +/- 0.056** |
+| the four runs pooled | released code | | 220 | 0.702 | **-0.110 +/- 0.036** |
+
+On the same 40 prompts the four runs of their filter give -0.35, -0.04, -0.13 and
++0.10 against `bon4` (standard errors 0.06 to 0.09); two of them share x_T and the
+DDIM noise and differ only by the stream of the multinomial draw (-0.13 and +0.10).
+The standard deviation of `ir_max` across their four runs of one prompt has median
+0.25. The two free baselines under the two seedings are bit-identical (0.824 both,
+against 0.846 for `bon4` on those prompts). This repository's `ctl` on the same 40
+prompts in two sessions: +0.112 +/- 0.091 and +0.075 +/- 0.050. On the same four particles at the first scheduled step, the guide's
+reward for one particle reads -1.78 with the pipeline VAE, -0.56 with sd-vae-ft-mse
+and -0.21 in the released code one index later (`out/diag_authors_0_s2024.json`,
+arms `vae` and `ctl_b1`): the decoder alone moves a first-step reward by 1.2.
+
+The released code without FK, given the same generator, returns `bon4`'s four
+rewards to the fourth decimal on 20 slots; its ImageReward scorer equals the
+official one to the third decimal. On our x_T its FK loop landed at -0.13 against
+`bon4` in the run `R0g24` and at +0.10 in the run at seed 2024 under its own seeding
+(`R1`, the same four choices in `smc/`, at -0.01); the difference is not in the
+guide's first step, where both see four negative rewards and draw
+flat, and a reading of the code (23/09) found no re-seeding and no bias between
+the two seeding paths. Without a generator the multinomial advances the global
+stream and changes the later DDIM noise; with one it does not; the two are two
+random runs of the same filter. Each of the four choices alone costs 0.05 to 0.06 in `smc/` (`stat0`
+-0.050, `multi` -0.061, `vae` +0.009, `idx` -0.051, 40 prompts each); the guide's VAE
+changes which root survives in 70 % of prompts while leaving the reward unchanged.
+
+**Result, three scales** (`scripts/fig_three_scales.py`, `figures/fig8_three_scales.png`).
+Minimum ESS over the run divided by k, and pixel diversity of the finals relative to
+the free model, against lambda: CIFAR 32 px (k = 16) 1.00 to 0.066 and 1.00 to 0.52
+from lambda 0 to 4; CelebA 256 px (k = 16) 1.00 to 0.063 and 1.00 to 0.11; SD 512 px
+(k = 4) 1.00 to 0.30 and 1.00 to 0.26 from lambda 0 to 10.
+
+**Reproducibility.** The diffusers pipeline with a seeded generator returns the
+`bon4` rewards of 20/09 to the third decimal on 23/09. The `smc.models` path returns
+identical numbers within one session and different roots and rewards across sessions
+(the reference of 21/09 and the probe of the 22/09 morning agree to 0.0000; the
+22-23/09 night disagrees with both, `ir_max` off by up to 1.6 on a prompt), with
+identical code and weights. A test on 23/09 afternoon (`collapse_lab/nuit4.sh`,
+`u_determinism.py`, not pre-registered) ran `ctl` on two prompts in three separate
+processes, one of them under `cudnn.benchmark = False` and
+`use_deterministic_algorithms(True)`, and once more with the 22/09-morning version of
+`probe.py`: all four return the same rewards to the fourth decimal, equal to session C
+and to the 22/09 night, across a pod restart. Ruled out: the process, the flags, the
+cache path, the pod, the `sd` venv (no install since 20/09), `smc/` (unchanged since
+21/09 17:27) and the probe's rewrite. What separates the two groups is the machine's
+execution path: the sessions that return the 21/09 numbers ran at 87 to 90 s per run,
+every session since the 22/09 evening at 55 to 60 s, same code; the first machine is
+gone and the cause cannot be pushed further. x_T is shared at the bit
+between the pipeline and the wrapper, and the trajectories correlate at 0.984 or
+more at the last step; the ImageReward of a slot still differs by up to 0.34
+between the two paths (`out/latents_0.json`, `out/latents_1.json`). Slot pairing
+between files from different sessions is therefore invalid and the wrong-root rate
+of run 17 is not measurable that way.
+
+**Session C (23/09, `collapse_lab/out/probe_C.json`).** `ctl`, `lam0` and `floor2` at
+100 prompts in one process. `lam0` returns `bon4`'s four rewards slot by slot at
+correlation 1.00 (`ir_max` +0.009 +/- 0.006): the free path of the wrapper reproduces
+across sessions, and only the resampling path does not (`ctl` against the 21/09 file:
+correlation 0.70, same root in 30 % of prompts, `ir_max` -0.026 +/- 0.058). Paired by
+x_T inside the session: `floor2 - ctl` on `ir_max` **-0.012 [-0.082, +0.060]**, on the
+mean of the four -0.250 +/- 0.045; `floor2` 3.03 roots, 4 % single-root, `div_pix`
+0.300; `ctl` 1.07 roots, 93 %; `ctl - bon4` +0.030 +/- 0.037 in this session. On this
+pairing, with `lam0[j]` the free continuation of root j: Kendall tau between the
+first-step ranking and the free outcome **+0.137 +/- 0.050**, top-1 35 % against 25 %;
+best free root A 0.779, mean root M 0.233, the root `ctl` keeps read free B 0.466, what
+`ctl` makes of it C 0.799, so **B - M +0.233 +/- 0.047**, **A - B +0.313 +/- 0.042**,
+**C - B +0.333 +/- 0.038**, C - A +0.021 +/- 0.038.
+
+**What it changed.** The gap to the paper is bounded, not closed, and it is not in
+the implementation. The collapse has a mechanism with a predictive model behind it.
+The one correction that keeps lineages does so by changing the target and returns
+best-of-4's reward; paired by x_T its price on the best reward is 0.01, on the mean
+of the four 0.25. Constats 3 and 5 bis hold on the same-session pairing in a weaker
+form: a little information at the first step, a kept root a third of the way from the
+median to the best, 0.31 of root lost and 0.33 returned by the steering.

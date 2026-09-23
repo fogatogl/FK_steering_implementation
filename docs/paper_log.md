@@ -4,6 +4,202 @@ One block per pass, most recent on top. The loop, its scope and its review grid
 are `.claude/skills/paper-loop/SKILL.md`; what the post has to contain is
 `docs/paper_plan.md`.
 
+## Pass 10 (23/09 afternoon, sections 5 and 8; the review of 23/09 morning read in)
+
+**Reviewed.** Sections 2, 5 and 8 against block 18 with session C and the fourth run of
+the released code; the outside review of 23/09 (three open threads, one over-claim).
+
+**Found.** Quality, section 5: "the price is flat on the score, -0.10" over-read forty-prompt
+intervals that all cover zero; session C's `floor2` paired by x_T at 100 prompts costs -0.012
+[-0.082, +0.060]. The claim the runs carry is weaker and sharper: nothing beats best-of-4 by
+more than the noise on `ir_max`, while the lineages and the mean of the four move by a lot.
+Correctness, section 8: "one seeding path scores 0.31 under the other for no reason found"
+was written on two runs; with four runs and a reading of the released code (no re-seeding,
+no bias between the two paths, the multinomial advances the global stream without a
+generator and leaves it alone with one), the fact is a run-to-run spread, measured on four
+runs. Wording, block 18 and the assessment: "steers less well than `smc/`" said more than
+one run supports; replaced by the two runs' numbers.
+
+**Corrected.** Section 5's price paragraph rewritten around the three quantities (score
+inside the noise, roots times three, mean -0.15 to -0.56). Section 8's weak-points
+paragraph rewritten; it now also says the authors were not asked for Table 1's command
+before writing. Block 18's sentence on the released loop. `collapse_lab/FINDINGS.md`
+received findings 16 to 20 and an addendum to finding 11; `README.md`'s SD paragraph,
+`docs/chronology.md` (two stages and the re-anchoring with the 25/09 data freeze) and
+`LEARNING.md` (three lines) caught up with the runs.
+
+**Open, for the author.** (a) Whether to send the email to the authors asking for Table 1's
+exact command (draft in the session's scratchpad); section 8's last sentence changes either
+way. (b) closed in the same pass: the three-process determinism test
+(`collapse_lab/nuit4.sh`, `u_determinism.py`) came back identical across processes,
+flags, probe versions and a pod restart, and different from the 21/09 machine; section
+7's paragraph was rewritten from it. (c) Whether the six
+`fig_grid_0*.png` and `out/images/` (35 MB) enter git. (d) Merge of the worktree branch into
+`main`.
+
+## Pass 9 (23/09, the fourth run of the released code read in: section 2's table and paragraph)
+
+**Reviewed.** Block 18's reference table after the last arm, and section 2.
+
+**Found.** Correctness: the sentence "neither of them returns the paper's number on this
+material" was falsified by the fourth run of the released code (0.949, +0.10 +/- 0.06
+over best-of-4 on the same x_T, within a standard error of +0.161). Quality: the four
+runs of the same code on the same 40 prompts span -0.35 to +0.10, two of them on
+identical x_T and noise; that spread is the finding, and the post now says it instead
+of a single number. The pooled -0.110 +/- 0.036 over 220 run-prompts replaces the
+per-run rows in the table.
+
+**Corrected.** Section 2's table and the paragraph under it. The "bounded" reading
+stands with its reason changed: the mean is under best-of-4 and the run-to-run spread
+is wider than the paper's effect.
+
+**Open, for the author.** The variance of the released filter (median 0.25 of `ir_max`
+between its runs of one prompt, against 0.03 for `ctl` between sessions) has two
+suspects, the multinomial draw at flat weights and the terminal duplication, neither
+measured on its own at this variance; it is a night of GPU if wanted. Section 5's
+`floor2` price by x_T (pass 8, open b) still waits on the author's choice.
+
+## Pass 8 (23/09, session C read in: section 3's last paragraph and section 7's reproducibility paragraph)
+
+**Reviewed.** Block 18's session C paragraph (new), then the two paragraphs of the
+post that rest on it.
+
+**Found.** The previous draft said the wrong-root question was not measurable;
+session C measures it on a same-process pairing, and the free path turns out to
+reproduce across sessions (correlation 1.00 with the 20/09 file), which narrows the
+non-reproducibility to the resampling path. Quality: constats 3 and 5 bis return in
+weaker, measured form (tau +0.14, A - B +0.31). Correctness: the earlier
+"trajectories diverge enough that slot i is not the continuation of slot i" was true
+of the file pairs compared then and false of a same-process pairing; replaced.
+
+**Corrected.** Section 3's last paragraph rewritten on the decomposition (0.78 /
+0.23 / 0.47 / 0.80); section 7's paragraph names the free path as reproducible and
+the guide's fp16 reward as the suspect.
+
+**Open.** (a) The authors' code at seed 2024 under its own seeding is running; its
+number goes to `reference_config.md`'s table and to block 18, not to the post
+unless it changes the reading. (b) `floor2`'s price paired by x_T is 0.01 on
+`ir_max` where the prompt-paired readout said 0.08: section 5 quotes the pooled
+-0.069 over seven corrections and should quote the x_T-paired `floor2` figure next
+to it in the next pass; not done here because block 18 carries both and the
+sentence needs the author's choice of which to lead with.
+
+## Pass 7 (23/09, review of sections 1, 6, 7, 8; A5 added to F5)
+
+**Reviewed.** The four sections pass 6 had not reread, against blocks 5, 6, 9, 18.
+
+**Found.** Correctness: "fourteen SD arms" in section 8 against "fifteen" in
+section 5 (fifteen is right). Clarity: section 7 stated the origin of the
+lambda = 0 residue as a fact; it is the one measured input that differs (the text
+embedding, 1.6e-2 in fp16), stated as such now. Nothing else in the four sections.
+
+**Corrected.** The two sentences. `scripts/fig_three_scales.py` gains the A5
+panel (ESS / k of four free draws reweighted by exp(lambda ir) against lambda,
+with fk4's first-step ESS at lambda = 10), so F5 carries the target's ceiling
+next to the two collapse curves.
+
+**Open.** One pass with two findings, none of them a number: the loop stops here
+until session C lands, which will touch section 3's last paragraph and possibly
+restore constats 3 and 5 bis.
+
+## Pass 6 (23/09, review of pass 5 with the grid, four corrections)
+
+**Reviewed.** Sections 2 to 5 reread against blocks 11, 12, 15, 17, 18 of
+`results.md`, figures checked by `ls`.
+
+**Found.** Correctness: "60 runs of 100 on a single one" for an arm measured on 40
+prompts (it is 60 % of its runs); "the prediction held on both" arms, where only
+`thr05` had a pre-registered coalescence prediction (`R1`'s multinomial-column
+match was read after the fact); "paired on 40 prompts" for arms that ran on 20
+(the ramps, `lam2`, `rise`); two FK numbers in section 2 (0.820 from the 300-run
+row of 20/09, 0.826 from the row regenerated on 21/09) with no clause saying
+which code each comes from. Clarity: figure 7 (ESS against gain) is no longer
+referenced in the text after the trim; it stays in the annex list.
+
+**Corrected.** The four sentences above; the reference row of the table names its
+provenance.
+
+**Open.** No question to the author from this pass. Next pass after session C
+lands: section 3's last paragraph and the two suspended constats.
+
+## Pass 5 (23/09, sections 2 to 8 rewritten on the final state; block 18 of `results.md` added)
+
+**Reviewed.** The whole post against the grid, after writing: the reference
+paragraph and table of section 2 (block 18), the two-degeneracies and target
+paragraphs of section 3 (blocks 14, 18), section 4 filled from blocks 12, 16, 17,
+section 5 rewritten as "repairing the collapse, and what it costs" from blocks 13,
+15, 18, the three-scales line of section 6 (block 18), the reproducibility
+paragraphs of section 7, the limits of section 8. Quality 4: the reference run
+and the coalescence model are the two strongest pieces; the reference is 40
+prompts on the x_T-paired row. Clarity 3: section 3 now carries three ideas
+(weights, paths, target) and a reader needs the two figures to follow. Correctness
+4: every number was re-read from block 18 or an earlier block; the "bit for bit at
+lambda = 0" claim of the previous draft was false and is replaced in two places by
+the measured 0.984. Context 5: the contract paragraph now names the lab.
+
+**Found.** (1) Word count 4 030 after writing, against 3 500: trimmed the
+worst-prompt anecdote, the ESS-does-not-predict aside, the two CIFAR paragraphs
+and section 7's bug paragraph. (2) Three numbers quoted in the post were not in
+`results.md` (the 0.34 slot difference, the 1.2 decoder shift, the 0.31 between
+seedings): added to block 18. (3) The previous draft's thesis sentence in
+`paper_plan.md` ("the two changes that act on it are the two results") no longer
+matches the post: the two results are now the bounded reference and the
+mechanism. `paper_plan.md` not edited in this pass; question to the author below.
+
+**Corrected.** The two "bit for bit" claims; the 20-of-20 lineage count replaced
+by 96 of 100; the schedule section's promise of "the claim the table carries"
+(`S60` over `fk4` is not settled) rewritten as measured.
+
+**Open, for the author.** (a) `paper_plan.md`'s thesis and word budget are the
+21/09 ones; the post now follows the 22/09 plan (reference first, collapse
+second, repairs third). Rewrite the plan or accept the drift. (b) Section 3's
+figure of the ancestry is one prompt (`005848-0000`); the six are in
+`collapse_lab/out/`. (c) Session C (ctl, lam0, floor2 at 100 in one process) is
+running; if it lands as predicted, constats 3 and 5 bis return to section 3 in
+their reformulated form. (d) Whether the image grid at 5.3 MB stays in the repo.
+
+## Pass 4 (22-23/09, `docs/reference_config.md` created, `docs/protocol_sd.md` extended; `paper.md` untouched)
+
+**Reviewed.** Not a writing pass on the post: the reference night and the collapse
+night of the 22/09 plan, run back to back. What entered `docs/`: `reference_config.md`
+(paper text against released code against this repo, cell by cell with sources) and
+the pre-registration blocks at the end of `protocol_sd.md` (latents test, `R0`, `R1`,
+bisection, `B1` rule, `thr05` with the coalescence model's prediction, `rise`, then
+`R0g`, `authors_free_g`, `authors_free`), each written before its run. Findings and
+confrontations: `collapse_lab/ASSESSMENT.md`.
+
+**Found.** (1) The paper's stated SD configuration is this repo's; the released
+script's defaults are another configuration the paper's own appendix scores lower.
+(2) The released code under the paper's configuration returns 0.554 on the 100
+prompts with its own seeding and 0.807 with our generator on 40, never the 0.898 of
+Table 1; `smc/` with its four implementation choices returns best-of-4 (`R1`); the
+gap is bounded, not closed, and sits in neither implementation. (3) The latents test
+holds $x_T$ at the bit and the trajectories at correlation 0.98 or more, so constat 11
+has a third reading: the `smc` path reproduces within a session and not across
+sessions, with identical code and weights; slot pairing across files from different
+days measures nothing. (4) The coalescence model predicts the lineages of fifteen arms
+from the recorded weights alone, and its pre-registered `thr05` prediction (1.84 roots)
+held against the plan's guess (2.4 to 2.8).
+
+**Corrected.** Nothing in the post. In the reference: the generator runs of the
+released code (`R0g`, `authors_free_g`) were seeded `42000 + i` by the driver's default,
+and a five-prompt "their pipeline does not pair with ours" verdict was drawn from that
+mismatch; rerun at seed 2024 their pipeline without FK returns `bon4` to the fourth
+decimal, the passages in `protocol_sd.md` and `ASSESSMENT.md` say so, and `R0g24` (their
+FK at seed 2024, 40 prompts) runs for the $x_T$-paired number. In the lab: the `--redo` of the six grid prompts
+had overwritten six session-A records of `ctl`, `floor2`, `lam0` with session-B values;
+`ctl` restored from `sd_ref_fields100.json` (without weight fields), the six of `floor2`
+and `lam0` lost, scripts read weights only where present.
+
+**Open, for the author.** (a) Whether to rerun `ctl` and `lam0` in one session (200
+runs, about 3 h 20) to recompute constats 3, 5, 5 bis on a valid slot pairing, or to
+drop them. (b) Section 2 of the post now has a reference measurement to write from:
+"bounded", with the released code at or under best-of-4 here; the wording of the
+two seeding paths (0.554 against 0.807) waits for `authors_free` and `authors_free_g`
+at 40 prompts. (c) The `_b1` arms and the image grid come from session B and pair
+only with `R1`; F1 and F2 say so in their captions. (d) `smc/` untouched; the floor
+as a `reward_floor` parameter stays post-submission.
+
 ## Pass 3 (21/09, section 6 re-derived from the JSON and the saved tensors)
 
 **Reviewed.** Every number of section 6, recomputed from `results/*.json` and

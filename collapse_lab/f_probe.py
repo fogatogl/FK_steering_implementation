@@ -12,6 +12,8 @@ R = LAB.parent / "results"
 runs = json.loads((LAB / "out" / "probe.json").read_text())["runs"]
 par = {}
 for r in runs:
+    if "logG_at_schedule" not in r:    # six ctl restaures sans poids depuis ref100 (collapse_lab/ASSESSMENT.md, 23/09)
+        continue
     par.setdefault(r["arm"], {})[r["prompt_id"]] = r
 
 base = json.loads((R / "sd_baseline.json").read_text())["runs"]

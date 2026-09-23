@@ -18,15 +18,20 @@ moderes -- `adapt` tient l'ESS a 2.0 et finit quand meme a 1.40 lignees.
 mais quatre clones ont l'`ir` d'une seule image : l'`ir` moyen perd 0.53 +/- 0.12 contre
 quatre tirages libres (constat 13).
 
-**Les pistes** (constat 14). Toutes ramenent `ir_max` au niveau de best-of-4, environ
--0.10 contre `ctl`, un prix plat ; elles se distinguent par la diversite gardee.
-Mesure : plancher + lambda = 2 (2.85 lignees) > plancher + lambda bisecte (2.12) >
-plancher seul ou lambda = 2 seul (1.7-1.9) > lambda bisecte seul (1.40). Ce qui garde
-les lignees, c'est ce qui **reechantillonne moins** (pas inertes, calendrier plus court),
-pas ce qui adoucit les poids. A tester : calendrier commence plus tard, seuil de
-reechantillonnage sous la cible d'ESS, profil de lambda montant, k > 4 particules.
-Mort : centrer la reward, changer de potentiel. A trancher avant d'ecrire : le test sur
-les latents du constat 11.
+**Les pistes** (constats 14, 17, 18, 20). Toutes ramenent `ir_max` au niveau de
+best-of-4, a une ou deux erreurs-types du bruit ; elles se distinguent par la diversite
+gardee et par l'`ir` moyen des quatre (-0.15 a -0.56). Mesure : plancher + lambda = 2
+(3.0 lignees, -0.01 sur `ir_max` apparie par x_T a n = 100) > plancher + lambda bisecte
+(2.12) > seuil ESS < k/2 ~ plancher seul ~ lambda = 2 seul (1.7-2.0) > lambda bisecte
+seul (1.40) ; calendrier sans t = 80 : 1.14. Le nombre de racines finales se predit depuis
+les poids et le resampler seuls, a 0.07 pres sur quinze bras (constat 17). A lambda = 10 la
+cible elle-meme ne porte que 1.2 a 1.5 particules sur 4 (constat 15) : rien ne « resout »
+l'effondrement a ce lambda, et la seule correction qui passe sous 25 % de runs a une racine
+change la cible. Mort : centrer la reward, changer de potentiel, reechantillonner moins.
+
+**La reference** (constat 16). La configuration du papier est celle de ce depot ; le code
+publie rend en moyenne moins que best-of-4 (-0.11 +/- 0.04 sur quatre runs) avec une
+dispersion d'un run a l'autre plus large que l'effet du papier. Ecart borne, pas ferme.
 
 ---
 
@@ -435,6 +440,12 @@ Le test qui tranche est au niveau des latents, pas de la reward : un prompt, cap
 latents du pipeline aux pas 0 et 1 par `callback_on_step_end`, et les comparer a
 `initial_state` puis un `step`. S'ils coincident, c'est la seconde lecture.
 
+*Ajout du 23/09.* Le test a ete fait (`m_latents.py`) : x_T coincide au bit et les
+trajectoires restent correlees a 0.98 ou plus jusqu'au dernier pas ; la troisieme lecture
+est la bonne, le chemin avec reechantillonnage n'est pas rejouable d'une session a l'autre
+(constat 19). La session C rejoue `ctl` et `lam0` dans un meme processus et recalcule les
+constats 3 et 5 bis sur cet appariement (constat 20) : ils tiennent, en plus faible.
+
 ## 12. Les deux corrections, evaluees hors de `smc/`
 
 Aucun des deux bras ne demande de modifier `smc/` : le plancher passe par la reward
@@ -751,3 +762,127 @@ Ce que cette relecture ne remet pas en cause : le premier pas est le mauvais end
 pour choisir (constat 3, sous la reserve du constat 11), et le plancher manquant est un
 ecart a la reference (constat 6).
 
+
+## 16. La reference : l'ecart au papier est borne, pas ferme
+
+Source : `docs/reference_config.md`, `results/sd_authors_R0.json`, `collapse_lab/ref/`,
+depouillement `ref/parse_authors.py` ; le detail horodate dans `collapse_lab/ASSESSMENT.md`,
+section C de l'etat final.
+
+La configuration du papier (max, [0, 20, 40, 60, 80], lambda 10, k 4, DDIM eta 1, 100 pas,
+CFG 7.5, ImageReward sur l'estimee de Tweedie) est celle de ce depot ; les defauts du script
+publie (`diff`, 5-30-5) sont une autre configuration, que l'annexe du papier note plus bas.
+Le code publie differe par quatre choix d'implementation non ecrits : statistique `max`
+planchee a 0, multinomial a chaque pas planifie (poids plats compris), reechantillonnage
+adaptatif de la population terminale, VAE du pipeline pour le decodage du guide.
+
+Sur les 100 prompts du benchmark, SD v1.5, contre `bon4` apparie :
+
+| lecture | code | n | `ir_max` | contre `bon4` |
+|---|---|---|---|---|
+| table 1 du papier | | | 0.898 | +0.161 |
+| `ctl`, ce depot | `smc/` | 100 | 0.826 | +0.056 +/- 0.052 |
+| `R1`, `smc/` avec leurs quatre choix | `smc/` | 100 | 0.756 | -0.011 +/- 0.041 |
+| leur code, quatre runs groupes | le leur | 220 | 0.702 | -0.110 +/- 0.036 |
+| les memes quatre runs sur leurs 40 prompts communs | le leur | 40 x 4 | | -0.35, -0.04, -0.13, +0.10 |
+
+Leur pipeline sans FK, a generateur egal, rend les quatre rewards de `bon4` a la
+quatrieme decimale ; leur scorer ImageReward vaut l'officiel a la troisieme. Les deux
+implementations partent donc des memes images et les notent pareil. Avec le filtre, leur
+moyenne est sous best-of-4 et leurs quatre runs s'ecartent entre eux de plus que l'effet du
+papier : deux d'entre eux partagent x_T et bruit DDIM et ne different que par le flux du
+tirage multinomial, et ils rendent -0.13 et +0.10 (ecart-type par prompt entre leurs runs :
+mediane 0.25 ; `ctl` de ce depot bouge de 0.04 entre deux sessions sur les memes prompts).
+Un run sur quatre atteint le +0.16 a une erreur-type ; aucune moyenne ne l'atteint. Lecture
+du code (23/09, `fkd_class.py`, `fkd_pipeline_sd.py`) : aucun reensemencement, aucun biais
+d'un chemin de graine sur l'autre ; sans generateur le multinomial avance le flux global et
+change le bruit DDIM des pas suivants, avec generateur il n'y touche pas ; le poids terminal
+divise par le produit float32 des poids intermediaires, qui peut deborder. Rien de cela
+n'explique 0.23 entre deux runs a bruit egal (trois erreurs-types) : **la dispersion de leur
+filtre est mesuree, pas expliquee.** Regle pre-enregistree : ecart **borne**, pas ferme ; il
+n'est pas dans l'implementation, et une part est dans la variance d'un filtre a quatre
+particules qui garde une racine.
+
+## 17. La coalescence se lit sur les poids seuls
+
+`n_coalescence.py`. Rejouer le peigne systematique (integre sur son decalage `u`) ou le
+multinomial sur les poids enregistres a chaque pas planifie predit le nombre moyen de
+racines finales de quinze bras a **0.07 pres** (`ctl` 1.08 contre 1.06, `floor` 1.73 contre
+1.73, `fadapt` 2.16 contre 2.12, `floor2` 2.94 contre 2.94, `R1` 1.25 contre 1.19) et la part
+de runs a une racine a trois points pres ; correlation par run 0.87 a 0.99 sur les bras qui
+ont de l'etendue. Le pilotage n'entre pas dans la prediction. `adapt` tient l'ESS a 2.0 a
+chaque pas et finit a 1.4 racine : l'ESS mesure la degenerescence des poids, pas celle des
+chemins (constat 15). A poids plats le peigne est l'identite et le multinomial ne l'est pas :
+quatre passages plats laissent 1.58 racines sur 4, et le code publie perd des racines avant
+toute information. Prediction pre-enregistree sur `thr05`, ecrite par ce modele avant la
+mesure : 1.84 racines, 61 % a une racine, 1.12 reechantillonnement ; mesure : 2.00, 62 %,
+0.97. Le plan disait 2.4 a 2.8. Figure : `out/fig_coalescence.png`.
+
+## 18. Reechantillonner moins ne garde pas les lignees
+
+`thr05` (plancher, reechantillonner seulement si ESS < k/2) : 0.97 reechantillonnement par
+run, 2.0 racines, 62 % a une racine (predit par le constat 17, voir ci-dessus). Quand le
+seuil declenche enfin, les poids accumules sont pointus et un seul passage prend presque
+tout. `ir_max` -0.06 +/- 0.10 contre `ctl`. `late` (calendrier sans t = 80) ne repare rien
+non plus : 86 % a une racine a n = 300, 1.14 racine, pour +0.04 +/- 0.03 sur `ir_max`. Ce
+dernier chiffre dit autre chose : retirer le pas t = 80 ne coute rien au score, donc ce pas
+ne porte pas d'information utile a la selection, sans avoir besoin de `bon4` pour le dire.
+
+## 19. Rejouabilite : le chemin libre l'est, le chemin avec reechantillonnage ne l'est pas
+
+Le pipeline diffusers a generateur seme rend le 23/09 les rewards de `bon4` (20/09) a la
+troisieme decimale. Le chemin `smc.models.StableDiffusion` : deterministe dans une session ;
+entre sessions, le 21/09 et le matin du 22/09 rendent les memes chiffres a 0.0000, et le soir
+du 22/09 d'autres racines et d'autres `ir_max` (jusqu'a 1.6 d'ecart sur un prompt), memes
+poids, meme code, meme graine. La session C (constat 20) separe les deux cas : `lam0`
+(lambda = 0, aucune reward lue) rend `bon4` case par case a la correlation 1.00, `ctl` rend
+le `ctl` du 21/09 a 0.70 avec la meme racine dans 30 % des prompts. Le chemin libre est donc
+rejouable d'une session a l'autre ; celui qui lit la reward du guide (VAE ft-mse, ImageReward,
+BERT en fp16) ne l'est pas, et 1e-3 sur une reward suffit a deplacer une dent du peigne a
+quatre cases.
+
+*Test du 23/09 apres-midi (`nuit4.sh`, `u_determinism.py`, non pre-enregistre).* `ctl` sur les
+prompts 0 et 1 dans trois processus separes : deux sans rien changer, un avec
+`cudnn.benchmark = False` et `use_deterministic_algorithms(True)` ; puis la version de
+`probe.py` du 22/09 matin (celle de la session A) sur les memes prompts. Les quatre rendent
+les **memes quatre rewards** a la quatrieme decimale, egales a celles de la session C du matin
+et de la session B du 22/09 soir (six prompts communs, `ctl_b1` = `ctl_C` a 0.0000), a travers
+un redemarrage du pod entre la session C et le test. Elimines : le processus, les drapeaux
+deterministes, le chemin de cache (`~/.cache` pour B, `work/hf_cache` pour C et le test, memes
+revisions), le pod, le venv `sd` (aucune installation depuis le 20/09), `smc/` (inchange depuis
+le 21/09 17h27, avant toutes les sessions), la reecriture de `probe.py`. Ce qui reste : les
+sessions qui rendent la reference du 21/09 (la reference elle-meme, la session A du 22/09
+matin) tournaient a **87 a 90 s par run** ; toutes celles depuis le 22/09 soir tournent a
+**55 a 60 s**, meme code, meme pipeline. Les deux groupes different par le chemin d'execution
+de la machine (noyaux fp16 choisis, materiel), pas par quoi que ce soit dans le depot ; la
+machine du premier groupe n'existe plus et le point ne peut pas etre pousse plus loin.
+Consequence inchangee : tout appariement par case entre fichiers de sessions differentes est
+invalide ; les moyennes par prompt entre bras FK restent utilisables ; a l'interieur du
+groupe depuis le 22/09 soir, l'appariement par case tient.
+
+## 20. Session C : les constats 3 et 5 bis tiennent, reformules
+
+`out/probe_C.json`, `t_sessionC.py` : `ctl`, `lam0`, `floor2` a 100 prompts dans **un seul
+processus**, le seul appariement par case valide (constat 19). Predictions en face dans
+`docs/protocol_sd.md`, « Pre-registration of session C ».
+
+- **Constat 3.** Kendall tau entre le classement de `r_phi(t = 80)` dans `ctl` et l'`ir`
+  libre de la meme racine (`lam0`) : **+0.137 +/- 0.050**, top-1 dans 35 % des prompts contre
+  25 % au hasard (n = 100). Le premier pas porte un peu d'information, pas aucune ; le
+  +0.067 du constat 3 etait lu sur un appariement invalide.
+- **Constat 5 bis.** A meilleure racine libre 0.779 ; M racine moyenne 0.233 ; B la racine que
+  `ctl` garde, lue libre, 0.466 ; C ce que `ctl` en tire 0.799. B - M = +0.233 +/- 0.047 (la
+  racine gardee vaut un tiers du chemin vers la meilleure, rang moyen 2.04 sur 4) ;
+  **A - B = +0.313 +/- 0.042** (l'effondrement coute encore 0.31 de racine) ; C - B = +0.333
+  +/- 0.038 (le pilotage rend un peu plus) ; C - A = +0.021 +/- 0.038 (le solde sur best-of-4).
+- **`floor2` apparie par x_T** : `ir_max` **-0.012 [-0.082, +0.060]** contre `ctl` (predit
+  [-0.14, -0.02], rate par le haut), `ir` moyen des quatre -0.250 +/- 0.045, 3.03 racines, 4 %
+  a une racine. Le prix des lignees sur `ir_max` est de l'ordre de l'avance de `ctl` sur
+  best-of-4 (+0.030 +/- 0.037 dans cette session, +0.056 le 21/09), pas plus ; le prix sur
+  la moyenne des quatre reste.
+
+Ce que cela change au constat 13 : « prix plat de -0.10 » etait trop dit. A n = 40 chaque IC
+couvre zero, la moyenne des sept bras est -0.07 [-0.18, +0.04], et `floor2` apparie par x_T
+a n = 100 vaut -0.01. La phrase tenable : **aucune configuration ne bat best-of-4 de plus
+que le bruit sur `ir_max`, pendant que la diversite varie d'un facteur trois et l'`ir` moyen
+de -0.15 a -0.56.** Les gros effets sont sur les lignees et la moyenne.

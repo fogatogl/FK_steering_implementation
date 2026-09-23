@@ -361,6 +361,82 @@ variant and the write-up cannot have both. Whichever goes to 100 prompts x
 constant lambda. If diversity becomes the claim, `div_pix` needs a perceptual
 metric behind it and neither LPIPS nor CLIP is in the venv.
 
+## The collapse lab: cause first, then the corrections (21/09 to 22/09)
+
+**Put in place.** `collapse_lab/`, a folder of analysis scripts that read the
+recorded runs and call `smc.fk` read-only, with its own `probe.py` that runs the
+paper's setting with the ancestor matrix kept and a set of named arms (the
+released code's floor at 0, lambda 2, both, lambda bisected to ESS = k/2, a
+schedule without t = 80, a threshold at k/2). The reference row was regenerated
+with the collapse fields (`sd_ref_fields100.json`, run 14): 96 runs of 100 end on
+one root. Criteria for "solved", predictions and outcomes went into
+`collapse_lab/ASSESSMENT.md` before each run; the findings, numbered, into
+`collapse_lab/FINDINGS.md`.
+
+**Why.** The screen of 21/09 had said the schedule is the lever, and left the
+question of which claim the post defends. Neither could be written without the
+cause: whether the collapse is the weights (an ESS question) or the paths (a
+genealogy question), and whether any correction keeps lineages without giving
+the reward back.
+
+**What came out.** Two degeneracies that the ESS does not separate (finding 15):
+reweighting best-of-4's four free draws by exp(10 ir) already gives an ESS of
+1.23 out of 4, so at lambda = 10 the target itself carries about one particle;
+and the number of final roots is a function of the recorded weights and the
+resampler alone, predicted within 0.07 on fifteen arms without knowing anything
+about the steering (finding 17, `n_coalescence.py`). One arm passes the
+criterion fixed before the runs, the floor with lambda = 2 (5 % single-root, 3.0
+roots of 4), and it does so by changing the target. Resampling less does not
+keep lineages (finding 18), and no arm moves `ir_max` by more than the noise
+while the mean of the four falls by 0.15 to 0.56 with the roots kept.
+
+**Problems met.** A rerun with `--redo` overwrote six records of three arms with
+values from another session; `floor2` and `lam0` lost those six prompts, `ctl`
+was restored from the reference file. Behind it, the fact the incident exposed:
+the `smc.models` path with resampling returns identical numbers within one
+session and different roots and rewards across sessions, same code, same
+weights, same seed (finding 19). Slot pairing across files from different
+sessions was invalid, and with it findings 3, 5 and 5 bis as first read.
+
+## The reference night and session C (22/09 evening to 23/09 midday)
+
+**Put in place.** The authors' released code cloned outside the repository and
+driven from `collapse_lab/ref/run_authors.py` under the paper's configuration,
+with a shim for a module it imports and never uses; the four implementation
+choices it makes and the paper does not state (`docs/reference_config.md`)
+wrapped one by one into this repository's filter (`stat0`, `multi`, `vae`,
+`idx`) and together (`R1`). Then session C: `ctl`, `lam0` and `floor2` at 100
+prompts in a single process (`probe_C.json`), so that slot pairing is valid
+inside the file; and a fourth run of the released code at seed 2024 under its own
+seeding path.
+
+**Why.** The +0.062 against the paper's +0.161 needed a reference that was not
+this repository's code, and the findings that rested on slot pairing needed a
+pairing that holds.
+
+**What came out.** The paper's configuration is this repository's. The released
+code without its filter returns best-of-4's rewards to the fourth decimal; with
+its filter its four runs on the same 40 prompts land at -0.35, -0.04, -0.13 and
++0.10 against best-of-4, pooled -0.110 +/- 0.036 over 220 run-prompts. Two of
+those runs share x_T and the DDIM noise and differ only by the stream of the
+multinomial draw. A reading of their code on 23/09 found no re-seeding and no
+bias between the two seeding paths: without a generator the multinomial advances
+the global stream and changes the later DDIM noise, with one it does not, and
+the two paths are two random runs of the same filter. The spread between them is
+measured, not explained. The gap is bounded, not closed, and it is not in the
+implementation (finding 16). Session C: the free path (`lam0`) returns best-of-4
+slot by slot at correlation 1.00, so the non-reproducibility sits in the
+resampling path only; findings 3 and 5 bis hold in weaker form (tau +0.14,
+A - B +0.31); `floor2` paired by x_T costs -0.01 on `ir_max` and -0.25 on the
+mean of the four (finding 20).
+
+**Problems met.** The pre-registered prediction for `floor2`'s price missed on
+the shallow side and the one for the fourth run of the released code missed on
+the high side, both recorded in `docs/protocol_sd.md`. The post's "flat price of
+-0.10 on `ir_max`" from 22/09 does not survive session C and was rewritten:
+nothing beats best-of-4 by more than the noise on the best image, while the
+lineages and the mean move by a lot.
+
 ## Where this sits against the plan (21/09)
 
 The 16/09 plan had S6 (16/09 to 04/10) for modules 0 and 1 on CIFAR, S7 (05 to
@@ -397,3 +473,22 @@ x 3-seed run done and in the table as a stated deviation, the figures rebuilt
 from the JSON, and the blog post written from `docs/results.md`,
 `docs/decisions.md` and this file. v1 for FK on images, MDLM and PG-DLM after
 the conference decision.
+
+## Re-anchored after the collapse lab (23/09)
+
+The fork of 21/09 is closed: the claim is the collapse, with its cause and its
+price, and `ir_max` is reported as indistinguishable from best-of-4 across
+every configuration tried. The reference is the released code, read as a mean
+under best-of-4 with a run-to-run spread wider than the paper's effect.
+
+Fourteen days to the submission. What is left is writing, not measuring:
+`docs/paper.md` at pass 9 with sections 2 to 5 to tighten, F0 to extend with the
+reference rows, `collapse_lab/README.md` to complete, a reproduction on a clean
+machine, the anonymisation. The three-process determinism test ran on 23/09
+afternoon (`collapse_lab/nuit4.sh`): every process since the 22/09 evening
+agrees to the fourth decimal, the 21/09 machine does not, and the cause is the
+machine's execution path, not the repository. One GPU item stays open and is
+cheap, if wanted: one more paired run of the released code to put a standard
+error on its spread. **Data freeze on 25/09 evening**: whatever is not measured by then
+becomes a sentence in the limits section. `smc/` stays frozen until the
+submission; the floor as a `reward_floor` parameter comes after it.
