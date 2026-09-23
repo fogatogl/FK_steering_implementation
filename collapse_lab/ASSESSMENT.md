@@ -16,6 +16,164 @@ Fichier separe de `FINDINGS.md`, qui reste a l'auteur. Ici : les criteres fixes 
 donnees, les predictions horodatees, puis ce que les donnees ont rendu. Depouillement :
 `python collapse_lab/r_solutions.py` (sans GPU). Runs : `collapse_lab/nuit2.sh`.
 
+## Etat final (23/09, 07h). Tout ce qui suit cette section est le journal chronologique.
+
+**En bref.** A k = 4 et lambda = 10, aucune correction ne rend quatre lignees : la cible
+elle-meme n'en porte que 1.2 a 1.5 sur 4 (constat 15), et le nombre de racines finales se
+predit depuis les poids et le resampler seuls, a 0.05 pres sur quinze bras, sans rien savoir du
+pilotage. La seule correction qui passe sous 25 % de runs a une racine change la cible
+(`floor2`, lambda 2 : 6 %, 2.9 racines) et rend exactement la diversite que cette cible porte.
+Toute correction qui garde des lignees a lambda = 10 rend `ir_max` au niveau de best-of-4 : le
+gain de FK sur best-of-4 est le prix de la concentration, et le rendre reversible le coute. Cote
+reference, la configuration du papier est celle de ce depot, et le +0.161 de la table 1 n'est
+produit ni par ce depot (+0.056) ni par le code publie, qui rend ici moins que best-of-4 dans
+ses trois lectures (-0.13 apparie par x_T, -0.02 apparie par bruit, -0.33 sous sa propre graine).
+
+### A. Les corrections, apparie a `ctl` par prompt (session A, seed 2024)
+
+| bras | n | 1 racine | racines | ESS pond. / plafond | div_pix | `ir_max` - `ctl` | `ir` moyen - `ctl` | `ir_max` - `bon4` |
+|---|---|---|---|---|---|---|---|---|
+| `ctl` (reference) | 40 | 95 % | 1.06 | 1.01 / 1.51 | 0.092 | | | +0.112 +/- 0.091 |
+| `late` (sans t = 80) | 20 ; 300 | 100 % ; 86 % | 1.00 ; 1.14 | 1.00 / 1.43 | 0.082 | +0.048 +/- 0.104 ; **+0.039 +/- 0.033** | +0.081 | +0.187 |
+| `adapt` (lambda bisecte) | 40 | 60 % | 1.40 | 1.10 / 1.51 | 0.153 | **-0.099 +/- 0.044** | -0.171 | +0.013 |
+| `floor` (plancher 0) | 40 | 68 % | 1.73 | 1.64 / 1.51 | 0.150 | -0.091 +/- 0.055 | -0.153 | +0.021 |
+| `lam2` | 40 | 35 % | 1.82 | 1.62 / 2.72 | 0.205 | -0.052 +/- 0.103 | -0.138 | +0.060 |
+| `fadapt` (plancher + bisecte) | 40 | 30 % | 2.12 | 1.72 / 1.51 | 0.200 | -0.106 +/- 0.058 | -0.214 | +0.006 |
+| **`floor2`** (plancher + lambda 2) | 40* | **5 %** | **3.00** | 2.73 / 2.72 | **0.286** | -0.083 +/- 0.093 | -0.334 | +0.029 |
+| `thr05` (plancher, ESS < k/2) | 40 | 62 % | 2.00 | 1.66 / 1.51 | 0.172 | -0.058 +/- 0.100 | -0.181 | +0.054 |
+| `rise` (plancher, bisecte, lam_max 100) | 20 | 35 % | 1.95 | 1.63 / 1.43 | 0.170 | +0.007 +/- 0.109 | -0.135 | +0.146 |
+| `lam0` (libre) | 17 | 0 % | 4.00 | 4.00 / 4.00 | 0.338 | -0.070 +/- 0.082 | **-0.557** | +0.034 |
+
+\* `floor2` : chiffres a n = 40 releves le 22/09 22h, avant l'incident qui a perdu six records ;
+a n = 34 la sortie actuelle de `r_solutions.py` est biaisee (+0.009 sur `ir_max`). Moyenne des
+sept corrections contre `ctl` sur `ir_max` : -0.069 [-0.176, +0.041] ; sur les cinq premieres,
+avant l'incident : -0.106 [-0.193, -0.019]. Le prix en `ir` moyen des quatre suit les racines
+gardees, de -0.14 a -0.56.
+
+### B. Les choix d'implementation du code publie, un a un dans `smc/` (40 prompts, apparie a `ctl`)
+
+| bras | choix | racines | `ir_max` - `ctl` | racine gardee = `ctl` |
+|---|---|---|---|---|
+| `stat0` | plancher 0 + forme statistique | 1.75 | -0.050 +/- 0.096 | 25 % |
+| `multi` | multinomial a chaque pas planifie | 1.00 | -0.061 +/- 0.081 | 38 % |
+| `vae` | guide decode par le VAE du pipeline | 1.05 | +0.009 +/- 0.083 | **30 %** |
+| `idx` | indices {20, 40, 60, 80, 99} | 1.00 | -0.051 +/- 0.085 | 22 % |
+| `R1` | les quatre ensemble (100 prompts) | 1.19 | -0.067 +/- 0.055 | |
+
+Aucun choix seul ne vaut plus de 0.06 ; les quatre ensemble valent l'avance de `ctl` sur
+best-of-4 (`R1 - bon4` = -0.011 +/- 0.041). Le VAE du guide, neutre sur la reward, change la
+racine gardee dans 70 % des prompts : la selection tient a l'arrondi d'un decodeur.
+
+### C. La reference : le code publie, configuration de la table 1, SD v1.5
+
+| run | code | graine | n | `ir_max` | contre `bon4` | appariement |
+|---|---|---|---|---|---|---|
+| table 1 du papier | | | | 0.898 | **+0.161** | |
+| `ctl` | `smc/` | 2024 | 100 | 0.826 | +0.056 +/- 0.052 | x_T |
+| `R1` | `smc/` + leurs 4 choix | 2024 | 100 | 0.756 | -0.011 +/- 0.041 | x_T |
+| `R0g24` | leur code | 2024, generateur | 40 | 0.720 | **-0.126 +/- 0.070** | x_T et bruit DDIM |
+| `R0g` | leur code | 42, generateur | 40 | 0.807 | -0.039 +/- 0.073 (prompt) ; **-0.018 +/- 0.074** contre leur libre | bruit (graine 42) |
+| `R0` | leur code | 42, RNG global | 100 | 0.554 | -0.216 +/- 0.061 (prompt) ; **-0.328 +/- 0.083** contre leur libre | prompt |
+| leur pipeline sans FK | leur code | 2024, generateur | 5 | | **0.0000** d'ecart sur 20 cases | bit |
+
+Leur sampleur de base est bit-compatible avec le pipeline diffusers ; leur scorer ImageReward
+rend les memes valeurs que l'officiel a la troisieme decimale ; leur boucle FK fait ce qu'elle
+ecrit (plancher, poids plats, drift multinomial, selection tardive) et pilote moins bien que
+`smc/` a choix et bruit identiques (0.56 contre 0.82 par particule). Regle pre-enregistree :
+ecart au papier **borne**, pas ferme.
+
+### D. Le mecanisme, en trois lignes
+
+1. *Poids.* A chaque pas planifie le poids vaut `exp(lambda r_phi)` a un facteur partage pres
+   (constats 4, 8) ; a lambda = 10 l'etendue du premier pas vaut 9 nats sur du bruit.
+2. *Chemins.* Le nombre de racines finales est une fonction des poids enregistres et du resampler
+   (`n_coalescence.py`, quinze bras a 0.05 pres, correlation par run 0.87 a 0.99) ; l'ESS d'un pas
+   ne la mesure pas (`adapt` : ESS 2.0, 1.4 racine). A poids plats le peigne est l'identite, le
+   multinomial ne l'est pas (1.58 racines sur 4 apres quatre pas plats).
+3. *Cible.* A lambda = 10, quatre tirages libres reponderes par `exp(10 ir)` ont une ESS de 1.2 a
+   1.5 (constat 15) : garder plus de racines, c'est rendre des particules que la cible ecrase
+   (`floor`, `fadapt`, `thr05`, `rise` : ESS ponderee au-dessus du plafond).
+
+### E. Ce qui a change dans la lecture des constats
+
+- Constat 11, troisieme lecture : x_T est partage au bit et les trajectoires restent correlees a
+  0.98 ou plus ; mais le chemin `smc.models` n'est pas rejouable d'une session a l'autre (le
+  pipeline diffusers l'est) et l'ecart d'arrondi change la racine gardee. L'appariement par case
+  entre fichiers de jours differents ne mesure rien ; **les constats 3, 5, 5 bis sont suspendus**
+  jusqu'a un rejeu de `ctl` et `lam0` dans une meme session.
+- Constat 14 : `thr05` (rééchantillonner moins) rend 2.0 racines, pas 2.4-2.8 ; `late` ne repare
+  rien ; `rise` ne bat pas `ctl`. La piste « seuil sous la cible » est de l'importance sampling
+  (reglee sans GPU). Le classement des corrections tient : `floor2` > `fadapt` > `thr05` ~
+  `floor` ~ `lam2` > `adapt`.
+
+### F. Brouillons de constats pour `FINDINGS.md` (a reprendre par l'auteur)
+
+**16. La reference.** La configuration du papier (max, [0, 20, 40, 60, 80], lambda 10, k 4, DDIM
+eta 1, 100 pas, CFG 7.5) est celle de ce depot ; les defauts du script publie (`diff`, 5-30-5)
+sont une autre configuration que l'annexe du papier note plus bas. Le code publie sous la
+configuration du papier rend, sur les 100 prompts du benchmark et SD v1.5, 0.554 (sa graine) et
+0.720 (nos x_T, 40 prompts), contre 0.770 pour best-of-4 et 0.826 pour ce depot ; `smc/` avec
+ses quatre choix d'implementation rend 0.756. Le +0.161 n'apparait dans aucune lecture ; l'ecart
+est borne, il n'est pas dans l'implementation. Source : `docs/reference_config.md`,
+`results/sd_authors_R0.json`, `collapse_lab/ref/`.
+
+**17. La coalescence se lit sur les poids.** Rejouer le peigne (ou le multinomial) sur les poids
+enregistres a chaque pas, en integrant sur `u`, predit le nombre de racines finales de quinze
+bras a 0.05 pres et la part de runs a une racine a trois points pres (`n_coalescence.py`). Le
+pilotage n'entre pas dans la prediction. `adapt` tient l'ESS a 2 et perd 2.6 racines : l'ESS est
+la degenerescence des poids, pas celle des chemins. A poids plats le multinomial des auteurs
+perd des racines par pur tirage (4 -> 1.58 en quatre pas).
+
+**18. Rééchantillonner moins ne garde pas les lignees.** `thr05` (plancher, ESS < k/2) :
+0.97 rééchantillonnement par run, 2.0 racines, 62 % a une racine, predit a 1.84 / 61 % / 1.12
+par le constat 17 avant la mesure. Quand le seuil declenche, les poids accumules sont pointus et
+un seul passage prend presque tout. `ir_max` -0.06 +/- 0.10 contre `ctl`.
+
+**19. Rejouabilite.** Le pipeline diffusers rend aujourd'hui les rewards de `bon4` (20/09) a la
+troisieme decimale ; le chemin `smc.models.StableDiffusion`, memes poids et meme code, rend le
+21/09 et le matin du 22/09 les memes chiffres, et le soir du 22/09 d'autres racines et d'autres
+`ir_max` (jusqu'a 1.6 d'ecart sur un prompt). Deterministe dans une session, pas entre sessions ;
+cause non identifiee. Consequence pour tout appariement par case.
+
+### G. Ce qu'il faut faire ensuite, dans l'ordre
+
+**GPU, une nuit (session C, ~5 h, T4).** `ctl`, `lam0`, `floor2` a 100 prompts dans un seul
+processus (`probe.py --arms ctl lam0 floor2 --limit 100 --redo --out out/probe_C.json`, avec
+`HF_HOME=/home/onyxia/work/hf_cache`). Ce que ca rend : un appariement par x_T valide pour les
+constats 3, 5, 5 bis ; la correction de tete (`floor2`) a n = 100 sur les memes x_T que sa
+reference, sans les six prompts perdus ; et un `ctl` de la session des bras `R1`, bissection,
+`thr05`, `rise`, qui sont aujourd'hui apparies a `ctl` par prompt seulement. Prediction a
+ecrire avant : `floor2 - ctl` sur `ir_max` dans [-0.14, -0.02], racines 2.8 a 3.1, 5 a 10 % a
+une racine ; `lam0` : quatre racines, `ir_max` a moins de 0.05 de `bon4` en moyenne et non
+apparie par case avec lui.
+
+**GPU, dix minutes, avant la nuit.** Le 0.23 entre leur boucle et `smc/` a choix et bruit
+identiques (`R1 - R0g24`) : un prompt, tracer les deux boucles cote a cote au premier pas
+planifie (rewards brutes, poids, indices tires) avec le meme x_T ; `ref/diag_authors.py` fait
+deja la moitie. Si les rewards du pas 20 coincident et que seul le tirage differe, la difference
+est le RNG du multinomial (global chez eux, generateur ici) et elle est de la variance ; si les
+rewards different, c'est le decodage du guide et c'est un fait de reproduction de plus.
+
+**GPU, quarante minutes, optionnel.** `R0` a la graine 2024 sous leur chemin de graine (RNG
+global), 40 prompts : si le resultat rejoint `R0g24` (0.72) et non `R0` (0.55), le 0.31 entre
+les deux chemins etait propre a la graine 42 et se dit en une phrase.
+
+**CPU / ecriture.** (1) Inserer les constats 16-19 dans `FINDINGS.md` et le bloc propose dans
+`collapse_lab/README.md`. (2) Section 2 du post depuis `reference_config.md` et la table C
+ci-dessus : « borne », avec les trois lectures et leur appariement. (3) F0 etendue
+(`scripts/plot_fig4_sd.py` avec `R0`, `R0g24`, `R1`). (4) F3 est dessinee
+(`out/fig_coalescence.png`, `s_coalescence_fig.py`) ; F1, F2, F4, F5 existent. (5) A5 (ESS de
+cible contre lambda) et A6 (table d'invariance) restent a mettre en forme, coupables.
+(6) Machine : `HF_HOME` dans le shell des jobs, supprimer `~/.cache/huggingface` (2.4 Go de
+doublons), sortir le jeton du remote git. (7) `smc/` : le plancher en parametre `reward_floor`
+apres la soumission, pas avant.
+
+**A ne pas faire.** Chercher a « resoudre » l'effondrement a lambda = 10 et k = 4 : la cible
+l'interdit, et les bras qui y arrivent rendent des particules qu'elle ecrase. Le post le dit
+comme un fait sur la cible, pas comme un echec des corrections.
+
+---
+
 ## Ce qu'on teste
 
 Le constat 14 de `FINDINGS.md` classe cinq corrections mesurees (`floor2` > `fadapt` >
