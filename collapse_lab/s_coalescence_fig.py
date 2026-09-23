@@ -45,7 +45,7 @@ ax.set_xlim(0.9, 4.1); ax.set_ylim(0.9, 4.1)
 ax.set_xlabel("racines finales predites depuis les poids et le resampler")
 ax.set_ylabel("racines finales observees (moyenne sur les prompts)")
 ax.set_title("La coalescence se lit sur les poids : quinze bras, un modele\n"
-             "(carres : bras multinomiaux ; cercles vides : ce que le multinomial ferait des memes poids)", fontsize=8.5)
+             "carres : bras multinomiaux ; cercles vides : le multinomial sur les memes poids", fontsize=8.5)
 dress(ax)
 fig.tight_layout()
 for ext in ("png", "svg"):
