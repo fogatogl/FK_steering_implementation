@@ -4,6 +4,43 @@ One block per pass, most recent on top. The loop, its scope and its review grid
 are `.claude/skills/paper-loop/SKILL.md`; what the post has to contain is
 `docs/paper_plan.md`.
 
+## Pass 4 (22-23/09, `docs/reference_config.md` created, `docs/protocol_sd.md` extended; `paper.md` untouched)
+
+**Reviewed.** Not a writing pass on the post: the reference night and the collapse
+night of the 22/09 plan, run back to back. What entered `docs/`: `reference_config.md`
+(paper text against released code against this repo, cell by cell with sources) and
+the pre-registration blocks at the end of `protocol_sd.md` (latents test, `R0`, `R1`,
+bisection, `B1` rule, `thr05` with the coalescence model's prediction, `rise`, then
+`R0g`, `authors_free_g`, `authors_free`), each written before its run. Findings and
+confrontations: `collapse_lab/ASSESSMENT.md`.
+
+**Found.** (1) The paper's stated SD configuration is this repo's; the released
+script's defaults are another configuration the paper's own appendix scores lower.
+(2) The released code under the paper's configuration returns 0.554 on the 100
+prompts with its own seeding and 0.807 with our generator on 40, never the 0.898 of
+Table 1; `smc/` with its four implementation choices returns best-of-4 (`R1`); the
+gap is bounded, not closed, and sits in neither implementation. (3) The latents test
+holds $x_T$ at the bit and the trajectories at correlation 0.98 or more, so constat 11
+has a third reading: the `smc` path reproduces within a session and not across
+sessions, with identical code and weights; slot pairing across files from different
+days measures nothing. (4) The coalescence model predicts the lineages of fifteen arms
+from the recorded weights alone, and its pre-registered `thr05` prediction (1.84 roots)
+held against the plan's guess (2.4 to 2.8).
+
+**Corrected.** Nothing in the post. In the lab: the `--redo` of the six grid prompts
+had overwritten six session-A records of `ctl`, `floor2`, `lam0` with session-B values;
+`ctl` restored from `sd_ref_fields100.json` (without weight fields), the six of `floor2`
+and `lam0` lost, scripts read weights only where present.
+
+**Open, for the author.** (a) Whether to rerun `ctl` and `lam0` in one session (200
+runs, about 3 h 20) to recompute constats 3, 5, 5 bis on a valid slot pairing, or to
+drop them. (b) Section 2 of the post now has a reference measurement to write from:
+"bounded", with the released code at or under best-of-4 here; the wording of the
+two seeding paths (0.554 against 0.807) waits for `authors_free` and `authors_free_g`
+at 40 prompts. (c) The `_b1` arms and the image grid come from session B and pair
+only with `R1`; F1 and F2 say so in their captions. (d) `smc/` untouched; the floor
+as a `reward_floor` parameter stays post-submission.
+
 ## Pass 3 (21/09, section 6 re-derived from the JSON and the saved tensors)
 
 **Reviewed.** Every number of section 6, recomputed from `results/*.json` and

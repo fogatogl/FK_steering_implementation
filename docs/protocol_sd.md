@@ -356,3 +356,159 @@ slot $i$ of `bon4` and slot $i$ of `fk4` starting from the same $x_T$, is the
 one thing to check before the number is quoted; the wrapper reproducing the
 pipeline bit for bit at $\lambda = 0$ (run 11) is the reason to expect it to
 hold, not a proof that it does.
+
+## Pre-registration of the reference arms and the collapse night (22/09, 19h35, written before the runs)
+
+Configuration table and sources: `docs/reference_config.md`. Everything below runs from
+`collapse_lab/nuit2.sh` in this order: `m_latents`, `R1`, `R0`, `B1`, `stat0`, `multi`,
+`vae`, `idx`, `thr05`, `rise`. About nine hours on the T4. Readout:
+`collapse_lab/r_solutions.py`, `f_probe.py`, `ref/parse_authors.py`. Each prediction is
+confronted one by one afterwards (held / missed / under tension), as in constat 10.
+
+**The latents test (`collapse_lab/m_latents.py`, constat 11).** Two prompts, indices 0
+and 1, `seed_effective` 2024000 and 2024001. Pipeline latents captured by
+`callback_on_step_end` at loop indices 0, 1, 10, 50, 99 against `initial_state` then
+`step`, same generator. Predicted: $x_T$ identical at the bit (same `randn_tensor` shape
+and order); after index 0, max |diff| under 5e-3 and per-slot correlation above 0.999
+(fp16 rounding of `eps`, batched against expanded text encoding); the correlation falls
+under 0.9 before index 50 and under 0.5 by index 99 for at least one slot. Reading if
+held: $x_T$ is shared and the trajectory is numerically chaotic at $\eta = 1$; slot $j$ of
+`bon4` is not the continuation of root $j$, and no slot pairing measures "what the root
+becomes". Constats 3 and 5 bis are reformulated, not dropped: the root does not determine
+the image. If instead all four correlations stay above 0.99 at index 99, the mismatch of
+constat 11 has another cause and constats 3, 5 and 5 bis are dropped.
+
+**`R0`, the released code under the paper's configuration** (`collapse_lab/ref/run_authors.py
+--config paper`, 100 prompts, seed 42, one pass). Predicted `ir_max` mean **0.77**, interval
+[0.72, 0.82]. Reason: of the four implementation differences, the only one measured here,
+the floor on the max statistic, costs -0.09 against `ctl` (arm `floor`, n = 40); the
+multinomial resampler adds variance with no known sign; the VAE and the one-index shift are
+predicted neutral. Against `bon4` at seed 2024 (same prompts, not the same $x_T$):
+`R0 - bon4` in [-0.05, +0.05]. The paper's 0.898 is not predicted to appear. The terminal
+adaptive resampling is predicted to return fewer than four distinct images in 20 to 50 % of
+runs. Decision rule, fixed now: the gap is **closed** if `R1 - bon4` (paired, 100 prompts)
+is at least +0.12; **bounded** otherwise. Predicted outcome: bounded, and issue 3 of the
+plan: the released code does not return the published number on this material.
+
+**`R1`, `smc/fk.py` with the four implementation choices** (`probe.py --arms R1`: floor,
+statistic form, multinomial at every scheduled step, guide decoded by the pipeline VAE,
+indices {20, 40, 60, 80, 99}). Paired to `ctl`: `ir_max` **-0.08 +/- 0.05**, lineages 1.0
+to 1.3, t = 80 inert in about 90 % of runs. `R1 - R0` (unpaired means, same prompts):
+within +/- 0.03. If |`R1 - R0`| exceeds 0.06, the two codes differ in something the table
+does not list, and the bisection below says where.
+
+**The bisection, one choice at a time, 40 prompts, paired to `ctl`.**
+
+- `stat0` (floor + statistic form): `ir_max` -0.09 +/- 0.05, the `floor` arm again; the
+  form itself changes nothing (`fk4_stat - fk4` = -0.004 +/- 0.024). Lineages about 1.7.
+- `multi` (multinomial at every scheduled step): `ir_max` -0.02 +/- 0.04; `n_resamplings`
+  4.0 on every run; lineages 1.0 to 1.1; about 1.8 ancestors after t = 80, as `ctl`, because
+  the weights are peaked enough that the comb and the multinomial draw agree.
+- `vae` (guide decoded by the pipeline VAE): |`ir_max` difference| under 0.03; the kept
+  root (`root_slots`) equals `ctl`'s in at least 70 % of prompts.
+- `idx` (indices {20, 40, 60, 80, 99}): |`ir_max` difference| under 0.03; no prediction on
+  root agreement, one index moves the reward noise the first step reads.
+
+**`B1`, the image grid.** Six prompts chosen by rule from `out/probe.json` at n = 40, by
+`collapse_lab/q_image_grid.py --choose`: the two prompts ranked 20th and 21st of 40 on
+`ctl`'s `ir_max`; the two with the largest `ctl - bon4` on `ir_max`; among the prompts where
+`floor2` keeps four lineages, the two with the highest `floor2` `ir_max`. Ties by
+`prompt_id`. Arms `lam0`, `ctl`, `floor2` and `R1`, rerun with `--save-images` on those six
+prompts (same $x_T$, so the same trajectories up to the fp16 drift the latents test
+measures). No prediction: the grid is shown, not scored.
+
+**`thr05`** (floor, resampling only when ESS < k/2, 40 prompts). `n_resamplings` 1.2 to 1.8;
+lineages 2.4 to 2.8; `ir_max` -0.10 +/- 0.06 against `ctl`; `ir` mean between `floor` and
+`floor2`; terminal ESS (`ess_at_schedule[-1]`) under 1.5 in more than half the runs, the
+selection being deferred to the last step. If `n_coalescence.py` is ready before this arm
+starts, its prediction is added here as a dated line; otherwise these numbers stand.
+
+*Added 22/09, 19h55, from `collapse_lab/n_coalescence.py`, about six hours before the arm
+starts.* The coalescence model, applied to the recorded weights of the `floor` arm (40
+prompts) with the rule "resample only if ESS < k/2", predicts for `thr05`: **1.84 roots**,
+**61 % of runs on a single root**, **1.12 resamplings** per run. This replaces the guess
+above (2.4 to 2.8 roots) as the prediction to confront. The same model reproduces the
+observed lineages of the seven existing arms within 0.05 (`ctl` 1.07 against 1.05, `floor`
+1.73 against 1.73, `fadapt` 2.16 against 2.12, `floor2` 2.97 against 3.00) and the
+single-root fractions within three points. The mechanism it implies: with the floor, the
+early steps are inert and the accumulated weights stay flat, so `thr05` rarely resamples
+before t = 40; when it does, the accumulated weights are peaked (two or three steps of
+`exp(10 r)` summed) and one comb pass takes most lineages at once. Fewer resamplings, but
+each one harder. If `thr05` lands near 1.8 and not near 2.6, "resample less" is not the
+lever the plan expected, and the weights' peakedness at the moment of resampling is.
+
+**`rise`** (floor, bisected lambda with `lam_max = 100`, 20 prompts). Lineages 2.0 to 2.3
+(as `fadapt`); at t = 20, the bisected lambda exceeds 10 in the runs where it bites;
+`ir_max` -0.05 +/- 0.07 against `ctl`, not above it.
+
+**Cut order if the night overruns:** `rise`, then `idx`, then `vae`. Never cut: the latents
+test, `R1`, `R0`, `B1`.
+
+*Added 22/09, about 21h50, after `R0` at 22 prompts and `R1` at 100, before the arm runs.* `R0`
+returned 0.554 against 0.770 for `bon4` on the same prompts (-0.216 +/- 0.061), 0.206 +/-
+0.072 under `R1`. The diagnostic (`collapse_lab/ref/diag_authors.py`, two prompts) shows
+their scorer equal to the official ImageReward to the third decimal and their guide working
+as written: floored rewards, flat weights, multinomial drift, then selection. What separates
+`R0` from `R1` is therefore not the scorer and not the potential; the remaining difference
+is the noise stream (seed 42 through the global RNG against `seed_effective = 2024000 + i`
+through a generator). **`R0g`**: their pipeline with `generator=torch.Generator(seed_effective)`
+(`run_authors.py --generator`), 40 prompts, so that their code runs from the same $x_T$ and
+the same DDIM noise as `bon4`, `ctl` and `R1`; their multinomial draws stay on the global RNG.
+Predictions: if the two codes are equivalent, `R0g - R1` within +/- 0.05 paired on 40
+prompts and `R0g - bon4` within +/- 0.05; if `R0g - R1` stays below -0.12, their pipeline
+differs from `smc/` in something the reference table does not list, and the next step is a
+step-by-step comparison of the two trajectories on one prompt under FK (the latents test
+without FK already gives correlation above 0.98 at the last step, so the base sampler is not
+the suspect).
+
+*Added 22/09, about 22h05, before the latents rerun.* The latents test held $x_T$ at the bit and the
+trajectories at correlation 0.984 to 0.9999 per slot at the last step: the chaotic-divergence
+prediction is **missed**. Yet the `lam0` records and `bon4` disagree slot by slot (correlation
+0.64 across 80 slots, 0.89 once sorted within prompt), and on prompt 0 the largest ImageReward
+gap (0.05 against 0.77) sits on the slot with the lowest latent correlation (0.984).
+`m_latents.py` now decodes both final latents and scores them, next to the recorded `bon4`
+value. Predictions: (a) the pipeline's finals today score within 0.05 of the recorded `bon4`
+on every slot (the 20/09 file is reproducible); (b) this repo's finals differ from the
+pipeline's by up to 0.7 on the least-correlated slot, the gaps ordering as 1 minus the
+correlation: ImageReward is that sensitive to an fp16-level divergence. If (a) fails, the
+`bon4` file is the odd one out and constats 3, 5, 5 bis are to be recomputed against `lam0`,
+which is the paired free baseline by construction. If (b) fails (all gaps under 0.1), the
+`lam0` arm departs from the bare model somewhere in `fk_steer` at lambda 0, to be found.
+
+*Added 23/09, about 03h05, before the run.* Outcome of the rerun: (a) **held**, the pipeline today
+returns the recorded `bon4` rewards to the third decimal on both prompts; (b) **missed in its
+strong form**: the bare model's finals differ from the pipeline's by 0.17 to 0.34, not 0.7,
+and they also differ from the `lam0` records of the probe (prompt 0: 1.11 / -0.29 / 0.69 /
+0.87 today against 1.01 / 0.77 / 1.10 / 0.68 recorded). The image redo (`nuit2e.sh`) reruns
+`lam0` on that prompt with the same seed and settles whether the probe path is deterministic.
+`R0g` at 14 of 40 prompts sits 0.30 +/- 0.19 under `R1`: the equivalence prediction is
+failing, and the noise stream is cleared as the cause. **`authors_free_g`**: their pipeline
+with `fkd_args=None` and our generator, five prompts (`run_authors.py --no-smc --generator`).
+Prediction: if their pipeline is the diffusers pipeline it copies, the four rewards equal the
+recorded `bon4` to the third decimal on all five prompts, and the difference between `R0g`
+and `R1` lies inside their FK loop; if they differ by more than 0.05 on any slot, their base
+sampler is not ours and the reference comparison has to be read against their own free
+baseline, not against `bon4`.
+
+*Added 23/09, about 03h35, before the run.* `R0g` at 40 prompts: `ir_max` 0.807, `R0g - R1`
+-0.147 +/- 0.092, `R0g - bon4` -0.039 +/- 0.073, and **`R0g - R0` (same prompts, their
+seeding against our generator) +0.310 +/- 0.077**. The equivalence prediction is missed on
+`R1` and nearly met on `bon4`; the 0.31 between the two seedings of the same code is what
+needs explaining, since best-of-4 varies by under 0.02 across seeds. **`authors_free`**: their
+pipeline without FK under their seeding path (`torch.manual_seed(42000 + i)`, `generator=None`),
+40 prompts. Prediction: if the path is sound, the per-particle mean of its four free samples is
+within 0.05 of `bon4`'s per-particle mean on the same prompts (0.288) and its best-of-4 within
+0.08 of `bon4`'s (0.846); if it sits 0.2 or more lower, the global-RNG path of their pipeline
+is defective on this setup, `R0`'s 0.554 is an artefact of that path, and `R0g` is the
+reference number to report (their code at 0.04 under best-of-4, 0.15 under `R1`).
+
+*Added 23/09, about 04h05, before the run.* `authors_free_g` on five prompts: their pipeline without
+FK, with our generator, does **not** return `bon4`'s rewards; the slot gaps run from 0.33 to
+2.69, where the standard diffusers pipeline returns them to the third decimal (`m_latents.py`).
+Their copied pipeline consumes randomness differently from the one it copies; no run of their
+code pairs with ours by $x_T$, only by prompt. The question left is distributional:
+`authors_free_g` extended to 40 prompts (`nuit2h.sh`). Prediction: its per-particle mean is
+within 0.05 of `bon4`'s on the same prompts (0.288) and its best-of-4 within 0.08 of `bon4`'s
+(0.846); then their base sampler has the same law as ours, `R0g - bon4` = -0.04 stands as
+"their FK returns best-of-4's number", and the 0.31 between `R0` and `R0g` is to be read
+against `authors_free` (their seeding, `nuit2g.sh`) on the same footing.
