@@ -25,6 +25,7 @@ def main():
     p.add_argument("--i", type=int, default=0)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--ir-cache", default="/home/onyxia/work/ir_cache")
+    p.add_argument("--generator", action="store_true", help="notre generateur (avec --seed 2024 : les x_T de bon4 / R1)")
     args = p.parse_args()
 
     sys.path.insert(0, str(Path(__file__).parent / "shim"))
@@ -87,11 +88,12 @@ def main():
     fkd_args = dict(lmbda=10.0, num_particles=4, use_smc=True, adaptive_resampling=False, time_steps=100,
                     guidance_reward_fn="ImageReward", potential_type="max", resample_frequency=20,
                     resampling_t_start=20, resampling_t_end=80)
-    images = pipe([prompt] * 4, num_inference_steps=100, eta=1.0, fkd_args=fkd_args)[0]
+    gen = torch.Generator("cuda").manual_seed(effective) if args.generator else None
+    images = pipe([prompt] * 4, num_inference_steps=100, eta=1.0, fkd_args=fkd_args, generator=gen)[0]
     fin_leur = leur_ir.score_batched([prompt] * 4, images)
     fin_off = officiel.score(prompt, images)
     print(f"  finales : leur scorer {[round(v, 3) for v in fin_leur]} | officiel {[round(float(v), 3) for v in fin_off]}")
-    out = ROOT / "collapse_lab" / "out" / f"diag_authors_{args.i}.json"
+    out = ROOT / "collapse_lab" / "out" / f"diag_authors_{args.i}{'_s%d' % args.seed if args.seed != 42 else ''}.json"
     out.write_text(json.dumps({"prompt_id": pid, "prompt": prompt, "seed_effective": effective, "pas": journal,
                                "finales_leur": fin_leur, "finales_officiel": [float(v) for v in fin_off]}, indent=1))
     print(f"-> {out}")

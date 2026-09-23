@@ -1,0 +1,8 @@
+{
+  "source": "Singhal et al., arXiv 2501.06848 v5, sections/experiments_new.tex lines 82-85, table ir_geneval_t2i, SD v1.5 row; IR = ImageReward of the highest-reward particle",
+  "rows": [
+    {"sampler": "k1",   "n": 1, "ir_max": 0.187, "hps_at_ir_max": 0.245},
+    {"sampler": "bon4", "n": 4, "ir_max": 0.737, "hps_at_ir_max": 0.265},
+    {"sampler": "fk4",  "n": 4, "ir_max": 0.898, "hps_at_ir_max": 0.263}
+  ]
+}

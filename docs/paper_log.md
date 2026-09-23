@@ -4,6 +4,42 @@ One block per pass, most recent on top. The loop, its scope and its review grid
 are `.claude/skills/paper-loop/SKILL.md`; what the post has to contain is
 `docs/paper_plan.md`.
 
+## Pass 5 (23/09, sections 2 to 8 rewritten on the final state; block 18 of `results.md` added)
+
+**Reviewed.** The whole post against the grid, after writing: the reference
+paragraph and table of section 2 (block 18), the two-degeneracies and target
+paragraphs of section 3 (blocks 14, 18), section 4 filled from blocks 12, 16, 17,
+section 5 rewritten as "repairing the collapse, and what it costs" from blocks 13,
+15, 18, the three-scales line of section 6 (block 18), the reproducibility
+paragraphs of section 7, the limits of section 8. Quality 4: the reference run
+and the coalescence model are the two strongest pieces; the reference is 40
+prompts on the x_T-paired row. Clarity 3: section 3 now carries three ideas
+(weights, paths, target) and a reader needs the two figures to follow. Correctness
+4: every number was re-read from block 18 or an earlier block; the "bit for bit at
+lambda = 0" claim of the previous draft was false and is replaced in two places by
+the measured 0.984. Context 5: the contract paragraph now names the lab.
+
+**Found.** (1) Word count 4 030 after writing, against 3 500: trimmed the
+worst-prompt anecdote, the ESS-does-not-predict aside, the two CIFAR paragraphs
+and section 7's bug paragraph. (2) Three numbers quoted in the post were not in
+`results.md` (the 0.34 slot difference, the 1.2 decoder shift, the 0.31 between
+seedings): added to block 18. (3) The previous draft's thesis sentence in
+`paper_plan.md` ("the two changes that act on it are the two results") no longer
+matches the post: the two results are now the bounded reference and the
+mechanism. `paper_plan.md` not edited in this pass; question to the author below.
+
+**Corrected.** The two "bit for bit" claims; the 20-of-20 lineage count replaced
+by 96 of 100; the schedule section's promise of "the claim the table carries"
+(`S60` over `fk4` is not settled) rewritten as measured.
+
+**Open, for the author.** (a) `paper_plan.md`'s thesis and word budget are the
+21/09 ones; the post now follows the 22/09 plan (reference first, collapse
+second, repairs third). Rewrite the plan or accept the drift. (b) Section 3's
+figure of the ancestry is one prompt (`005848-0000`); the six are in
+`collapse_lab/out/`. (c) Session C (ctl, lam0, floor2 at 100 in one process) is
+running; if it lands as predicted, constats 3 and 5 bis return to section 3 in
+their reformulated form. (d) Whether the image grid at 5.3 MB stays in the repo.
+
 ## Pass 4 (22-23/09, `docs/reference_config.md` created, `docs/protocol_sd.md` extended; `paper.md` untouched)
 
 **Reviewed.** Not a writing pass on the post: the reference night and the collapse

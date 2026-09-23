@@ -522,3 +522,51 @@ DDIM stream with `bon4`, `ctl` and `R1`. Prediction: `R0g24 - bon4` within +/- 0
 `R0g24 - R1` within +/- 0.08, paired; fewer than four distinct final images in 5 to 15 % of runs.
 The 0.31 between `R0` (their seeding, shared stream) and `R0g` (generator stream) at seed 42
 stays unexplained by this run.
+
+*Outcome, 23/09 about 06h30.* `R0g24`: `ir_max` 0.720, `- bon4` -0.126 +/- 0.070, `- R1`
+-0.233 +/- 0.085, duplicates in 10 % of runs. Both intervals missed on the low side; the
+duplicate rate held. Their loop steers less well than `smc/` with the same four choices on
+identical $x_T$ and DDIM noise (0.56 against 0.82 per particle).
+
+## Pre-registration of session C and the two traces (23/09, about 07h30, written before the runs)
+
+**The trace of the two loops on one prompt.** `ref/diag_authors.py --i 0 --seed 2024
+--generator` records, at loop indices 20, 40, 60, 80, 99, the raw rewards their guide sees on
+the same $x_T$ as `R1`'s record for prompt `005695-0057`, whose `r_at_schedule` row 0 holds
+`smc/`'s rewards at index 20 on the same four particles before any resampling. Prediction:
+the four rewards at index 20 agree to 0.05 (same particles, same Tweedie estimate, same
+pipeline VAE, same ImageReward), so the two loops see the same first step and diverge only
+through the resampling draw (global RNG for theirs, the generator for ours); the 0.23 between
+`R0g24` and `R1` is then variance of the root choice plus their terminal duplication, not a
+difference of guide. If the index-20 rewards differ by more than 0.2 on any particle, the
+guide's input differs (decode or postprocess) and that is the difference to name.
+
+*Outcome, 23/09 about 07h45 (`out/diag_authors_0_s2024.json`).* Their loop on our $x_T$ at
+index 20 sees -0.21 / -2.28 / -0.77 / -1.13, all negative: floored, flat, drift, as in `R1`,
+whose recorded first-step rewards are the clamped zeros (so the value comparison is not
+possible on `R1`; the behaviour prediction holds). On the same four particles one index
+earlier, this repo's guide sees -1.78 / -2.27 / -1.37 / -1.15 with the pipeline VAE (`vae`
+arm) and -0.56 / -2.26 / -1.46 / -1.09 with sd-vae-ft-mse (`ctl_b1`): particle 0 moves by 1.2
+with the decoder and by 1.6 between decoder and one denoising step. The 0.05 agreement
+predicted on values is **missed**, and the reason is the finding: at t = 80 the guide's reward
+is decoder noise at the unit level, which is why the `vae` arm keeps a different root than
+`ctl` in 70 % of prompts. The 0.23 between `R0g24` and `R1` is not a difference of guide at
+the first step; it is left to the resampling draws and to their terminal duplication, and it
+stays open as variance to be measured, not as a code defect to be found.
+
+**Session C, one process** (`probe.py --arms ctl lam0 floor2 --limit 100 --redo --out
+out/probe_C.json`, `HF_HOME` set, about 5 h). Predictions, paired by $x_T$ inside the
+session: `floor2 - ctl` on `ir_max` in [-0.14, -0.02]; `floor2` 2.8 to 3.1 roots, 5 to 10 %
+single-root; `lam0` four roots, `ir_max` within 0.05 of `bon4`'s mean over the 100 prompts
+and slot-correlated with `bon4` under 0.7 (a different session); `ctl` at 1.0 to 1.1 roots
+and `ir_max` within 0.05 of `sd_ref_fields100.json`'s mean, slot-uncorrelated with it beyond
+0.7. On the recomputed constats: the Kendall tau between the first-step ranking and the final
+`lam0` reward stays under 0.15 (constat 3 reformulated, "the root does not determine the
+image"); the root `ctl` keeps scores under `lam0` between the median and the best of the
+four (constat 5 bis, B between M and A), with A - B in [0.25, 0.50].
+
+**`R0` at seed 2024 under their own seeding** (`run_authors.py --config paper --seed 2024
+--limit 40`, global RNG, 40 min). Prediction: `ir_max` between `R0` (0.55) and `R0g24` (0.72),
+i.e. in [0.55, 0.75]; if it lands within 0.05 of `R0g24`, the 0.31 was specific to seed 42's
+stream and is said in one sentence; if it stays near 0.55, the shared-stream path itself
+costs 0.2 and stays open.

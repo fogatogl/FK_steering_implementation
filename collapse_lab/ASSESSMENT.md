@@ -82,6 +82,16 @@ ecrit (plancher, poids plats, drift multinomial, selection tardive) et pilote mo
 `smc/` a choix et bruit identiques (0.56 contre 0.82 par particule). Regle pre-enregistree :
 ecart au papier **borne**, pas ferme.
 
+*Trace des deux boucles sur le prompt 0, memes x_T (23/09, 07h45).* Au premier pas planifie
+les deux guides voient quatre rewards negatives, planchent, tirent a plat : meme comportement.
+Sur les memes quatre particules, la reward du guide vaut -1.78 avec le VAE du pipeline (`vae`),
+-0.56 avec sd-vae-ft-mse (`ctl_b1`), -0.21 chez eux un pas plus tard : **le decodeur seul
+deplace la reward d'une particule de 1.2 au premier pas**. C'est la version la plus directe du
+constat 3 : a t = 80 le guide lit du bruit de decodeur, et le bras `vae` garde une autre racine
+que `ctl` dans 70 % des prompts. Le 0.23 entre leur boucle et `smc/` n'est pas dans le guide du
+premier pas ; il reste aux tirages et a leur duplication terminale, variance a mesurer plutot
+que defaut a trouver.
+
 ### D. Le mecanisme, en trois lignes
 
 1. *Poids.* A chaque pas planifie le poids vaut `exp(lambda r_phi)` a un facteur partage pres
