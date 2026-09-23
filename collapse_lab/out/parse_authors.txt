@@ -32,6 +32,14 @@ authors_paper (seed 42) : 100 prompts, {'potential_type': 'max', 'resample_frequ
    authors_paper - ctl  sur ir_max : -0.272 +/- 0.067 (n=100)   (34/100 gagnes)
    authors_paper - R1   sur ir_max : -0.206 +/- 0.072 (n=100)   (memes choix d'implementation, codes differents)
 
+authors_paper (seed 2024) : 40 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}
+   ir_max moyen 0.949   ir moyen des 4 0.838   images distinctes 3.58/4 (moins de 4 dans 18% des runs)   div_pix 0.081   60 s/run
+   papier, SD v1.5 : k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_paper - bon4 sur ir_max : +0.103 +/- 0.056 (n=40)   (25/40 gagnes)
+   authors_paper - k1   sur ir_max : +0.641 +/- 0.130 (n=40)   (32/40 gagnes)
+   authors_paper - ctl  sur ir_max : -0.009 +/- 0.100 (n=40)   (18/40 gagnes)
+   authors_paper - R1   sur ir_max : -0.004 +/- 0.012 (n=40)   (memes choix d'implementation, codes differents)
+
 authors_paper_g (seed 42) : 40 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}
    ir_max moyen 0.807   ir moyen des 4 0.674   images distinctes 3.67/4 (moins de 4 dans 12% des runs)   div_pix 0.091   59 s/run
    papier, SD v1.5 : k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)

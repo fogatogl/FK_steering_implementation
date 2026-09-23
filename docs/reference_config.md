@@ -62,3 +62,10 @@ seed 42, one pass. `R1`: `smc/fk.py` with the four implementation choices above,
 (`collapse_lab/probe.py --arms R1`). Then each choice alone against `ctl`: `stat0`, `multi`,
 `vae`, `idx`. Predictions and decision rule: `docs/protocol_sd.md`, "Pre-registration of the
 reference arms (22/09)".
+
+**Outcome (23/09).** `R1 - bon4` = -0.011 +/- 0.041 on 100 prompts: bounded, by the rule.
+The released code in four runs (its seeding at 42 on 100 prompts, our generator at 42 and at
+2024 on 40, its seeding at 2024 on 40): 0.554, 0.807, 0.720, 0.949; against `bon4`, pooled
+over 220 run-prompts, -0.110 +/- 0.036; on the common 40 prompts, -0.35, -0.04, -0.13, +0.10.
+Its free sampler is bit-identical to this repository's best-of-4 given the same generator.
+Full account: `collapse_lab/ASSESSMENT.md`, sections C and H; `docs/results.md` block 18.

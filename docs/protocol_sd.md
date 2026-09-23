@@ -579,3 +579,15 @@ the shallow side), 3.03 roots and 4 % single-root (held). Constat 3: Kendall tau
 i.e. in [0.55, 0.75]; if it lands within 0.05 of `R0g24`, the 0.31 was specific to seed 42's
 stream and is said in one sentence; if it stays near 0.55, the shared-stream path itself
 costs 0.2 and stays open.
+
+*Outcome, 23/09 about 13h15.* **0.949**, `- bon4` +0.103 +/- 0.056 on the same $x_T$ (under
+their seeding path at seed 2024 the global CUDA stream draws the same $x_T$ as our
+generator). The prediction is **missed on the high side**, and the sign of the
+"seeding path" effect flips between seeds (-0.31 at 42, +0.23 at 2024): there is no
+path effect, there is a spread. On the same 40 prompts the four runs of their FK give
+-0.35, -0.04, -0.13, +0.10 against `bon4`; pooled over 220 run-prompts, **-0.110 +/-
+0.036**; the standard deviation of `ir_max` across their four runs of one prompt has
+median 0.25. This repository's reference on the same 40 prompts in two sessions:
++0.11 and +0.08. The reference reading becomes: the released code's mean is under
+best-of-4, and its run-to-run spread on 40 prompts is wider than the effect the paper
+reports; one run in four reaches the paper's number within a standard error.

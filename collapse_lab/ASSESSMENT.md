@@ -26,8 +26,10 @@ pilotage. La seule correction qui passe sous 25 % de runs a une racine change la
 Toute correction qui garde des lignees a lambda = 10 rend `ir_max` au niveau de best-of-4 : le
 gain de FK sur best-of-4 est le prix de la concentration, et le rendre reversible le coute. Cote
 reference, la configuration du papier est celle de ce depot, et le +0.161 de la table 1 n'est
-produit ni par ce depot (+0.056) ni par le code publie, qui rend ici moins que best-of-4 dans
-ses trois lectures (-0.13 apparie par x_T, -0.02 apparie par bruit, -0.33 sous sa propre graine).
+produit ni par ce depot (+0.056, +0.030 dans deux sessions) ni en moyenne par le code publie
+(-0.11 +/- 0.04 sur quatre runs, 220 run-prompts), dont les quatre moyennes a 40 prompts vont
+de -0.35 a +0.10 selon le flux aleatoire a x_T egaux : un run sur quatre atteint le chiffre du
+papier, et la dispersion de leur filtre depasse l'effet qu'il rapporte.
 
 ### A. Les corrections, apparie a `ctl` par prompt (session A, seed 2024)
 
@@ -74,7 +76,16 @@ racine gardee dans 70 % des prompts : la selection tient a l'arrondi d'un decode
 | `R0g24` | leur code | 2024, generateur | 40 | 0.720 | **-0.126 +/- 0.070** | x_T et bruit DDIM |
 | `R0g` | leur code | 42, generateur | 40 | 0.807 | -0.039 +/- 0.073 (prompt) ; **-0.018 +/- 0.074** contre leur libre | bruit (graine 42) |
 | `R0` | leur code | 42, RNG global | 100 | 0.554 | -0.216 +/- 0.061 (prompt) ; **-0.328 +/- 0.083** contre leur libre | prompt |
+| `R0` graine 2024 | leur code | 2024, RNG global (= nos x_T) | 40 | **0.949** | **+0.103 +/- 0.056** | x_T |
 | leur pipeline sans FK | leur code | 2024, generateur | 5 | | **0.0000** d'ecart sur 20 cases | bit |
+| **les quatre runs de leur FK, groupes** | leur code | | 220 | 0.702 | **-0.110 +/- 0.036** | |
+
+Sur les memes 40 prompts, les quatre runs de leur FK rendent contre `bon4` : **-0.35, -0.04,
+-0.13, +0.10** (+/- 0.06 a 0.09 chacun). Deux d'entre eux partagent x_T et bruit DDIM et ne
+different que par le flux du tirage multinomial (-0.13 et +0.10) ; l'ecart-type d'`ir_max`
+entre les quatre runs d'un meme prompt a une mediane de 0.25. Ce depot, sur les memes 40
+prompts et deux sessions : +0.11 et +0.08. Le +0.161 du papier est dans l'etendue de ce que
+leur code rend d'un flux a l'autre, et au-dessus de sa moyenne de 0.25.
 
 Leur sampleur de base est bit-compatible avec le pipeline diffusers ; leur scorer ImageReward
 rend les memes valeurs que l'officiel a la troisieme decimale ; leur boucle FK fait ce qu'elle
@@ -603,12 +614,13 @@ Apparie a `ctl`, 40 prompts sauf `rise` (20). Predictions de `protocol_sd.md` (2
   repare rien.
 
 **La reference : l'ecart au papier est borne, pas ferme.** La configuration du papier est
-celle de ce depot. Le code publie sous cette configuration ne depasse best-of-4 dans aucune
-des trois lectures : **-0.13 +/- 0.07 apparie par x_T** (`R0g24`, 40 prompts), -0.02 +/- 0.07
-apparie par bruit a la graine 42 (`R0g` contre sa baseline libre), -0.33 +/- 0.08 sous son propre
-chemin de graine (`R0`, 100 prompts). `smc/` avec ses quatre choix d'implementation rend
-best-of-4 (`R1`, -0.01) ; avec les siens, +0.056. Le +0.161 de la table 1 n'est produit par
-aucune des deux implementations sur ce materiel. Le diagnostic montre le mecanisme de leur
+celle de ce depot. Le code publie sous cette configuration, en quatre runs (220 run-prompts),
+rend en moyenne **-0.11 +/- 0.04** contre best-of-4, et ses quatre moyennes a 40 prompts vont
+de **-0.35 a +0.10** selon le flux aleatoire, a x_T egaux : son resultat depend du tirage plus
+que l'effet que le papier rapporte. `smc/` avec ses quatre choix d'implementation rend
+best-of-4 (`R1`, -0.01) ; avec les siens, +0.056 et +0.030 dans deux sessions. Le +0.161 de la
+table 1 est atteint par un run sur quatre de leur code (+0.10 +/- 0.06), et par aucune
+moyenne. Le diagnostic montre le mecanisme de leur
 boucle : plancher, poids plats, drift, selection tardive ; et sur les memes x_T leur boucle
 pilote moins bien que `smc/` avec les memes choix (0.56 contre 0.82 par particule), pour une
 raison que la table ne liste pas.
@@ -631,8 +643,10 @@ raison que la table ne liste pas.
 | `rise` : lignees 2.0-2.3, pas au-dessus de `ctl` | tenue (1.9-2.0 ; +0.01) |
 | leur baseline libre = la notre en loi | tenue (0.824 / 0.846, 0.295 / 0.288) |
 
-Ouvert : (1) le 0.31 entre les deux chemins de graine du FK des auteurs, reproductible et
-inexplique, et le 0.23 entre leur boucle et `smc/` a choix et bruit identiques (`R1 - R0g24`) ; (2) la non-reproductibilite inter-session du chemin `smc.models` (pipeline
+Ouvert : (1) la dispersion du FK des auteurs entre flux aleatoires (quatre moyennes a 40
+prompts de -0.35 a +0.10, ecart-type par prompt 0.25 entre runs) la ou `ctl` bouge de 0.03
+entre sessions : le multinomial a poids plats et la duplication terminale en sont les suspects,
+non mesures ; (2) la non-reproductibilite inter-session du chemin `smc.models` (pipeline
 diffusers rejouable, notre modele non), cause non identifiee ; (3) les constats 3, 5 et 5 bis
 suspendus tant que `ctl` et `lam0` n'ont pas ete rejoues dans une meme session ; (4) `floor2`
 et `lam0` amputes de 6 prompts par l'incident du rejeu.

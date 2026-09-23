@@ -88,17 +88,23 @@ repository's filter by wrappers, and the released code ran from its own clone.
 | paper, Table 1 | | 0.898 | +0.161 |
 | this repository, its own choices (`ctl`: the FK row regenerated on 21/09 with the current code, 100 prompts, seed 2024) | `smc/` | 0.826 | +0.056 ± 0.052 |
 | this repository with the four choices (`R1`, 100 prompts) | `smc/` | 0.756 | -0.011 ± 0.041 |
-| released code, same $x_T$ as the rows above (40 prompts) | theirs | 0.720 | -0.126 ± 0.070 |
-| released code, its own seeding (100 prompts) | theirs | 0.554 | -0.216 ± 0.061 |
+| released code, four runs pooled (220 run-prompts) | theirs | 0.702 | -0.110 ± 0.036 |
+| the same four runs on their common 40 prompts, one by one | theirs | | -0.35, -0.04, -0.13, +0.10 |
 
 The released code without its filter returns best-of-4's four rewards to the
 fourth decimal when handed the same generator, and its ImageReward scorer agrees
 with the official one to the third decimal, so the two implementations start from
-the same images and score them the same way. Under the paper's configuration
-neither of them returns the paper's number on this material, and the four
-choices that separate them cost the whole edge over best-of-4 rather than adding
-to it. The gap is bounded, not closed, and it does not live in the
-implementation.
+the same images and score them the same way. With its filter on, the released
+code's mean sits under best-of-4, and its four runs disagree with each other by
+more than the effect the paper reports: two of them share the same $x_T$ and the
+same denoising noise and differ only by the stream of the resampling draw, and
+they land at -0.13 and +0.10. One run in four reaches the paper's +0.16 within a
+standard error; the average of the four does not, and this repository's own
+filter moves by 0.04 between two sessions on the same prompts. The four
+implementation choices that separate the two codes cost the edge over best-of-4
+rather than adding to it. The gap is bounded, not closed: it does not live in the
+implementation, and part of it lives in the variance of a four-particle filter
+that keeps one root.
 
 ![The reproduction, this repository and the released code](../figures/fig0_reference.png)
 

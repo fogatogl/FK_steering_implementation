@@ -4,6 +4,28 @@ One block per pass, most recent on top. The loop, its scope and its review grid
 are `.claude/skills/paper-loop/SKILL.md`; what the post has to contain is
 `docs/paper_plan.md`.
 
+## Pass 9 (23/09, the fourth run of the released code read in: section 2's table and paragraph)
+
+**Reviewed.** Block 18's reference table after the last arm, and section 2.
+
+**Found.** Correctness: the sentence "neither of them returns the paper's number on this
+material" was falsified by the fourth run of the released code (0.949, +0.10 +/- 0.06
+over best-of-4 on the same x_T, within a standard error of +0.161). Quality: the four
+runs of the same code on the same 40 prompts span -0.35 to +0.10, two of them on
+identical x_T and noise; that spread is the finding, and the post now says it instead
+of a single number. The pooled -0.110 +/- 0.036 over 220 run-prompts replaces the
+per-run rows in the table.
+
+**Corrected.** Section 2's table and the paragraph under it. The "bounded" reading
+stands with its reason changed: the mean is under best-of-4 and the run-to-run spread
+is wider than the paper's effect.
+
+**Open, for the author.** The variance of the released filter (median 0.25 of `ir_max`
+between its runs of one prompt, against 0.03 for `ctl` between sessions) has two
+suspects, the multinomial draw at flat weights and the terminal duplication, neither
+measured on its own at this variance; it is a night of GPU if wanted. Section 5's
+`floor2` price by x_T (pass 8, open b) still waits on the author's choice.
+
 ## Pass 8 (23/09, session C read in: section 3's last paragraph and section 7's reproducibility paragraph)
 
 **Reviewed.** Block 18's session C paragraph (new), then the two paragraphs of the

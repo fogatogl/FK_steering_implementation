@@ -762,11 +762,16 @@ pipeline VAE for the guide's decode. On the 100 prompts:
 | `R0g24` | released code | generator 2024 (same x_T) | 40 | 0.720 | -0.126 +/- 0.070 |
 | `R0` | released code | its own, seed 42 | 100 | 0.554 | -0.216 +/- 0.061 |
 | `R0g` | released code | generator, seed 42 | 40 | 0.807 | -0.039 +/- 0.073 |
+| `R0` at seed 2024 | released code | its own path, seed 2024 (same x_T as ours) | 40 | 0.949 | **+0.103 +/- 0.056** |
+| the four runs pooled | released code | | 220 | 0.702 | **-0.110 +/- 0.036** |
 
-`R0g - R0` on the same 40 prompts is +0.310 +/- 0.077 while the two free baselines
-under the same two seedings are bit-identical (0.824 both, against 0.846 for `bon4`
-on those prompts): the difference between the two seeding paths of their filter is
-not explained. On the same four particles at the first scheduled step, the guide's
+On the same 40 prompts the four runs of their filter give -0.35, -0.04, -0.13 and
++0.10 against `bon4` (standard errors 0.06 to 0.09); two of them share x_T and the
+DDIM noise and differ only by the stream of the multinomial draw (-0.13 and +0.10).
+The standard deviation of `ir_max` across their four runs of one prompt has median
+0.25. The two free baselines under the two seedings are bit-identical (0.824 both,
+against 0.846 for `bon4` on those prompts). This repository's `ctl` on the same 40
+prompts in two sessions: +0.112 +/- 0.091 and +0.075 +/- 0.050. On the same four particles at the first scheduled step, the guide's
 reward for one particle reads -1.78 with the pipeline VAE, -0.56 with sd-vae-ft-mse
 and -0.21 in the released code one index later (`out/diag_authors_0_s2024.json`,
 arms `vae` and `ctl_b1`): the decoder alone moves a first-step reward by 1.2.
