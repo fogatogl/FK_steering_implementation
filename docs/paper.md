@@ -206,8 +206,9 @@ band the protocol had labelled not settled, and the ImageReward it reaches,
 0.858, is still 0.040 under the paper's 0.898. It does not touch the collapse:
 258 of 300 runs end on one lineage, 1.14 of 4 on average. Removing the
 uninformative step is the one change in this post that costs nothing on the
-reward, one reward evaluation per particle fewer in fact, and it repairs nothing
-about the cloud.
+reward, and it repairs nothing about the cloud. It spends one reward evaluation
+per particle fewer, though its runs took 87 s against 62 s on the T4 that night,
+so the saving is in evaluations, not in wall clock as measured.
 
 ## 5. Repairing the collapse, and what it costs
 
@@ -311,9 +312,12 @@ ImageReward of one slot can differ by 0.3 between the two paths at the end.
 $\lambda = 0$ both return the best-of-4 rewards written on 20/09, slot by slot,
 three days later. The wrapper with resampling does not: it returns identical
 numbers within one process and different surviving roots from one day's session
-to the next, with the same code and weights. The suspect is the guide's reward
+to the next, with the same code and weights. At $\lambda = 0$ no reward is read,
+so the one session in which the free path itself failed to reproduce has no
+candidate cause: same code, same weights, same seed, another process. For the
+resampling path there is one: the guide's reward stack, decoder and ImageReward
 in fp16, where a difference at the third decimal is enough to move one tooth of
-a four-tooth comb, and the cause was not pinned down in the time available. Every
+a four-tooth comb; it was not tested on its own in the time available. Every
 paired comparison in this post is therefore paired by prompt, or by $x_T$
 within one session, and never by slot across files written on different days.
 

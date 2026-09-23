@@ -119,7 +119,14 @@ que defaut a trouver.
 
 - Constat 11, troisieme lecture : x_T est partage au bit et les trajectoires restent correlees a
   0.98 ou plus ; mais le chemin `smc.models` n'est pas rejouable d'une session a l'autre (le
-  pipeline diffusers l'est) et l'ecart d'arrondi change la racine gardee. L'appariement par case
+  pipeline diffusers l'est) et l'ecart d'arrondi change la racine gardee. Deux cas a distinguer.
+  Le chemin libre (`lam0`) a rendu `bon4` au score pres dans la session C et pas dans la session
+  B : a lambda = 0 aucune reward n'est lue, donc ni le cache des modeles (`HF_HOME` differait
+  entre les deux sessions, memes revisions) ni le scorer ne peuvent l'expliquer ; meme code,
+  memes poids, meme graine, autre processus, cause **non identifiee**. Le chemin avec
+  rééchantillonnement (`ctl`) a un candidat : la pile de la reward du guide (VAE ft-mse,
+  ImageReward, tokenizer BERT) chargee depuis un autre chemin de cache, dont 1e-3 sur une
+  reward suffit a deplacer une dent du peigne ; non teste isolement. L'appariement par case
   entre fichiers de jours differents ne mesure rien. **La session C (H) les recalcule sur un
   appariement valide** : tau +0.14, A - B +0.31, B - M +0.23. Les constats 3 et 5 bis tiennent,
   reformules : un peu d'information au premier pas, une racine gardee un peu meilleure que le
@@ -354,7 +361,9 @@ Predictions du 22/09 18h30, confrontees :
    300 (`sd_s60_full.json`), 86-100 % a une racine, la ou 1.4-1.8 etaient predits : retirer
    t = 80 ne fait que reporter le premier reechantillonnage a t = 60, ou l'ESS mediane vaut
    1.4 et le peigne tue autant. `ir_max` +0.03 contre `ctl` a 20 prompts, +0.04 +/- 0.03 a
-   300 : le seul bras qui ne paie pas, et il fait une evaluation de reward de moins.
+   300 : le seul bras qui ne paie pas, et il fait une evaluation de reward de moins (mais
+   87 s par run cette nuit-la contre 62, `results.md` bloc 17 : l'economie est en evaluations,
+   pas en horloge mesuree).
 4. Lecture d'ensemble : **tenue**. Aucun bras a lambda = 10 ne passe sous 25 % de prompts a
    une racine ; le seul qui y passe change la cible (lambda = 2).
 
@@ -637,7 +646,7 @@ raison que la table ne liste pas.
 | `bon4` du 20/09 rejouable | tenue (0.000) |
 | `R0` = 0.77 [0.72, 0.82] | ratee par le bas (0.554) |
 | `R1` - `ctl` = -0.08 +/- 0.05 | tenue (-0.067) |
-| `R1` - `R0` dans +/- 0.03 | ratee (+0.21 ; +0.23 +/- 0.09 apparie par x_T, `R0g24`) |
+| `R0` a moins de 0.03 de `R1` | ratee : les quatre runs de leur code s'etalent de -0.35 a +0.10 contre `bon4` la ou `R1` est a -0.01 ; la question n'a pas une reponse mais une dispersion |
 | `R0g24` dans +/- 0.06 de `bon4` | ratee (-0.13 +/- 0.07) ; doublons terminaux 5-15 % : tenue (10 %) |
 | bissection : chaque choix sous 0.06 | tenue ; `vae` change la racine gardee dans 70 % des prompts (predit < 30 %) : ratee |
 | `rise` : lignees 2.0-2.3, pas au-dessus de `ctl` | tenue (1.9-2.0 ; +0.01) |
