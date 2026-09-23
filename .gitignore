@@ -30,3 +30,10 @@ wandb/
 
 # --- Editable install ---
 *.egg-info/
+
+# --- Collapse lab: GPU outputs that are rebuilt, never committed ---
+collapse_lab/out/images
+collapse_lab/out/fig_grid_0*.png
+collapse_lab/out/probe_backup*.json
+collapse_lab/out/*.tmp
+*.json.tmp

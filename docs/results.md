@@ -778,10 +778,14 @@ arms `vae` and `ctl_b1`): the decoder alone moves a first-step reward by 1.2.
 
 The released code without FK, given the same generator, returns `bon4`'s four
 rewards to the fourth decimal on 20 slots; its ImageReward scorer equals the
-official one to the third decimal. Its FK loop on our x_T steers less well than
-`smc/` with the same four choices (0.56 against 0.82 per particle), and the
-difference is not in the guide's first step, where both see four negative rewards
-and draw flat. Each of the four choices alone costs 0.05 to 0.06 in `smc/` (`stat0`
+official one to the third decimal. On our x_T its FK loop landed at -0.13 against
+`bon4` in the run `R0g24` and at +0.10 in the run at seed 2024 under its own seeding
+(`R1`, the same four choices in `smc/`, at -0.01); the difference is not in the
+guide's first step, where both see four negative rewards and draw
+flat, and a reading of the code (23/09) found no re-seeding and no bias between
+the two seeding paths. Without a generator the multinomial advances the global
+stream and changes the later DDIM noise; with one it does not; the two are two
+random runs of the same filter. Each of the four choices alone costs 0.05 to 0.06 in `smc/` (`stat0`
 -0.050, `multi` -0.061, `vae` +0.009, `idx` -0.051, 40 prompts each); the guide's VAE
 changes which root survives in 70 % of prompts while leaving the reward unchanged.
 
@@ -796,7 +800,17 @@ from lambda 0 to 4; CelebA 256 px (k = 16) 1.00 to 0.063 and 1.00 to 0.11; SD 51
 identical numbers within one session and different roots and rewards across sessions
 (the reference of 21/09 and the probe of the 22/09 morning agree to 0.0000; the
 22-23/09 night disagrees with both, `ir_max` off by up to 1.6 on a prompt), with
-identical code and weights; the cause is not identified. x_T is shared at the bit
+identical code and weights. A test on 23/09 afternoon (`collapse_lab/nuit4.sh`,
+`u_determinism.py`, not pre-registered) ran `ctl` on two prompts in three separate
+processes, one of them under `cudnn.benchmark = False` and
+`use_deterministic_algorithms(True)`, and once more with the 22/09-morning version of
+`probe.py`: all four return the same rewards to the fourth decimal, equal to session C
+and to the 22/09 night, across a pod restart. Ruled out: the process, the flags, the
+cache path, the pod, the `sd` venv (no install since 20/09), `smc/` (unchanged since
+21/09 17:27) and the probe's rewrite. What separates the two groups is the machine's
+execution path: the sessions that return the 21/09 numbers ran at 87 to 90 s per run,
+every session since the 22/09 evening at 55 to 60 s, same code; the first machine is
+gone and the cause cannot be pushed further. x_T is shared at the bit
 between the pipeline and the wrapper, and the trajectories correlate at 0.984 or
 more at the last step; the ImageReward of a slot still differs by up to 0.34
 between the two paths (`out/latents_0.json`, `out/latents_1.json`). Slot pairing

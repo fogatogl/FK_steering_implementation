@@ -104,9 +104,15 @@ def main():
     p.add_argument("--save-images", action="store_true",
                    help="PNG 512 px dans out/images/<arm>/<prompt_id>_<slot>.png + index.json")
     p.add_argument("--redo", action="store_true",
-                   help="rejoue les paires (prompt, bras) deja presentes et remplace leur record "
-                        "(memes seeds, donc memes chiffres ; sert a ajouter images et ancetres)")
+                   help="rejoue les paires (prompt, bras) deja presentes et remplace leur record ; "
+                        "exige --force, car un autre processus ne rend pas les memes chiffres "
+                        "(constat 19) et l'incident du 22/09 a ecrase six records ainsi")
+    p.add_argument("--force", action="store_true",
+                   help="autorise --redo a remplacer des records ; sinon, passer un --out neuf par session")
     args = p.parse_args()
+    if args.redo and not args.force:
+        raise SystemExit("--redo remplace des records d'une autre session : passer --force, "
+                         "ou ecrire dans un autre fichier avec --out")
 
     data = json.loads(Path(args.prompts).read_text())
     if isinstance(data, dict):

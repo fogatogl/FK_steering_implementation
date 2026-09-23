@@ -18,6 +18,21 @@ rejouer.
     python collapse_lab/h_invariances.py    # ce qui peut bouger l'ESS, et ce qui ne le peut pas
     python collapse_lab/i_root100.py        # la racine gardee, sur 100 prompts
     python collapse_lab/j_decomposition.py  # d'ou vient le gain de fk4 sur bon4
+    python collapse_lab/l_target_ess.py     # combien de particules la cible porte-t-elle, a chaque lambda
+    python collapse_lab/r_solutions.py      # les trois criteres de "resolu", par bras, IC bootstrap
+    python collapse_lab/n_coalescence.py    # les lignees predites depuis les poids seuls, contre l'observe
+    python collapse_lab/t_sessionC.py       # session C : constats 3 et 5 bis sur l'appariement par case valide
+    python collapse_lab/ref/parse_authors.py  # le code des auteurs contre bon4, ctl et la table 1
+    python collapse_lab/p_two_rewards.py    # F4 : ir_max et ir moyen apparies contre ctl (venv ddpm)
+    python collapse_lab/o_ancestry_fig.py --pid <id> --arms lam0 ctl floor2 R1   # F1
+    python collapse_lab/q_image_grid.py     # F2 depuis out/images/ (--choose : les six prompts par regle)
+    python collapse_lab/s_coalescence_fig.py  # F3
+    python scripts/fig_three_scales.py      # F5 : CIFAR / CelebA / SD (venv ddpm, samples/*.pt)
+
+Le code des auteurs est clone hors depot (`/home/onyxia/work/fkd_ref/`), lance depuis
+`ref/run_authors.py` dans le venv `sd` avec `ref/shim` sur le chemin (un module importe par
+leur code et jamais appele). Les runs de nuit sont `nuit*.sh` ; les predictions ecrites avant
+chaque run et leurs verdicts sont dans `ASSESSMENT.md` et dans `docs/protocol_sd.md`.
 
 `commun.py` porte la regle anti-double-comptage : `fk4_stat.json` et
 `fk4_diff.json` sont les memes 20 prompts aux memes x_T, et leur premier pas est

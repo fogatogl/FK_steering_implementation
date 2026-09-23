@@ -89,8 +89,11 @@ leur code rend d'un flux a l'autre, et au-dessus de sa moyenne de 0.25.
 
 Leur sampleur de base est bit-compatible avec le pipeline diffusers ; leur scorer ImageReward
 rend les memes valeurs que l'officiel a la troisieme decimale ; leur boucle FK fait ce qu'elle
-ecrit (plancher, poids plats, drift multinomial, selection tardive) et pilote moins bien que
-`smc/` a choix et bruit identiques (0.56 contre 0.82 par particule). Regle pre-enregistree :
+ecrit (plancher, poids plats, drift multinomial, selection tardive) ; a choix et bruit
+identiques il a rendu 0.56 par particule contre 0.82 pour `smc/` dans un run (`R0g24`) et
++0.10 sur best-of-4 dans un autre (graine 2024, RNG global) : ce n'est pas « pilote moins
+bien », c'est une dispersion entre runs que la lecture du code (23/09, aucun
+reensemencement, aucun biais entre chemins de graine) ne reduit pas. Regle pre-enregistree :
 ecart au papier **borne**, pas ferme.
 
 *Trace des deux boucles sur le prompt 0, memes x_T (23/09, 07h45).* Au premier pas planifie
@@ -630,9 +633,10 @@ que l'effet que le papier rapporte. `smc/` avec ses quatre choix d'implementatio
 best-of-4 (`R1`, -0.01) ; avec les siens, +0.056 et +0.030 dans deux sessions. Le +0.161 de la
 table 1 est atteint par un run sur quatre de leur code (+0.10 +/- 0.06), et par aucune
 moyenne. Le diagnostic montre le mecanisme de leur
-boucle : plancher, poids plats, drift, selection tardive ; et sur les memes x_T leur boucle
-pilote moins bien que `smc/` avec les memes choix (0.56 contre 0.82 par particule), pour une
-raison que la table ne liste pas.
+boucle : plancher, poids plats, drift, selection tardive ; et sur les memes x_T leur boucle a
+rendu 0.56 par particule contre 0.82 pour `smc/` avec les memes choix dans un run, +0.10 sur
+best-of-4 dans un autre. *(Relu le 23/09 apres-midi : « pilote moins bien » retire ; c'est la
+dispersion entre runs de leur filtre, mesuree et non expliquee, voir la section C.)*
 
 **Ce qui est tenu, rate, ouvert** (predictions de `protocol_sd.md`) :
 

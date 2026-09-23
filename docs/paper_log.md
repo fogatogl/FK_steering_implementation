@@ -4,6 +4,39 @@ One block per pass, most recent on top. The loop, its scope and its review grid
 are `.claude/skills/paper-loop/SKILL.md`; what the post has to contain is
 `docs/paper_plan.md`.
 
+## Pass 10 (23/09 afternoon, sections 5 and 8; the review of 23/09 morning read in)
+
+**Reviewed.** Sections 2, 5 and 8 against block 18 with session C and the fourth run of
+the released code; the outside review of 23/09 (three open threads, one over-claim).
+
+**Found.** Quality, section 5: "the price is flat on the score, -0.10" over-read forty-prompt
+intervals that all cover zero; session C's `floor2` paired by x_T at 100 prompts costs -0.012
+[-0.082, +0.060]. The claim the runs carry is weaker and sharper: nothing beats best-of-4 by
+more than the noise on `ir_max`, while the lineages and the mean of the four move by a lot.
+Correctness, section 8: "one seeding path scores 0.31 under the other for no reason found"
+was written on two runs; with four runs and a reading of the released code (no re-seeding,
+no bias between the two paths, the multinomial advances the global stream without a
+generator and leaves it alone with one), the fact is a run-to-run spread, measured on four
+runs. Wording, block 18 and the assessment: "steers less well than `smc/`" said more than
+one run supports; replaced by the two runs' numbers.
+
+**Corrected.** Section 5's price paragraph rewritten around the three quantities (score
+inside the noise, roots times three, mean -0.15 to -0.56). Section 8's weak-points
+paragraph rewritten; it now also says the authors were not asked for Table 1's command
+before writing. Block 18's sentence on the released loop. `collapse_lab/FINDINGS.md`
+received findings 16 to 20 and an addendum to finding 11; `README.md`'s SD paragraph,
+`docs/chronology.md` (two stages and the re-anchoring with the 25/09 data freeze) and
+`LEARNING.md` (three lines) caught up with the runs.
+
+**Open, for the author.** (a) Whether to send the email to the authors asking for Table 1's
+exact command (draft in the session's scratchpad); section 8's last sentence changes either
+way. (b) closed in the same pass: the three-process determinism test
+(`collapse_lab/nuit4.sh`, `u_determinism.py`) came back identical across processes,
+flags, probe versions and a pod restart, and different from the 21/09 machine; section
+7's paragraph was rewritten from it. (c) Whether the six
+`fig_grid_0*.png` and `out/images/` (35 MB) enter git. (d) Merge of the worktree branch into
+`main`.
+
 ## Pass 9 (23/09, the fourth run of the released code read in: section 2's table and paragraph)
 
 **Reviewed.** Block 18's reference table after the last arm, and section 2.

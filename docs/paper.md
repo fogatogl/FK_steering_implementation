@@ -231,16 +231,22 @@ diversity that target carries, no more.
 
 ![ir_max and mean reward of the four, paired against the reference](../collapse_lab/out/fig_two_rewards.png)
 
-**The price is flat on the score and steep on the cloud.** Every arm that keeps
-lineages returns `ir_max` to best-of-4's level: pooled over the seven
+**The score cannot tell the arms apart; the cloud can.** On `ir_max` every arm
+sits within the noise of the reference and of best-of-4: pooled over the seven
 corrections the paired difference against the reference is -0.069, interval
-[-0.176, +0.041] over prompts, and each of them sits within 0.06 of best-of-4.
-The mean reward of the four images tells the other half: it falls by 0.15 to
-0.56 in the order of the roots kept, down to the free model's -0.56. Under
-collapse the four images are one good image scored four times; with the
-lineages back, they are four images, and three of them are worse. The edge FK
-has over best-of-4 is the concentration, and making the concentration
-reversible costs exactly that edge.
+[-0.176, +0.041] over prompts, each interval at 40 prompts covers zero, and the
+one correction that keeps the lineages, rerun at 100 prompts on the same $x_T$
+as its reference, costs **-0.012 [-0.082, +0.060]**, less than the reference's
+own edge over best-of-4 (+0.056 ± 0.052 at 100 prompts, +0.030 ± 0.037 in the
+rerun's session). Nothing tried beats best-of-4 by more than the noise on the
+best image. The other two quantities move by a lot: the lineages, from 1.06 to
+3.0 roots of 4 with the diversity times three, and the mean reward of the four,
+which falls by 0.15 to 0.56 in the order of the roots kept, down to the free
+model's -0.56 (paired by $x_T$, `floor2` pays -0.250 ± 0.045 on that mean).
+Under collapse the four images are one good image scored four times; with the
+lineages back, they are four images, and three of them are worse. What FK buys
+over best-of-4 on the best image is small and inside the noise at this budget;
+what it costs on the cloud is not.
 
 ![Image grid, four samplers on six prompts, frame colour = surviving root](../collapse_lab/out/fig_grid_all.png)
 
@@ -315,10 +321,17 @@ numbers within one process and different surviving roots from one day's session
 to the next, with the same code and weights. At $\lambda = 0$ no reward is read,
 so the one session in which the free path itself failed to reproduce has no
 candidate cause: same code, same weights, same seed, another process. For the
-resampling path there is one: the guide's reward stack, decoder and ImageReward
-in fp16, where a difference at the third decimal is enough to move one tooth of
-a four-tooth comb; it was not tested on its own in the time available. Every
-paired comparison in this post is therefore paired by prompt, or by $x_T$
+resampling path, a test on 23/09 ran the reference arm in three separate
+processes, one with `cudnn.benchmark` off and deterministic algorithms on, and
+once with the previous version of the probe: all return the same rewards to the
+fourth decimal, equal to every session since the 22/09 evening and across a pod
+restart, and different from the 21/09 reference. The process, the flags, the
+cache path, the pod, the environment and the code are ruled out one by one; what
+separates the two groups is that the sessions matching the reference ran at 87
+to 90 s per run and every later one at 55 to 60 s with identical code, so the
+machine's fp16 execution path is what changed, and a difference at the third
+decimal of one guide reward is enough to move one tooth of a four-tooth comb.
+Every paired comparison in this post is therefore paired by prompt, or by $x_T$
 within one session, and never by slot across files written on different days.
 
 **The budget, as a measurement.** A forward hook on the UNet counts calls and
@@ -341,8 +354,12 @@ implemented and measured here; neither is offered as a contribution.
 
 **What is weak.** The released code was run under this repository's diffusers
 0.31 rather than the development commit it pins, on 100 prompts with its own
-seeding and 40 with ours, and one seeding path of its filter scores 0.31 under
-the other for no reason found. The paper does not say which VAE decoded its
+seeding and 40 with ours. Its four runs on the same 40 prompts disagree with
+each other by up to 0.45 in mean `ir_max`, two of them on identical $x_T$ and
+denoising noise; a reading of its code found no re-seeding and no bias between
+its two seeding paths, so this is the run-to-run spread of a four-particle
+filter, measured on four runs and not explained further. The authors were not
+asked for the exact command behind Table 1 before this was written. The paper does not say which VAE decoded its
 images, and this one uses `sd-vae-ft-mse` for the guide; on the same four
 particles the pipeline's VAE moves one first-step reward by 1.2. The runs do not keep the images, so any
 image-level metric has to be decided before the GPU night and not after.
