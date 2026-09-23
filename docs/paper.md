@@ -1,6 +1,6 @@
 # Reproducing FK Steering on Stable Diffusion, and where the missing 60 % goes
 
-*Draft, pass 5 (23/09). Every number traces to a block of `docs/results.md`; the
+*Draft, pass 7 (23/09). Every number traces to a block of `docs/results.md`; the
 figures are rebuilt from the JSON by the script named under each.*
 
 ## 1. What FK Steering claims
@@ -291,9 +291,9 @@ strict $2/k$ bound the systematic comb guarantees.
 
 **The wrapper, against the library it wraps.** At $\lambda = 0$ the SD path
 through the particle filter draws the pipeline's $x_T$ at the bit and follows its
-trajectory at a correlation of 0.984 or more to the last step; the residue is the
-fp16 rounding of a text embedding encoded once and expanded rather than four
-times in a batch. That is what makes the $\lambda > 0$ comparison a statement
+trajectory at a correlation of 0.984 or more to the last step; the one input that
+differs is the text embedding, encoded once and expanded rather than four times
+in a batch, by 1.6e-2 in fp16. That is what makes the $\lambda > 0$ comparison a statement
 about steering rather than about two different samplers, and it is also why the
 ImageReward of one slot can differ by 0.3 between the two paths at the end.
 
@@ -334,7 +334,7 @@ image-level metric has to be decided before the GPU night and not after.
 `div_pix` is a pixel proxy that separates four copies from four images and
 nothing more. The CIFAR and CelebA numbers carry standard deviations over three
 seeds, not over prompts, and support the mechanism rather than the headline. Two
-of the fourteen SD arms lost six of their forty records to a rerun that
+of the fifteen SD arms lost six of their forty records to a rerun that
 overwrote them, and are read at 34. Everything ran on one 16 GB T4.
 
 **How this was made.** The Sequential Monte Carlo core, the weights, the

@@ -4,6 +4,24 @@ One block per pass, most recent on top. The loop, its scope and its review grid
 are `.claude/skills/paper-loop/SKILL.md`; what the post has to contain is
 `docs/paper_plan.md`.
 
+## Pass 7 (23/09, review of sections 1, 6, 7, 8; A5 added to F5)
+
+**Reviewed.** The four sections pass 6 had not reread, against blocks 5, 6, 9, 18.
+
+**Found.** Correctness: "fourteen SD arms" in section 8 against "fifteen" in
+section 5 (fifteen is right). Clarity: section 7 stated the origin of the
+lambda = 0 residue as a fact; it is the one measured input that differs (the text
+embedding, 1.6e-2 in fp16), stated as such now. Nothing else in the four sections.
+
+**Corrected.** The two sentences. `scripts/fig_three_scales.py` gains the A5
+panel (ESS / k of four free draws reweighted by exp(lambda ir) against lambda,
+with fk4's first-step ESS at lambda = 10), so F5 carries the target's ceiling
+next to the two collapse curves.
+
+**Open.** One pass with two findings, none of them a number: the loop stops here
+until session C lands, which will touch section 3's last paragraph and possibly
+restore constats 3 and 5 bis.
+
 ## Pass 6 (23/09, review of pass 5 with the grid, four corrections)
 
 **Reviewed.** Sections 2 to 5 reread against blocks 11, 12, 15, 17, 18 of

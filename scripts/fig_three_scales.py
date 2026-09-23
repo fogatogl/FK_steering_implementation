@@ -86,7 +86,32 @@ def main():
         for lam, (em, es, dm, ds, n) in sorted(e.items()):
             print(f"  {lam:6g} | {em:11.3f} | {dm:8.3f} {dm / libre:8.2f} | {n}")
 
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(9, 3.6))
+    # panneau A5 : la cible elle-meme. ESS de exp(lambda * ir) sur les quatre tirages libres de
+    # bon4 (100 prompts, seed 2024), contre lambda ; le point de fk4 a t = 80 a lambda = 10.
+    base = json.loads((ROOT / "results" / "sd_baseline.json").read_text())["runs"]
+    bon = [r for r in base if r["sampler"] == "bon4" and r["seed"] == 2024]
+    ref = [r for r in json.loads((ROOT / "results" / "sd_ref_fields100.json").read_text())["runs"] if r["sampler"] == "fk4"]
+
+    def ess_w(logw):
+        w = np.exp(logw - logw.max()); w /= w.sum()
+        return 1 / (w ** 2).sum()
+
+    lams_c = [0.5, 1, 2, 5, 10]
+    cible = {l: np.array([ess_w(l * np.array(r["ir"])) for r in bon]) / 4 for l in lams_c}
+    fk80 = np.array([r["ess_at_schedule"][0] for r in ref]) / 4
+    print(f"cible sur 4 tirages libres, ESS / k median par lambda : " + ", ".join(f"{l:g}: {np.median(v):.2f}" for l, v in cible.items())
+          + f" ; fk4 a t = 80, lambda 10 : {np.median(fk80):.2f}")
+
+    fig, (a1, a2, a3) = plt.subplots(1, 3, figsize=(13, 3.6))
+    a3.plot(lams_c, [np.median(cible[l]) for l in lams_c], marker="o", color=figstyle.INK, lw=1.4, label="cible : 4 tirages libres reponderes")
+    a3.fill_between(lams_c, [np.percentile(cible[l], 25) for l in lams_c], [np.percentile(cible[l], 75) for l in lams_c], color=figstyle.INK, alpha=0.12)
+    a3.errorbar([10], [np.median(fk80)], yerr=[[np.median(fk80) - np.percentile(fk80, 25)], [np.percentile(fk80, 75) - np.median(fk80)]],
+                fmt="D", color=figstyle.RED, ms=6, capsize=3, label="fk4, premier pas planifie (t = 80)")
+    a3.set_xscale("symlog", linthresh=0.5); a3.set_xticks([0.5, 1, 2, 5, 10]); a3.set_xticklabels(["0.5", "1", "2", "5", "10"], fontsize=8); a3.minorticks_off()
+    a3.set_ylim(0, 1.05); a3.set_xlabel("lambda"); a3.set_ylabel("ESS / k (mediane, Q1-Q3)")
+    a3.set_title("la cible : ce que quatre particules peuvent porter", fontsize=9)
+    a3.legend(fontsize=7, loc="upper right")
+    figstyle.dress(a3)
     styles = (("CIFAR 32 px, k=16", cifar, figstyle.BLUE, "o"),
               ("CelebA 256 px, k=16", celeba, figstyle.GREEN, "s"),
               ("SD 512 px, k=4", sd, figstyle.RED, "D"))
