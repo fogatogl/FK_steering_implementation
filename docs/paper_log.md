@@ -4,6 +4,26 @@ One block per pass, most recent on top. The loop, its scope and its review grid
 are `.claude/skills/paper-loop/SKILL.md`; what the post has to contain is
 `docs/paper_plan.md`.
 
+## Pass 6 (23/09, review of pass 5 with the grid, four corrections)
+
+**Reviewed.** Sections 2 to 5 reread against blocks 11, 12, 15, 17, 18 of
+`results.md`, figures checked by `ls`.
+
+**Found.** Correctness: "60 runs of 100 on a single one" for an arm measured on 40
+prompts (it is 60 % of its runs); "the prediction held on both" arms, where only
+`thr05` had a pre-registered coalescence prediction (`R1`'s multinomial-column
+match was read after the fact); "paired on 40 prompts" for arms that ran on 20
+(the ramps, `lam2`, `rise`); two FK numbers in section 2 (0.820 from the 300-run
+row of 20/09, 0.826 from the row regenerated on 21/09) with no clause saying
+which code each comes from. Clarity: figure 7 (ESS against gain) is no longer
+referenced in the text after the trim; it stays in the annex list.
+
+**Corrected.** The four sentences above; the reference row of the table names its
+provenance.
+
+**Open.** No question to the author from this pass. Next pass after session C
+lands: section 3's last paragraph and the two suspended constats.
+
 ## Pass 5 (23/09, sections 2 to 8 rewritten on the final state; block 18 of `results.md` added)
 
 **Reviewed.** The whole post against the grid, after writing: the reference

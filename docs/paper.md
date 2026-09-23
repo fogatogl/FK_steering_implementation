@@ -86,7 +86,7 @@ repository's filter by wrappers, and the released code ran from its own clone.
 | row | code | ImageReward | against best-of-4 |
 |---|---|---|---|
 | paper, Table 1 | | 0.898 | +0.161 |
-| this repository, its own choices (`ctl`, 100 prompts, seed 2024) | `smc/` | 0.826 | +0.056 ± 0.052 |
+| this repository, its own choices (`ctl`: the FK row regenerated on 21/09 with the current code, 100 prompts, seed 2024) | `smc/` | 0.826 | +0.056 ± 0.052 |
 | this repository with the four choices (`R1`, 100 prompts) | `smc/` | 0.756 | -0.011 ± 0.041 |
 | released code, same $x_T$ as the rows above (40 prompts) | theirs | 0.720 | -0.126 ± 0.070 |
 | released code, its own seeding (100 prompts) | theirs | 0.554 | -0.216 ± 0.061 |
@@ -146,13 +146,14 @@ one step. What kills the cloud is a different thing, the degeneracy of the paths
 each resampling copies some particles and drops others, and after a few passes
 every survivor descends from the same ancestor whatever the weights did in
 between. The two are separable on this data. An arm that bisects $\lambda$ at
-every step so that the ESS is held at exactly 2 of 4 still ends on 1.4 roots, 60
-runs of 100 on a single one. And the count of surviving roots can be predicted
+every step so that the ESS is held at exactly 2 of 4 still ends on 1.4 roots, 60 %
+of its runs on a single one. And the count of surviving roots can be predicted
 without knowing anything about the steering: replaying the recorded weights of
 each run through the resampler, with the systematic comb integrated over its
 offset, gives the mean number of final roots of fifteen different arms within
-0.07 and their single-root fraction within three points. The prediction was
-written down before the two arms it was tested on were run, and it held on both.
+0.07 and their single-root fraction within three points. For one arm the
+prediction was written down before the arm ran, 1.84 roots against the plan's
+guess of 2.4 to 2.8, and the arm came out at 2.00.
 Under flat weights the comb is the identity and the multinomial draw the
 released code uses is not: four flat passes at $k = 4$ leave 1.6 roots of 4 by
 pure chance, before any reward has spoken.
@@ -200,8 +201,8 @@ about the cloud.
 
 ## 5. Repairing the collapse, and what it costs
 
-Ten arms tried to keep the cloud alive, each pre-registered with a prediction
-and paired to the reference on 40 prompts. Two time-dependent $\lambda$ ramps
+Fifteen arms tried to keep the cloud alive, each pre-registered with a
+prediction and paired to the reference on 20 to 40 prompts. Two time-dependent $\lambda$ ramps
 under two placements move ImageReward by nothing, all eight differences inside
 one standard error of zero, and the quadratic ramp with an ESS threshold doubles
 the lineages to 2.05 of 4 by resampling once per run instead of four times. A

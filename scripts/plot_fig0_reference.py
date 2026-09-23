@@ -74,7 +74,7 @@ a2.axvline(papier["fk4"]["ir_max"] - papier["bon4"]["ir_max"], color=INK, ls="--
 a2.text(papier["fk4"]["ir_max"] - papier["bon4"]["ir_max"] + 0.005, len(diffs) - 0.6, "papier\n+0.161", fontsize=8, color=INK)
 a2.set_yticks(y); a2.set_yticklabels([f"{n}  (n={k})" for n, _, _, k, _ in diffs], fontsize=8)
 a2.invert_yaxis()
-a2.set_xlabel("difference appariee par prompt contre best-of-4 (meme seed 2024 pour ctl, R1, R0g24)")
+a2.set_xlabel("difference appariee par prompt contre best-of-4 (seed 2024 sauf R0)")
 a2.set_title("l'ecart a best-of-4 : aucune ligne n'atteint le papier", fontsize=9, loc="left")
 dress(a2, grid="x")
 fig.suptitle("Figure F0 — la reproduction, ce depot et le code publie sous la configuration de la table 1", fontsize=11, x=0.01, ha="left")
