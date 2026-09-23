@@ -4,6 +4,31 @@ One block per pass, most recent on top. The loop, its scope and its review grid
 are `.claude/skills/paper-loop/SKILL.md`; what the post has to contain is
 `docs/paper_plan.md`.
 
+## Pass 8 (23/09, session C read in: section 3's last paragraph and section 7's reproducibility paragraph)
+
+**Reviewed.** Block 18's session C paragraph (new), then the two paragraphs of the
+post that rest on it.
+
+**Found.** The previous draft said the wrong-root question was not measurable;
+session C measures it on a same-process pairing, and the free path turns out to
+reproduce across sessions (correlation 1.00 with the 20/09 file), which narrows the
+non-reproducibility to the resampling path. Quality: constats 3 and 5 bis return in
+weaker, measured form (tau +0.14, A - B +0.31). Correctness: the earlier
+"trajectories diverge enough that slot i is not the continuation of slot i" was true
+of the file pairs compared then and false of a same-process pairing; replaced.
+
+**Corrected.** Section 3's last paragraph rewritten on the decomposition (0.78 /
+0.23 / 0.47 / 0.80); section 7's paragraph names the free path as reproducible and
+the guide's fp16 reward as the suspect.
+
+**Open.** (a) The authors' code at seed 2024 under its own seeding is running; its
+number goes to `reference_config.md`'s table and to block 18, not to the post
+unless it changes the reading. (b) `floor2`'s price paired by x_T is 0.01 on
+`ir_max` where the prompt-paired readout said 0.08: section 5 quotes the pooled
+-0.069 over seven corrections and should quote the x_T-paired `floor2` figure next
+to it in the next pass; not done here because block 18 carries both and the
+sentence needs the author's choice of which to lead with.
+
 ## Pass 7 (23/09, review of sections 1, 6, 7, 8; A5 added to F5)
 
 **Reviewed.** The four sections pass 6 had not reread, against blocks 5, 6, 9, 18.

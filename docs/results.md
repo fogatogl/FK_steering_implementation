@@ -798,8 +798,24 @@ between the two paths (`out/latents_0.json`, `out/latents_1.json`). Slot pairing
 between files from different sessions is therefore invalid and the wrong-root rate
 of run 17 is not measurable that way.
 
+**Session C (23/09, `collapse_lab/out/probe_C.json`).** `ctl`, `lam0` and `floor2` at
+100 prompts in one process. `lam0` returns `bon4`'s four rewards slot by slot at
+correlation 1.00 (`ir_max` +0.009 +/- 0.006): the free path of the wrapper reproduces
+across sessions, and only the resampling path does not (`ctl` against the 21/09 file:
+correlation 0.70, same root in 30 % of prompts, `ir_max` -0.026 +/- 0.058). Paired by
+x_T inside the session: `floor2 - ctl` on `ir_max` **-0.012 [-0.082, +0.060]**, on the
+mean of the four -0.250 +/- 0.045; `floor2` 3.03 roots, 4 % single-root, `div_pix`
+0.300; `ctl` 1.07 roots, 93 %; `ctl - bon4` +0.030 +/- 0.037 in this session. On this
+pairing, with `lam0[j]` the free continuation of root j: Kendall tau between the
+first-step ranking and the free outcome **+0.137 +/- 0.050**, top-1 35 % against 25 %;
+best free root A 0.779, mean root M 0.233, the root `ctl` keeps read free B 0.466, what
+`ctl` makes of it C 0.799, so **B - M +0.233 +/- 0.047**, **A - B +0.313 +/- 0.042**,
+**C - B +0.333 +/- 0.038**, C - A +0.021 +/- 0.038.
+
 **What it changed.** The gap to the paper is bounded, not closed, and it is not in
 the implementation. The collapse has a mechanism with a predictive model behind it.
 The one correction that keeps lineages does so by changing the target and returns
-best-of-4's reward. Constats 3, 5 and 5 bis of the collapse write-up wait on a
-same-session rerun of `ctl` and `lam0` (session C, 23/09).
+best-of-4's reward; paired by x_T its price on the best reward is 0.01, on the mean
+of the four 0.25. Constats 3 and 5 bis hold on the same-session pairing in a weaker
+form: a little information at the first step, a kept root a third of the way from the
+median to the best, 0.31 of root lost and 0.33 returned by the steering.

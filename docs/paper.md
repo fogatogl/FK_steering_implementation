@@ -169,12 +169,16 @@ mass on one of them. Four particles cannot carry diversity at this $\lambda$,
 whatever the kernel, the potential or the schedule does; what FK adds on top is
 to pick that one candidate at $t = 80$, on a blurred estimate whose reward moves
 by more than a unit when the decoder changes, so that the choice reads noise.
-The wrong-root question of the previous draft is not measurable the way it was
-posed: the two samplers share $x_T$ at the bit, and their trajectories still
-diverge enough over 100 steps at $\eta = 1$ that slot $i$ of one is not the
-continuation of slot $i$ of the other, so "what this root would have become" has
-no single answer. What is measurable is that the root FK keeps at $t = 80$ is
-chosen on a reward that has not formed yet.
+How much the choice reads was measured once, on the one pairing that holds: the
+free run and the FK run of each prompt in the same process, so that slot $j$ of
+the free run is what root $j$ becomes when nobody touches it. The ranking of the
+four rewards at $t = 80$ predicts the ranking of the four free outcomes with a
+Kendall $\tau$ of **+0.14 ± 0.05**, and picks the best root in 35 % of prompts
+against 25 % by chance: a little, not nothing. Read on the free outcomes, the best
+of the four roots scores 0.78, an average root 0.23, and the root FK keeps 0.47,
+one third of the way from average to best; what FK then makes of that root is
+0.80. The collapse costs 0.31 of root, the steering returns 0.33, and the
+difference over best-of-4 is the 0.02 that is left.
 
 ## 4. Ablation of the schedule
 
@@ -297,14 +301,15 @@ in a batch, by 1.6e-2 in fp16. That is what makes the $\lambda > 0$ comparison a
 about steering rather than about two different samplers, and it is also why the
 ImageReward of one slot can differ by 0.3 between the two paths at the end.
 
-**What does not reproduce.** The diffusers pipeline with a seeded generator
-returns the best-of-4 rewards written on 20/09 to the third decimal three days
-later. The wrapper's path returns identical numbers within one process and
-different surviving roots, with the same code and the same weights, from one
-day's session to the next; the cause was not found in the time available.
-Every paired comparison in this post is therefore paired by prompt, or by
-$x_T$ within one session, and never by slot across files written on different
-days.
+**What does not reproduce.** The diffusers pipeline and the wrapper at
+$\lambda = 0$ both return the best-of-4 rewards written on 20/09, slot by slot,
+three days later. The wrapper with resampling does not: it returns identical
+numbers within one process and different surviving roots from one day's session
+to the next, with the same code and weights. The suspect is the guide's reward
+in fp16, where a difference at the third decimal is enough to move one tooth of
+a four-tooth comb, and the cause was not pinned down in the time available. Every
+paired comparison in this post is therefore paired by prompt, or by $x_T$
+within one session, and never by slot across files written on different days.
 
 **The budget, as a measurement.** A forward hook on the UNet counts calls and
 sample rows. The $k$ particles cross the UNet in one batched forward, so the

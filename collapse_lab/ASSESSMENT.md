@@ -109,12 +109,61 @@ que defaut a trouver.
 - Constat 11, troisieme lecture : x_T est partage au bit et les trajectoires restent correlees a
   0.98 ou plus ; mais le chemin `smc.models` n'est pas rejouable d'une session a l'autre (le
   pipeline diffusers l'est) et l'ecart d'arrondi change la racine gardee. L'appariement par case
-  entre fichiers de jours differents ne mesure rien ; **les constats 3, 5, 5 bis sont suspendus**
-  jusqu'a un rejeu de `ctl` et `lam0` dans une meme session.
+  entre fichiers de jours differents ne mesure rien. **La session C (H) les recalcule sur un
+  appariement valide** : tau +0.14, A - B +0.31, B - M +0.23. Les constats 3 et 5 bis tiennent,
+  reformules : un peu d'information au premier pas, une racine gardee un peu meilleure que le
+  hasard, 0.31 de racine perdu, 0.33 rendu par le pilotage.
 - Constat 14 : `thr05` (rééchantillonner moins) rend 2.0 racines, pas 2.4-2.8 ; `late` ne repare
   rien ; `rise` ne bat pas `ctl`. La piste « seuil sous la cible » est de l'importance sampling
   (reglee sans GPU). Le classement des corrections tient : `floor2` > `fadapt` > `thr05` ~
   `floor` ~ `lam2` > `adapt`.
+
+*Session C, lecture partielle a 33 prompts (23/09, 09h).* `lam0` de la session C rend les
+rewards de `bon4` (20/09) **case par case a la correlation 1.00** (`ir_max` +0.011 +/- 0.009) ;
+`ctl` de la session C ne rend pas le `ctl` du 21/09 (correlation par case 0.65, meme racine
+gardee dans 32 % des prompts). Le chemin libre de `smc.models` est donc rejouable d'une session
+a l'autre ; c'est le chemin **avec rééchantillonnement** qui ne l'est pas, et le suspect se
+deplace vers les rewards du guide (decodage VAE et ImageReward en fp16, noyaux choisis a
+l'execution), dont un ecart de 1e-3 suffit a faire basculer un peigne a quatre cases. Dans
+la session C, `ctl`, `lam0` et `floor2` partagent le processus : l'appariement par case y
+tient, et les constats 3 et 5 bis se recalculent (`t_sessionC.py`) ; chiffres a 100 prompts
+dans la section suivante quand la session est finie.
+
+### H. Session C : `ctl`, `lam0`, `floor2` a 100 prompts, un seul processus (23/09, 12h30)
+
+`out/probe_C.json`, readout `t_sessionC.py`. Predictions de `protocol_sd.md` ("Pre-registration
+of session C") en face.
+
+| mesure | valeur | prediction | issue |
+|---|---|---|---|
+| `lam0_C` contre `bon4` (20/09), par case | correlation **1.00**, `ir_max` +0.009 +/- 0.006 | correlation sous 0.7 | **ratee**, dans le bon sens : le chemin libre est rejouable |
+| `ctl_C` contre `ctl` du 21/09, par case | correlation 0.70, meme racine 30 %, `ir_max` -0.026 +/- 0.058 | moyenne a 0.05, cases decorrelees | tenue |
+| `floor2 - ctl`, `ir_max`, x_T apparies | **-0.012 [-0.082, +0.060]** | [-0.14, -0.02] | ratee par le haut : le prix est plus petit que prevu |
+| `floor2 - ctl`, `ir` moyen des 4 | -0.250 +/- 0.045 | | |
+| `floor2` racines ; une racine | **3.03 ; 4 %** | 2.8-3.1 ; 5-10 % | tenue |
+| `ctl` racines ; une racine | 1.07 ; 93 % | 1.0-1.1 | tenue |
+| `ctl - bon4` dans cette session | +0.030 +/- 0.037 | | (+0.056 dans la session du 21/09) |
+| constat 3, Kendall tau r_phi(t = 80) contre ir libre de la meme racine | **+0.137 +/- 0.050** ; top-1 35 % | sous 0.15 | tenue, de peu |
+| constat 5 bis, A - B | **+0.313 +/- 0.042** | [0.25, 0.50] | tenue |
+
+La decomposition, sur le seul appariement par case valide (`lam0` = la continuation libre de
+chaque racine, meme processus) : A meilleure racine libre **0.779**, M racine moyenne
+**0.233**, B la racine que `ctl` garde, lue libre **0.466**, C ce que `ctl` en tire **0.799**.
+B - M = +0.233 +/- 0.047 : la racine gardee vaut mieux qu'un tirage au sort, d'un tiers du
+chemin vers la meilleure (rang moyen 2.04 sur 4). A - B = +0.313 : l'effondrement coute encore
+0.31 de racine. C - B = +0.333 : le pilotage rend un peu plus que cela. C - A = +0.021 : le
+solde sur best-of-4 est ce que le pilotage ajoute moins ce que le choix precoce perd, et il
+est petit. Le constat 3 se reformule : le premier pas porte **un peu** d'information (tau
+0.14, top-1 35 % contre 25 %), pas aucune ; le constat 5 bis tient dans ses chiffres, A - B
+0.31 contre 0.41 dans la lecture inter-session du 22/09.
+
+Ce que la session C change dans la lecture : (1) le chemin libre de `smc.models` est rejouable
+d'une session a l'autre au bit pres du score, c'est le chemin avec rééchantillonnement qui ne
+l'est pas, et le suspect est la reward du guide (VAE + ImageReward en fp16) dont 1e-3 suffit a
+faire basculer un peigne ; (2) `floor2` coute moins que prevu quand il est apparie par x_T
+(-0.01 au lieu de -0.08 a -0.10 en appariement par prompt) : le prix des lignees sur `ir_max`
+est de l'ordre de l'avance de `ctl` sur best-of-4 (0.03 a 0.06), pas plus ; (3) le prix sur
+l'`ir` moyen reste (-0.25).
 
 ### F. Brouillons de constats pour `FINDINGS.md` (a reprendre par l'auteur)
 

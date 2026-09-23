@@ -565,6 +565,15 @@ and `ir_max` within 0.05 of `sd_ref_fields100.json`'s mean, slot-uncorrelated wi
 image"); the root `ctl` keeps scores under `lam0` between the median and the best of the
 four (constat 5 bis, B between M and A), with A - B in [0.25, 0.50].
 
+*Outcome of session C, 23/09 about 12h30 (`collapse_lab/out/probe_C.json`,
+`t_sessionC.py`).* `lam0` returns `bon4`'s slot rewards at correlation 1.00 (the "under 0.7"
+prediction missed, in the useful direction: the free path reproduces across sessions, the
+resampling path does not, `ctl` at 0.70 and 30 % same root against the 21/09 file).
+`floor2 - ctl` paired by $x_T$: -0.012 [-0.082, +0.060] (predicted [-0.14, -0.02], missed on
+the shallow side), 3.03 roots and 4 % single-root (held). Constat 3: Kendall tau +0.137 +/-
+0.050, top-1 35 % (held, under 0.15). Constat 5 bis: A - B = +0.313 +/- 0.042 (held), B - M =
++0.233 +/- 0.047, C - B = +0.333 +/- 0.038, C - A = +0.021 +/- 0.038.
+
 **`R0` at seed 2024 under their own seeding** (`run_authors.py --config paper --seed 2024
 --limit 40`, global RNG, 40 min). Prediction: `ir_max` between `R0` (0.55) and `R0g24` (0.72),
 i.e. in [0.55, 0.75]; if it lands within 0.05 of `R0g24`, the 0.31 was specific to seed 42's
