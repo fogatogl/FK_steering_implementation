@@ -1,87 +1,130 @@
-"""O. L'arbre genealogique des quatre particules, un panneau par bras, meme prompt (figure F1).
+"""F4: at the paper's setting the four final images descend from one x_T, with the floor and lambda = 2 they keep their own.
 
-Lit out/probe.json : `ancestors_at_schedule` (la matrice des ancetres aux pas planifies,
-enregistree depuis le 22/09 ; les runs anterieurs ne l'ont pas et sont sautes),
-`logG_at_schedule` (les poids normalises du pas, epaisseur des aretes), `ir` (sous chaque
-feuille), `root_slots` (couleur = racine x_T, memes couleurs que la grille F2).
-Niveaux de haut en bas : x_T, puis chaque pas planifie ; une arete relie la case j du pas m
-a son parent anc[m][j] au pas precedent. Un noeud dont personne ne descend meurt la.
+One panel per arm, same prompt: levels from top to bottom are x_T then each scheduled step;
+an edge joins slot j at step m to its parent anc[m][j] at the previous step, its width the
+normalised weight of that parent (logG_at_schedule), its colour the parent's root x_T
+(figstyle.ROOT_COLORS, shared with the F5 grid). A node nobody descends from dies there
+and is drawn as a light grey cross. Under the leaves, ir_max alone, under the leaf that
+carries it.
 
-  python collapse_lab/o_ancestry_fig.py --pid 005695-0057 --arms lam0 ctl floor2 R1
+Data: the session named by data/visual_selection.json["source"] (session D since 24/09, the
+images F5 shows), then collapse_lab/out/probe_C.json, then collapse_lab/out/probe.json for R1
+and for the `_b1` replays.
+The default prompt is data/visual_selection.json["F5"].
+
+    python collapse_lab/o_ancestry_fig.py                 # ctl, floor2      -> figures/f4_ancestry
+    python collapse_lab/o_ancestry_fig.py --appendix      # lam0 ctl floor2 R1 -> figures/f4_ancestry_appendix
+    python collapse_lab/o_ancestry_fig.py --pid <id> --arms lam0 ctl --out <stem>
 """
-import argparse, json
+import argparse
+import json
+import sys
+import textwrap
 from pathlib import Path
 
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 
 LAB = Path(__file__).resolve().parent
-COULEURS = ["#1b9e77", "#d95f02", "#7570b3", "#e7298a"]   # racine 0..3, partagees avec q_image_grid.py
+ROOT = LAB.parent
+sys.path.insert(0, str(ROOT / "scripts"))
+import figstyle as fs
+
+MAIN_ARMS = ["ctl", "floor2"]
+APPENDIX_ARMS = ["lam0", "ctl", "floor2", "R1"]
+# the session the selection was ranked on comes first, so F4 draws the run whose images F5 frames
+_sel = json.loads((ROOT / "data" / "visual_selection.json").read_text())
+SOURCES = [ROOT / _sel["source"]] * ("source" in _sel) + [LAB / "out" / "probe_C.json", LAB / "out" / "probe.json"]
 
 
-def racines_par_niveau(anc):
-    """anc : (M, k). Renvoie, pour chaque niveau 0..M (0 = x_T), la racine de chaque case."""
+def load():
+    """(arm, prompt_id) -> run, probe_C first, then probe.json, then the `_b1` replay in probe.json."""
+    par = {}
+    for src in SOURCES:
+        for r in json.loads(src.read_text())["runs"]:
+            if "ancestors_at_schedule" not in r:
+                continue
+            key = (r["arm"], r["prompt_id"])
+            if key not in par:
+                par[key] = (r, src)
+    for (arm, pid), v in list(par.items()):
+        if arm.endswith("_b1") and (arm[:-3], pid) not in par:
+            par[(arm[:-3], pid)] = v
+    return par
+
+
+def roots_per_level(anc):
+    """anc: (M, k). For each level 0..M (0 = x_T), the root of every slot."""
     k = len(anc[0])
-    niveaux = [list(range(k))]
+    levels = [list(range(k))]
     for m in range(len(anc)):
-        prev = niveaux[-1]
-        niveaux.append([prev[anc[m][j]] for j in range(k)])
-    return niveaux
+        prev = levels[-1]
+        levels.append([prev[anc[m][j]] for j in range(k)])
+    return levels
 
 
-def dessiner(ax, r, titre):
+def draw(ax, r, arm, narrow=False):
+    """narrow: more than two panels side by side, shorter tick labels and a wrapped arm label."""
     anc = r["ancestors_at_schedule"]
     lg = np.array(r["logG_at_schedule"])
     w = np.exp(lg - lg.max(1, keepdims=True)); w /= w.sum(1, keepdims=True)
     ts = sorted(r["schedule_t"], reverse=True)
     k = r["k"]; M = len(anc)
-    niv = racines_par_niveau(anc)
+    lev = roots_per_level(anc)
     for m in range(M):
         for j in range(k):
             parent = anc[m][j]
-            # le poids qui a fait copier le parent : celui du parent au pas m
-            ax.plot([parent, j], [m, m + 1], color=COULEURS[niv[m][parent]], lw=0.6 + 4.5 * w[m][parent], alpha=0.85, zorder=1)
+            # the weight that had the parent copied: the parent's weight at step m
+            ax.plot([parent, j], [m, m + 1], color=fs.ROOT_COLORS[lev[m][parent]],
+                    lw=0.6 + 4.5 * w[m][parent], alpha=0.85, zorder=1, solid_capstyle="round")
     for m in range(M + 1):
         for j in range(k):
-            vivant = m == M or any(anc[m][i] == j for i in range(k))
-            ax.scatter(j, m, s=90 if vivant else 40, color=COULEURS[niv[m][j]],
-                       edgecolor="k" if vivant else "none", lw=0.6, zorder=2, marker="o" if vivant else "x")
-    for j in range(k):
-        ax.text(j, M + 0.35, f"{r['ir'][j]:+.2f}", ha="center", fontsize=7)
+            alive = m == M or any(anc[m][i] == j for i in range(k))
+            if alive:
+                ax.scatter(j, m, s=90, color=fs.ROOT_COLORS[lev[m][j]], edgecolor=fs.INK, lw=0.6, zorder=2)
+            else:
+                ax.scatter(j, m, s=40, color=fs.GREY_LIGHT, marker="x", lw=1.2, zorder=2)
+    best = int(np.argmax(r["ir"]))
+    ax.annotate(f"best image, IR {r['ir_max']:+.2f}", (best, M), xytext=(0, -14), textcoords="offset points",
+                ha="center", va="top", color=fs.INK, fontsize=9)
     ax.set_yticks(range(M + 1))
-    ax.set_yticklabels(["x_T"] + [f"t={t}" for t in ts], fontsize=7)
-    ax.set_xticks(range(k)); ax.set_xticklabels([f"case {j}" for j in range(k)], fontsize=7)
-    ax.invert_yaxis()
-    ax.set_ylim(M + 0.7, -0.5)
-    ax.set_title(f"{titre}\n{r['n_lineages']} racine(s), ir_max {r['ir_max']:+.2f}", fontsize=9)
-    for s in ("top", "right"):
-        ax.spines[s].set_visible(False)
+    ax.set_yticklabels(["x_T"] + [f"t = {t}" for t in ts])
+    ax.set_xticks(range(k)); ax.set_xticklabels([str(j) if narrow else f"slot {j}" for j in range(k)])
+    ax.set_xlim(-0.5, k - 0.5)
+    ax.set_ylim(M + 0.9, -0.5)
+    ax.set_xlabel(textwrap.fill(fs.arm_label(arm), 18) if narrow else fs.arm_label(arm))
+    fs.dress(ax, grid=None)
+    ax.tick_params(length=0)
 
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--pid", required=True)
-    p.add_argument("--arms", nargs="+", default=["lam0_b1", "ctl_b1", "floor2_b1", "R1"],
-                   help="_b1 : les bras rejoues dans la session du 22-23/09, la seule qui porte les ancetres")
-    p.add_argument("--out", default=None)
+    p.add_argument("--pid", default=None, help="prompt id; default data/visual_selection.json['F5']")
+    p.add_argument("--arms", nargs="+", default=None)
+    p.add_argument("--appendix", action="store_true", help=f"arms {' '.join(APPENDIX_ARMS)}, output _appendix")
+    p.add_argument("--out", default=None, help="output stem (PNG and SVG), default figures/f4_ancestry[_appendix]")
     args = p.parse_args()
-    runs = json.loads((LAB / "out" / "probe.json").read_text())["runs"]
-    par = {(r["arm"], r["prompt_id"]): r for r in runs}
-    arms = [a for a in args.arms if (a, args.pid) in par and "ancestors_at_schedule" in par[(a, args.pid)]]
-    if not arms:
-        raise SystemExit(f"aucun run de {args.pid} avec ancestors_at_schedule pour {args.arms}")
-    fig, axes = plt.subplots(1, len(arms), figsize=(3.2 * len(arms), 4.2), sharey=False)
-    axes = np.atleast_1d(axes)
-    for ax, a in zip(axes, arms):
-        dessiner(ax, par[(a, args.pid)], a)
-    fig.suptitle(f"{args.pid} : {par[(arms[0], args.pid)]['prompt'][:80]}", fontsize=9)
-    fig.tight_layout()
-    out = Path(args.out) if args.out else LAB / "out" / f"fig_ancestry_{args.pid}.png"
-    fig.savefig(out, dpi=150)
-    fig.savefig(out.with_suffix(".svg"))
-    print(out, "bras :", " ".join(arms))
+    sel_path = ROOT / "data" / "visual_selection.json"
+    pid = args.pid or json.loads(sel_path.read_text())["F5"]
+    arms = args.arms or (APPENDIX_ARMS if args.appendix else MAIN_ARMS)
+    par = load()
+    found = [a for a in arms if (a, pid) in par]
+    missing = [a for a in arms if (a, pid) not in par]
+    if missing:
+        print(f"no run of {pid} with ancestors_at_schedule for: {' '.join(missing)}")
+    if not found:
+        raise SystemExit("nothing to draw")
+    fig, axes = fs.figure(4.0, ncols=len(found), squeeze=False)
+    for ax, a in zip(axes[0], found):
+        r, src = par[(a, pid)]
+        draw(ax, r, a, narrow=len(found) > 2)
+        print(f"{a:7s} <- {src.relative_to(ROOT)}  n_lineages {r['n_lineages']}  ir_max {r['ir_max']:+.4f}  roots {r['root_slots']}")
+    r0 = par[(found[0], pid)][0]
+    print(f"prompt {pid}: {r0['prompt']}")
+    out = Path(args.out) if args.out else ROOT / "figures" / ("f4_ancestry_appendix" if args.appendix else "f4_ancestry")
+    png, svg = fs.save(fig, out)
+    print("wrote", png, svg)
 
 
 if __name__ == "__main__":

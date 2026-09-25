@@ -1,29 +1,43 @@
-"""Q. La grille d'images appariee : une ligne par bras, quatre images, cadre = racine x_T.
+"""F5: on one prompt, the four FK images at the paper's setting share one x_T, the free sampler's and floor + lambda = 2's do not.
 
-Deux modes.
-  --choose : imprime les six prompt_id de la regle pre-enregistree (docs/protocol_sd.md,
-             22/09) depuis out/probe.json a n = 40 : les deux prompts de rang 20 et 21 sur
-             l'ir_max de ctl ; les deux ou ctl bat le plus bon4 ; parmi ceux ou floor2 garde
-             quatre lignees, les deux au plus haut ir_max de floor2. Egalites par prompt_id.
-  (defaut) : lit out/images/index.json et dessine, par prompt, une grille bras x 4 cases,
-             cadre colore par racine (memes couleurs que F1, scripts/figstyle.py si present),
-             ir sous chaque image, ir_max et lignees en marge. Sortie out/fig_grid_<pid>.png
-             et la planche des six, out/fig_grid_all.png.
-Rien n'est calcule ici : les ir viennent de index.json, les racines de root_slots.
+One row per arm (free sampler, FK paper setting, floor + lambda = 2), the four final images
+of the slots, a 6 px frame in the colour of the image's root x_T (figstyle.ROOT_COLORS by
+root_slots, the F4 tree's colours), the arm's label as a left column; nothing else in the image.
+
+The prompt list comes from data/visual_selection.json and from nowhere else: main F5, the
+ten of W1 for --appendix. Only the prompts whose images exist in out/images/index.json are
+drawn; each image is drawn only if index.json's ir equals probe_C.json's ir[slot] for that
+arm (the `_b1` suffix stripped) and prompt within 5e-4, otherwise it is refused. The selected
+prompts without images are printed as the GPU list.
+
+  (default)  : F5 prompt                          -> figures/f5_root_grid
+  --appendix : the ten prompts of W1              -> figures/f5_root_grid_appendix
+  --b1       : the six prompts of the B1 session, those present in index.json today,
+               same check against probe_C.json   -> figures/f5_root_grid_b1
+  --choose   : prints the six prompt_id of the pre-registered rule (docs/protocol_sd.md, 22/09)
+               from out/probe.json at n = 40: the two prompts ranked 20 and 21 on ctl's ir_max;
+               the two where ctl beats bon4 the most; among those where floor2 keeps four
+               lineages, the two with floor2's highest ir_max. Ties by prompt_id. Consumed
+               by nuit2.sh; its output does not change.
+Nothing is computed here: the ir come from index.json and probe_C.json, the roots from root_slots.
 """
-import argparse, json
+import argparse
+import json
+import sys
+import textwrap
 from pathlib import Path
 
-import numpy as np
-
+LAB = Path(__file__).resolve().parent
+ROOT = LAB.parent
+OUT = LAB / "out"
+sys.path.insert(0, str(ROOT / "scripts"))
+sys.path.insert(0, str(LAB))
 from commun import bon4
 
-LAB = Path(__file__).resolve().parent
-OUT = LAB / "out"
-# les bras rejoues dans la session du 22-23/09 portent le suffixe _b1 : memes seeds, mais le
-# chemin smc n'est pas rejouable d'une session a l'autre (ASSESSMENT.md) ; R1 est de cette session
-ARMS = ["lam0_b1", "ctl_b1", "floor2_b1", "R1"]
-COULEURS = ["#1b9e77", "#d95f02", "#7570b3", "#e7298a"]   # racine 0..3, partagees avec F1
+ARMS = ["lam0", "ctl", "floor2"]
+TOL = 5e-4
+FRAME_PX = 6
+CELL_PX = 256
 
 
 def par_bras():
@@ -48,54 +62,94 @@ def choisir(par):
     return medians + gagne + quatre
 
 
-def grille(pids, par):
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    from matplotlib.patches import Rectangle
+def load(src):
+    C = {(r["arm"], r["prompt_id"]): r for r in json.loads(src.read_text())["runs"]}
+    idx_path = src.parent / "images" / "index.json"
+    index = json.loads(idx_path.read_text()) if idx_path.exists() else []
+    img = {(e["arm"].split("_")[0], e["prompt_id"], e["slot"]): e for e in index}
+    return C, img, index
+
+
+def cells(C, img, pid, base):
+    """The 3 x 4 (path, root) cells of a prompt, or None if an image is missing or does not match."""
+    rows = []
+    for arm in ARMS:
+        run = C.get((arm, pid))
+        if run is None:
+            return None
+        row = []
+        for slot in range(run["k"]):
+            e = img.get((arm, pid, slot))
+            if e is None:
+                return None
+            if abs(e["ir"] - run["ir"][slot]) > TOL:
+                print(f"refused {e['path']}: index ir {e['ir']:+.4f}, record ir {run['ir'][slot]:+.4f}")
+                return None
+            row.append((base / e["path"], run["root_slots"][slot]))
+        rows.append(row)
+    return rows
+
+
+def grille(blocks, out):
+    """blocks: [(pid, rows)]; one block of len(ARMS) rows per prompt, a spacer row between blocks."""
+    import figstyle as fs
     from PIL import Image
-    index = json.loads((OUT / "images" / "index.json").read_text())
-    img = {(e["arm"], e["prompt_id"], e["slot"]): e for e in index}
-    arms = [a for a in ARMS if any(k[0] == a for k in img)]
-    fig_all, axes_all = plt.subplots(len(pids) * len(arms), 4, figsize=(4 * 2.2, len(pids) * len(arms) * 2.5))
-    for p, pid in enumerate(pids):
-        fig, axes = plt.subplots(len(arms), 4, figsize=(4 * 2.6, len(arms) * 2.9))
-        for a, arm in enumerate(arms):
-            r = par[arm][pid]
-            for j in range(4):
-                e = img[(arm, pid, j)]
-                im = Image.open(OUT / e["path"])
-                for ax in (axes[a, j], axes_all[p * len(arms) + a, j]):
-                    ax.imshow(im)
-                    ax.set_xticks([]); ax.set_yticks([])
-                    for s in ax.spines.values():
-                        s.set_edgecolor(COULEURS[e["root"]]); s.set_linewidth(4)
-                    ax.set_xlabel(f"ir {e['ir']:+.2f}", fontsize=8)
-            axes[a, 0].set_ylabel(f"{arm}\nir_max {r['ir_max']:+.2f}\n{r['n_lineages']} lignee(s)", fontsize=8)
-            axes_all[p * len(arms) + a, 0].set_ylabel(f"{pid[-4:]} {arm}", fontsize=7)
-        fig.suptitle(f"{pid} : {r['prompt'][:70]}", fontsize=9)
-        fig.tight_layout()
-        fig.savefig(OUT / f"fig_grid_{pid}.png", dpi=110)
-        plt.close(fig)
-    fig_all.tight_layout()
-    fig_all.savefig(OUT / "fig_grid_all.png", dpi=90)
-    print(OUT / "fig_grid_all.png")
+    n_img = len(ARMS)
+    nrows = len(blocks) * n_img + (len(blocks) - 1)
+    ratios = []
+    for b in range(len(blocks)):
+        ratios += [1.0] * n_img + ([0.12] if b < len(blocks) - 1 else [])
+    fig, axes = fs.figure(fs.WIDTH_IN * sum(ratios) / 4 * 0.86, ncols=4, nrows=nrows, squeeze=False,
+                          gridspec_kw={"height_ratios": ratios, "wspace": 0.02, "hspace": 0.02})
+    lw_pt = FRAME_PX * 72 / fs.DPI
+    for b, (pid, rows) in enumerate(blocks):
+        base = b * (n_img + 1)
+        for a, row in enumerate(rows):
+            for j, (path, root) in enumerate(row):
+                ax = axes[base + a][j]
+                ax.imshow(Image.open(path).convert("RGB").resize((CELL_PX, CELL_PX)))
+                ax.set_xticks([]); ax.set_yticks([])
+                for s in ax.spines.values():
+                    s.set_edgecolor(fs.ROOT_COLORS[root]); s.set_linewidth(lw_pt)
+            axes[base + a][0].set_ylabel(textwrap.fill(fs.arm_label(ARMS[a]), 18), rotation=0, ha="right", va="center")
+        if b < len(blocks) - 1:
+            for ax in axes[base + n_img]:
+                ax.axis("off")
+    return fs.save(fig, out)
 
 
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--choose", action="store_true")
-    p.add_argument("--pids", nargs="*")
+    p.add_argument("--appendix", action="store_true")
+    p.add_argument("--b1", action="store_true")
     args = p.parse_args()
-    par = par_bras()
     if args.choose:
-        print(" ".join(choisir(par)))
+        print(" ".join(choisir(par_bras())))
         return
-    # la grille se dessine sur les prompts qui ont des images : la regle de choix a ete
-    # appliquee a la nuit du 22/09, et le rejeu des ctl a change leurs ir_max (derive inter-session)
-    index = json.loads((OUT / "images" / "index.json").read_text())
-    pids = args.pids or sorted({e["prompt_id"] for e in index})
-    grille(pids, par)
+    sel = json.loads((ROOT / "data" / "visual_selection.json").read_text())
+    # the b1 images sit in out/images and match session C; the selection names its own session
+    src = OUT / "probe_C.json" if args.b1 else ROOT / sel.get("source", "collapse_lab/out/probe_C.json")
+    C, img, index = load(src)
+    if args.b1:
+        pids, out = sorted({e["prompt_id"] for e in index}), "f5_root_grid_b1"
+    elif args.appendix:
+        pids, out = sel["W1"], "f5_root_grid_appendix"
+    else:
+        pids, out = [sel["F5"]], "f5_root_grid"
+    blocks, missing = [], []
+    for pid in pids:
+        rows = cells(C, img, pid, src.parent)
+        (blocks if rows else missing).append((pid, rows))
+    if missing:
+        print("GPU list (no matching images yet):", " ".join(pid for pid, _ in missing))
+    if not blocks:
+        print("nothing to draw")
+        return
+    png, svg = grille(blocks, ROOT / "figures" / out)
+    for pid, rows in blocks:
+        print(pid, "roots per arm:", " ".join(f"{arm}={[root for _, root in row]}" for arm, row in zip(ARMS, rows)))
+    print("wrote", png, svg, f"| ir from images/index.json checked against {src.relative_to(ROOT)} within", TOL)
 
 
 if __name__ == "__main__":
