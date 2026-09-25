@@ -110,3 +110,38 @@ for nom, ps in (("these 40", common), ("the other 60", sorted(set(bon) - set(com
     print(f"   on {nom}: bon4 {np.mean([bon[p]['ir_max'] for p in ps]):.3f}, fk4 {np.mean([fk4[p]['ir_max'] for p in ps]):.3f}, "
           f"R1 {np.mean([R1[p]['ir_max'] for p in ps]):.3f}; fk4 - bon4 {se([fk4[p]['ir_max'] - bon[p]['ir_max'] for p in ps])}, "
           f"R1 - bon4 {se([R1[p]['ir_max'] - bon[p]['ir_max'] for p in ps])}")
+
+# sessions E and F (25/09, the T4): the released code at seed 2024 completed to the 100 prompts, and
+# its commit before "address max potential bug" (699c929); both paired by x_T with bon4 and R1
+for label, path, sampler in (("E, global seed", R / "sd_authors_R0_100.json", "authors_paper"),
+                             ("E, generator", R / "sd_authors_R0_100.json", "authors_paper_g"),
+                             ("F, before the fix, global seed", R / "sd_authors_prefix.json", "authors_paper_prefix")):
+    if not path.exists():
+        continue
+    d = {r["prompt_id"]: r for r in json.loads(path.read_text())["runs"] if r["sampler"] == sampler and r["seed"] == 2024}
+    if not d:
+        continue
+    ps = [p for p in order if p in d]
+    rest = [p for p in ps if p not in common]
+    print(f"\nSession {label}: {len(ps)} prompts ({len(rest)} beyond the first 40), ir_max {np.mean([d[p]['ir_max'] for p in ps]):.3f}, "
+          f"fewer than 4 distinct images in {np.mean([d[p]['n_distinct_images'] < 4 for p in ps]):.0%} of runs, "
+          f"devices {sorted({d[p].get('device', 'not recorded') for p in ps})}")
+    for nom, sub in (("all", ps), ("first 40", [p for p in ps if p in common]), ("other 60", rest)):
+        if len(sub) > 1:
+            print(f"   {nom}: - bon4 {se([d[p]['ir_max'] - bon[p]['ir_max'] for p in sub])}, - R1 {se([d[p]['ir_max'] - R1[p]['ir_max'] for p in sub])}, "
+                  f"- fk4 {se([d[p]['ir_max'] - fk4[p]['ir_max'] for p in sub])}")
+    if sampler == "authors_paper_prefix" and (R / "sd_authors_R0_100.json").exists():
+        post = {r["prompt_id"]: r for r in json.loads((R / "sd_authors_R0_100.json").read_text())["runs"]
+                if r["sampler"] == "authors_paper" and r["seed"] == 2024}
+        both = [p for p in ps if p in post]
+        x = np.array([d[p]["ir_max"] - bon[p]["ir_max"] for p in ps])
+        print(f"   before the fix - after it (global seed, same x_T): {se([d[p]['ir_max'] - post[p]['ir_max'] for p in both])}")
+        print(f"   rule of 22/09 applied: {'CLOSED' if x.mean() >= 0.12 else 'not closed'} (threshold +0.12)")
+if (R / "sd_authors_R0_100.json").exists():
+    E = json.loads((R / "sd_authors_R0_100.json").read_text())["runs"]
+    g = {r["prompt_id"]: r for r in E if r["sampler"] == "authors_paper" and r["seed"] == 2024}
+    h = {r["prompt_id"]: r for r in E if r["sampler"] == "authors_paper_g" and r["seed"] == 2024}
+    both = [p for p in order if p in g and p in h]
+    for nom, sub in (("all", both), ("first 40", [p for p in both if p in common]), ("other 60", [p for p in both if p not in common])):
+        if len(sub) > 1:
+            print(f"   global seed - generator, seed 2024, {nom}: {se([g[p]['ir_max'] - h[p]['ir_max'] for p in sub])}")

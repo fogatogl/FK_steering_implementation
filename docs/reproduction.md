@@ -108,6 +108,11 @@ collapse_lab/nuitD.sh                             # collapse_lab/out/session_D/,
 collapse_lab/nuitD_hps.sh                         # HPS v2.1 of session D's finals
 python scripts/select_visual_prompts.py collapse_lab/out/session_D/probe_D.json   # data/visual_selection.json
 
+# sessions E and F, the T4: the machine check, the released code at seed 2024 on the 100 prompts,
+# and its commit before the max-potential fix (a second checkout at 6726324, FKD_ROOT)
+collapse_lab/nuitE.sh                             # session_E/t4_check.json, results/sd_authors_R0_100.json
+collapse_lab/nuitF.sh                             # results/sd_authors_prefix.json
+
 # every number the post quotes, from the committed records (CPU, about 10 min), and the checks
 /home/onyxia/work/.venvs/ddpm/bin/python scripts/post_numbers.py   # results/post_numbers.json
 bash scripts/check_all.sh
