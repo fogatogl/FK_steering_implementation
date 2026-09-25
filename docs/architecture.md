@@ -468,9 +468,7 @@ in memory.
 | InceptionV3 | FID only | `pytorch-fid` pool3 | 2048 features | fp32 |
 
 Parameter counts absent from both the checkpoint configs and the docs are marked
-as absent. The MDLM checkpoint in `third_party/mdlm_hf` is installed and
-generates text, and nothing in `smc/` reads it yet: it is the v2 stack, for
-PG-DLM.
+as absent.
 
 ## FK Steering, parameter by parameter
 
@@ -634,6 +632,4 @@ needs LPIPS or a CLIP distance behind it.
 
 Parameter counts for the SD components, ImageReward and HPS are not in the
 checkpoint configs the repository reads, and are left out.
-The CelebA-HQ U-Net is used as a black box and never counted. The PG-DLM stack
-has no entry yet: `third_party/mdlm_hf` holds a checkpoint and no code in `smc/`
-reads it.
+The CelebA-HQ U-Net is used as a black box and never counted.

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "smc-diffusion"
 version = "0.1"
-description = "FK Steering, then PG-DLM, reproduced from the equations"
+description = "FK Steering reproduced from the equations, on Stable Diffusion"
 requires-python = ">=3.11"
 
 [tool.setuptools]

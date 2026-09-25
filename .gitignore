@@ -8,10 +8,6 @@ dataset/
 *.ckpt
 *.safetensors
 
-# --- Downloaded MDLM checkpoint (679 MB, redone with hf download) ---
-mdlm_hf/*.safetensors
-mdlm_hf/*.bin
-
 # --- Python ---
 __pycache__/
 *.py[cod]
