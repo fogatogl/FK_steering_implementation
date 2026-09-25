@@ -1,5 +1,8 @@
 # Chronology: how the project got from one state to the next
 
+*25/09/2026: the repository's scope closed on FK Steering; the PG-DLM stage the early entries plan
+was dropped, and its MDLM files left the repository. The history below is kept as it was written.*
+
 The thread that joins the runs of `docs/results.md` and the entries of
 `docs/decisions.md`. Each stage says what was put in place, why and what problem
 it solved, what went wrong, and which question came out of it and pushed the

@@ -32,13 +32,13 @@ evaluations:
 - **The four particles become one.** In 93 to 96 runs of 100 the four final images descend from a
   single initial noise: the first resampling weighs rewards read on a blurred estimate of the image.
   Replaying the recorded weights through the resampler recovers the number of surviving lineages
-  within 0.09 on eighteen variants (sections 4 and 5).
+  within 0.09 on eighteen steered runs of the probe (sections 4 and 5).
 - **Keeping the lineages changes the target.** Of eight corrections, only a floor at 0 with λ = 2
   keeps three roots of four; its best image stays at best-of-4's level and the mean of its four
   images costs 0.250 ± 0.045 against FK (section 6).
-- **The released code does not close the gap.** Given the same noises it agrees with this
-  reimplementation to 0.004; its four runs on 40 prompts span -0.35 to +0.10 against best-of-4
-  (section 7).
+- **The released code does not close the gap.** Run under the paper's configuration, its four runs
+  on 40 prompts span -0.35 to +0.10 against best-of-4, two seedings of one seed disagreeing by more
+  than their noise (section 7).
 
 ## Repository
 
