@@ -1,6 +1,6 @@
 """What the figure scripts share: the palette, the arm labels, the export.
 
-The rules are docs/paper_plan.md, section 2.2. One colour per arm for the whole post,
+The rules are the editorial plan's, section 2.2. One colour per arm for the whole post,
 Okabe-Ito (Wong, Nature Methods 2011); greys for the references; no title inside the
 image; DejaVu Sans at 9 pt or more once the figure sits in a 700 px column, so the PNG
 is exported at 1400 px wide; SVG next to it; transparent background, constrained layout
@@ -40,9 +40,9 @@ ARM_COLOR = {
 ARM_LABEL = {
     "ctl": "FK, paper setting (λ = 10)", "bon4": "best-of-4",
     "lam0": "free sampler", "k1": "free sampler (one sample)",
-    "floor2": "floor + λ = 2", "floor": "floor (authors' code)", "lam2": "λ = 2",
+    "floor2": "floor + λ = 2", "floor": "floor (released code)", "lam2": "λ = 2",
     "fadapt": "adaptive λ", "adapt": "adaptive λ", "late": "no step at t = 80",
-    "R0": "authors' code", "R1": "authors' choices in smc/",
+    "R0": "released code", "R1": "released choices in smc/",
     "thr05": "floor, resample if ESS < k/2", "rise": "floor + adaptive \u03bb, cap 100",
     "stat0": "floor, statistic form", "multi": "multinomial every step",
     "vae": "guide on pipeline VAE", "idx": "indices 20 to 99",

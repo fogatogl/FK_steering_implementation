@@ -98,7 +98,7 @@ def main():
         figstyle.dress(ax)
     axes[0].set_ylabel("min ESS over the run / k")
     png, svg = figstyle.save(fig, ROOT / "figures" / "f8_three_scales")
-    print(png, svg)
+    print(png.relative_to(ROOT), svg.relative_to(ROOT))
 
 
 if __name__ == "__main__":

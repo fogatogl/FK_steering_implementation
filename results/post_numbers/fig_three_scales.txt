@@ -18,4 +18,4 @@ SD 512 px, k = 4
   lambda   10  ESS_min / k = 0.300 +/- 0.021  (n = 17), ESS_min = 1.20 of 4
   floor of the ratio (one particle carries everything): 1/k = 0.250
 error bars: standard error over the 3 seeds (CIFAR, CelebA) or over the prompts the three SD arms share
-/home/onyxia/work/diffusion-models/.claude/worktrees/collapse-solutions/figures/f8_three_scales.png /home/onyxia/work/diffusion-models/.claude/worktrees/collapse-solutions/figures/f8_three_scales.svg
+figures/f8_three_scales.png figures/f8_three_scales.svg

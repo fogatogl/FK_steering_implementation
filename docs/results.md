@@ -194,7 +194,7 @@ classifier sweep 42 min for 18 runs, from the chain log.
 
 **Result.** Red: `r_sample` 0.93 free, 3.24 at lambda 1, 6.87 at lambda 8, `ess_min`
 16 to 1.003. Glasses: `r_sample` -4.95 free, -2.39 at lambda 1, -0.76 at lambda 4;
-`ess_min` 2.2 at lambda 1, 1.19 at lambda 2, 1.002 at lambda 4. On the grid of
+`ess_min` 2.2 at lambda 1, 1.18 at lambda 2, 1.002 at lambda 4. On the grid of
 seed 2024 judged by B: lambda = 1 puts glasses on 7 of 16 faces that stay clean;
 lambda = 2 gives sixteen copies of one pink blurred face, A says glasses, B says
 none. Red degrades the same way: plausible at lambda 2, a red wash at 8.

@@ -69,3 +69,8 @@ Seed 2024, own seeding - through a generator, same x_T: +0.229 +/- 0.085 (n=40) 
 Seed 42, free sampler under both seedings: 40/40 prompts equal on every slot
 Seed 42, own seeding - through a generator, same x_T: -0.310 +/- 0.077 (n=40) (-4.0 standard errors)
 The four run means on the common prompts: 0.497, 0.949, 0.807, 0.720; their standard deviation 0.19, against 0.07 expected from the run-to-run spread within a prompt (RMS 0.44) if the runs were exchangeable
+
+The common prompts are benchmark positions 0 to 39
+   on these 40: bon4 0.846, fk4 0.921, R1 0.954; fk4 - bon4 +0.075 +/- 0.050 (n=40), R1 - bon4 +0.108 +/- 0.057 (n=40)
+   on the other 60: bon4 0.719, fk4 0.718, R1 0.629; fk4 - bon4 -0.001 +/- 0.052 (n=60), R1 - bon4 -0.090 +/- 0.055 (n=60)
+   on all 100: bon4 0.770, fk4 0.799, R1 0.759; fk4 - bon4 +0.030 +/- 0.037 (n=100), R1 - bon4 -0.011 +/- 0.041 (n=100)

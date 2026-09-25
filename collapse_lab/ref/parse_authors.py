@@ -101,3 +101,12 @@ print(f"The four run means on the common prompts: {', '.join(f'{m:.3f}' for m in
       f"{means.std(ddof=1):.2f}, against {within / len(common) ** .5:.2f} expected from the run-to-run spread within a prompt "
       f"(RMS {within:.2f}) if the runs were exchangeable")
 
+
+# the released code ran on the benchmark's first 40 prompts only: the same-machine references there and on the rest
+order = [p["id"] for p in json.loads((LAB.parent / "data" / "imagereward-benchmark-prompts.json").read_text())]
+fk4 = {r["prompt_id"]: r for r in base if r["sampler"] == "fk4" and r["seed"] == 2024}
+print(f"\nThe common prompts are benchmark positions {min(map(order.index, common))} to {max(map(order.index, common))}")
+for nom, ps in (("these 40", common), ("the other 60", sorted(set(bon) - set(common))), ("all 100", sorted(bon))):
+    print(f"   on {nom}: bon4 {np.mean([bon[p]['ir_max'] for p in ps]):.3f}, fk4 {np.mean([fk4[p]['ir_max'] for p in ps]):.3f}, "
+          f"R1 {np.mean([R1[p]['ir_max'] for p in ps]):.3f}; fk4 - bon4 {se([fk4[p]['ir_max'] - bon[p]['ir_max'] for p in ps])}, "
+          f"R1 - bon4 {se([R1[p]['ir_max'] - bon[p]['ir_max'] for p in ps])}")

@@ -18,4 +18,4 @@ F7: what keeping more roots does to the best image's reward and to the mean of t
   bon4    100 | -0.030 +/- 0.037 | -0.428 +/- 0.047 |    4.00   (reference, not drawn)
   (mean +/- standard error over the prompts paired with ctl; the figure's lines are 1.96 standard errors)
 
-wrote /home/onyxia/work/diffusion-models/.claude/worktrees/collapse-solutions/figures/f7_two_rewards.png /home/onyxia/work/diffusion-models/.claude/worktrees/collapse-solutions/figures/f7_two_rewards.svg
+wrote figures/f7_two_rewards.png figures/f7_two_rewards.svg
