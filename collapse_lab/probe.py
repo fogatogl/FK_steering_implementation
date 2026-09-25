@@ -28,7 +28,8 @@ a smc/ : il suffit que la reward passee a fk_steer rende max(r, 0).
 Depuis la racine :
   /home/onyxia/work/.venvs/sd/bin/python collapse_lab/probe.py --arms ctl floor --limit 20
 """
-import argparse, json, time
+import argparse, json, os, socket, time
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -102,7 +103,9 @@ def main():
     p.add_argument("--prompt-ids", nargs="*", default=None,
                    help="restreint aux prompt_id donnes (l'indice i, donc x_T, reste celui du fichier)")
     p.add_argument("--save-images", action="store_true",
-                   help="PNG 512 px dans out/images/<arm>/<prompt_id>_<slot>.png + index.json")
+                   help="PNG 512 px dans out/images/<arm>/<prompt_id>_<slot>.png + index.json, and the "
+                        "guide's decoded Tweedie estimates at each scheduled step, WebP 128 px, "
+                        "<prompt_id>_t<t>_<slot>.webp")
     p.add_argument("--redo", action="store_true",
                    help="rejoue les paires (prompt, bras) deja presentes et remplace leur record ; "
                         "exige --force, car un autre processus ne rend pas les memes chiffres "
@@ -134,7 +137,19 @@ def main():
                 f"{args.seed * 1000 + i}. Mauvais fichier de prompts ou mauvais ordre.")
     print(f"appariement verifie sur {len(prompts)} prompts", flush=True)
 
+    # Finding 19: the resampling path reproduces within a machine group, not across. The GPU is
+    # whatever Onyxia allocates, so every record says which process and device produced it.
+    session = {"started": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+               "host": socket.gethostname(), "pid": os.getpid(),
+               "device": torch.cuda.get_device_name(0), "torch": torch.__version__,
+               "cuda": torch.version.cuda, "cudnn": torch.backends.cudnn.version(),
+               "cudnn_benchmark": torch.backends.cudnn.benchmark,
+               "deterministic": torch.are_deterministic_algorithms_enabled()}
+    session_id = f"{session['started']}/{session['host']}/{session['pid']}"
+    print(f"session {session_id} on {session['device']}", flush=True)
+
     import ImageReward as RM
+    from PIL import Image
     from diffusers import AutoencoderKL, DDIMScheduler, StableDiffusionPipeline
     from smc.fk import fk_steer
     from smc.models import StableDiffusion
@@ -190,8 +205,16 @@ def main():
             model.set_prompt(prompt)
             # la reward guide decode avec ft-mse (decision 6) ou avec le VAE du pipeline (les auteurs)
             brut = ImageRewardSD(pipe.vae if a["reward_vae"] == "pipe" else vae_r, ir, prompt)
+            # fk_steer calls the reward once per scheduled step, on the Tweedie estimates before
+            # that step's resampling: keep them, decode them once the run is over.
+            seen = []
+
+            def guide(z):
+                if args.save_images:
+                    seen.append(z.detach().clone())
+                return brut(z)
             # reward_min_value des auteurs : le plancher passe par la reward, pas par smc/.
-            reward = (lambda z: torch.clamp(brut(z), min=0.0)) if plancher else brut
+            reward = (lambda z: torch.clamp(guide(z), min=0.0)) if plancher else guide
             resampler = resample_multinomial if a["resampler"] == "multinomial" else resample_systematic
 
             t0 = time.time()
@@ -222,6 +245,12 @@ def main():
                     index.append({"arm": arm, "prompt_id": pid, "slot": j, "root": roots[j],
                                   "ir": round(float(scores[j]), 4), "path": str(path.relative_to(out.parent))})
                 index_path.write_text(json.dumps(index, indent=1))
+                # calls come in loop order, so t decreases: 80, 60, 40, 20, 0
+                for t, z in zip(sorted(cal, reverse=True), seen, strict=True):
+                    arr = (brut.decode(z).permute(0, 2, 3, 1).float().cpu().numpy() * 255).round()
+                    for j, a8 in enumerate(arr.astype(np.uint8)):
+                        Image.fromarray(a8).resize((128, 128), Image.LANCZOS).save(
+                            img_dir / arm / f"{pid}_t{t}_{j}.webp", quality=85)
             records.append({
                 "prompt_id": pid, "prompt": prompt, "arm": arm, "lam": lam,
                 "plancher": plancher, "adaptatif": adapt, "lam_max": a["lam_max"],
@@ -245,6 +274,7 @@ def main():
                 "logG_at_schedule": [[round(v, 4) for v in info["logG"][m].tolist()]
                                      for m in sched],
                 "seconds": round(dt, 1),
+                "session_id": session_id, "session": session,
             })
             tmp = out.with_suffix(".json.tmp")
             tmp.write_text(json.dumps({"runs": records}, indent=2))
