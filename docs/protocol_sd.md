@@ -278,7 +278,7 @@ two can be compared.
 
 Named here before the GPU is booked, so the reading of each run is fixed in
 advance and the blog post quotes a prediction rather than a rationalisation.
-The design is `docs/paper_plan.md`; the launchers are
+The design is the 21/09 editorial plan (not in the repository); the launchers are
 `scripts/run_sd_night1.sh` and `scripts/run_sd_night2.sh`.
 
 **What the 300 runs of run 11 already say, and what it forbids saying.**
