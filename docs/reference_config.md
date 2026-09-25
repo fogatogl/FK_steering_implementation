@@ -32,12 +32,12 @@ which is `ir_max`. Its k = 1 and BoN rows sit 0.05 and 0.02 under this repo's, i
 | potential | `G_t = exp(lambda max_{s >= t} r_phi(x_s))` (`experiments_new.tex:35`) | **default `diff`**; `launch.sh` uses `max` (`launch_eval_runs.py:278`) | `max` |
 | max potential, weight | the statistic itself | `w = exp(lambda * max(r_t, population_rs))`, `population_rs` initialised at **`reward_min_value = 0.0`** and carried through resampling (`fkd_class.py:80-82, 119-121`) | increment form `exp(lambda (M_t - M_{t-1}))` with `M` initialised at -inf; `potential_form="statistic"` exists as a flag; no floor |
 | terminal step | `G_0` closes the product (`method.tex`) | `w = exp(lambda r_0) / product_of_potentials`, then **adaptive resampling at the last step if ESS < k/2** (`fkd_class.py:135-139, 145-163`): the four returned images can be duplicates | `logG_last = lambda r_0 - acc` under the statistic form; `resample_last=False`: the returned images are never resampled |
-| resampler | not stated | `torch.multinomial(w, k, replacement=True)`, at **every** scheduled step when `adaptive_resampling` is off, uniform weights included (`fkd_class.py:143, 168-172`) | systematic comb, only if ESS < k (strict), so never at exactly uniform weights (`smc/resampling.py`, `smc/weights.py`) |
+| resampler | multinomial at every step (Algorithm 1, `method.tex:75`) | `torch.multinomial(w, k, replacement=True)`, at **every** scheduled step when `adaptive_resampling` is off, uniform weights included (`fkd_class.py:143, 168-172`) | systematic comb, only if ESS < k (strict), so never at exactly uniform weights (`smc/resampling.py`, `smc/weights.py`) |
 | adaptive resampling | appendix C.3 sketches it | off by default; on: resample only if ESS < k/2 (`fkd_class.py:143-147`) | `--fk-threshold`, default 1.0 |
 | prompts | ImageReward benchmark prompts (`experiments_new.tex:104`) | `prompt_files/benchmark_ir.json`, 100 prompts | `data/imagereward-benchmark-prompts.json`: **byte-identical ids, order and text** |
 | seeds | not stated | `torch.manual_seed(seed)` once per pass, seeds 42, 43, 44, no `generator` (`launch_eval_runs.py:60-62, 336`) | `seed_effective = seed * 1000 + i` per prompt, generator passed |
 | what is scored | best particle | `do_eval` on the four final images, IR and HPS v2.1, per-prompt `max`/`mean`, averaged over prompts (`fks_utils.py:do_eval`; `launch_eval_runs.py:200-215`) | `ir_max`, `ir` per slot, HPS at `ir_max` |
-| time | 8.1 s for FK k = 4 on SD v1.5 (`experiments_new.tex:134`) | not on a T4 | 62.5 s per run on the T4 |
+| time | 8.1 s for FK k = 4 on SD v1.5 (`experiments_new.tex:134`) | not measured on this service | 62.5 s per run on the faster card (model not recorded; about 88 s on the A2) |
 
 ## What this settles before any run
 

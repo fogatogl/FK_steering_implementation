@@ -591,3 +591,58 @@ median 0.25. This repository's reference on the same 40 prompts in two sessions:
 +0.11 and +0.08. The reference reading becomes: the released code's mean is under
 best-of-4, and its run-to-run spread on 40 prompts is wider than the effect the paper
 reports; one run in four reaches the paper's number within a standard error.
+
+## Pre-registration of session D (23/09, 18h47 UTC, written before the run, launched at 18h47:29)
+
+**Why a session D.** Session C saved no image, and the figures that show images (F1, F5, the
+demo) must show images whose rewards are those of their own record. `probe.py` now saves,
+with `--save-images`, the four finals and the guide's decoded Tweedie estimates at the five
+scheduled steps, and writes `session_id` and the device name in every record. The pod came
+back at 18:02 on an NVIDIA A2; the GPU of every earlier session is unrecorded (the docs say
+T4). The machine is the one the service allocates; the run goes ahead on it and the record
+says which it is.
+
+**The run** (`collapse_lab/nuitD.sh`): `probe.py --arms ctl lam0 floor2 --limit 100
+--save-images --out out/session_D/probe_D.json`, one process, prompt-major, `HF_HOME` set.
+
+**Predictions.**
+
+- Speed: 80 to 95 s per run (the sessions that returned the 21/09 numbers ran at 87-90 s,
+  every session since the 22/09 evening at 55-60 s). Under 65 s would put this pod in session
+  C's speed group.
+- `lam0` (free path): slot rewards equal `lam0` of session C at correlation 0.99 or more, mean
+  absolute difference of `ir_max` under 0.02 over the 100 prompts.
+- `ctl` (resampling path), the test of the machine: if the runs take 80 to 95 s, `ctl` returns
+  the 21/09 reference (`sd_ref_fields100.json`, `fk4`, seed 2024) to 0.001 on at least 95 of
+  the 100 prompts, and session C's `ctl` only at slot correlation near 0.7 with about 30 % of
+  roots in common, as C against 21/09. If the runs take 55 to 65 s, `ctl` equals session C's to
+  0.0001 on all 100. Anything else (neither file reproduced) means a third group.
+- Whatever the group, on the 100 prompts: `ctl` mean `ir_max` within 0.08 of session C's
+  0.799, 1.0 to 1.15 roots; `floor2` 2.8 to 3.2 roots; `floor2 - ctl` on `ir_max`, paired by
+  x_T, in [-0.10, +0.08].
+- Controls on the thumbnails: `ctl` and `lam0` share their four t = 80 Tweedie estimates (same
+  x_T, same noise, no resampling before), so their t = 80 thumbnails agree to 1/255 on every
+  prompt. `floor2` too.
+- The selection rule (`docs/visual_selection.md`) run on session D: if `ctl` changes group,
+  at least 3 of the 8 gains change against the selection read on session C; if it stays in C's
+  group, none changes.
+
+*Addendum, 23/09 19h03, before any HPS of session D is computed.* `collapse_lab/nuitD_hps.sh`
+scores the 1200 finals of session D with HPS v2.1 once the session ends
+(`collapse_lab/w_hps_finals.py`). Prediction: at the image ImageReward selects, HPS of `ctl`
+minus HPS of best-of-4 (`lam0`'s best slot) within +/- 0.01 on average over the 100 prompts,
+as on 21/09 (+0.0017 +/- 0.0014 between `fk4` and `bon4`).
+
+*Outcome of session D, 24/09 03h05 UTC (`collapse_lab/y_sessionD.py`, `v_ess_check.py`,
+`select_visual_prompts.py`).* 300 of 300 runs in one process on the NVIDIA A2, 88.3 s per run
+(predicted 80 to 95: held). `ctl` returns the 21/09 reference slot by slot on 100 of 100 prompts
+and session A on 40 of 40, and keeps session C's roots in 30 % of prompts (held). `lam0` equals
+session A on its 17 prompts and correlates with session C's `lam0` at 0.62 only, mean |`ir_max`
+gap| 0.303 (predicted 0.99 and 0.02: **missed**; the free path does not reproduce across GPU
+models either). On the 100 prompts: `ctl` `ir_max` 0.826, 1.04 roots (held); `floor2` 2.96 roots
+(held); `floor2 - ctl` -0.043 +/- 0.037 (predicted [-0.10, +0.08]: held); the t = 80 thumbnails
+of the three arms agree to 0/255 (held); the ESS rebuilt from `logG` matches the record to 1.3e-4.
+FK against best-of-4 of the same process: +0.043 +/- 0.038 (session C: +0.021 +/- 0.038). HPS
+at the image ImageReward selects, `ctl` - best-of-4: -0.003 +/- 0.002 (predicted within +/-
+0.01: held). The selection rule changes 5 of its 8 gains against the rule read on session C
+(predicted at least 3: held).

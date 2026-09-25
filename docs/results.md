@@ -734,12 +734,14 @@ now holds 34 for that arm. Pooled over the seven corrections, `ir_max` - `ctl` i
 incident, -0.106 [-0.193, -0.019]. Against `bon4` on the same prompts, `ctl` is at
 +0.112 +/- 0.091 and every correction between -0.01 and +0.06.
 
-**Result, the coalescence model** (`n_coalescence.py`). Replaying the recorded
-per-step weights through the systematic comb integrated over its offset (or through
-the multinomial draw at every scheduled step) predicts the mean number of final
-roots of all fifteen arms within 0.07 (`ctl` 1.08 against 1.06, `floor` 1.73 against
-1.73, `fadapt` 2.16 against 2.12, `floor2` 2.94 against 2.94, `R1` 1.25 against 1.19)
-and the single-root fraction within three points; per-run correlation 0.87 to 0.99 on
+**Result, the coalescence model** (`n_coalescence.py`, output `collapse_lab/out/n_coalescence.txt`).
+Replaying the recorded per-step weights through the systematic comb integrated over
+its offset (or through the multinomial draw at every scheduled step) predicts the mean
+number of final roots of all fifteen arms within 0.1, and within 0.05 for eleven of
+them (`ctl` 1.08 against 1.06, `floor` 1.73 against 1.73, `fadapt` 2.16 against 2.12,
+`floor2` 2.94 against 2.94, `R1` 1.25 against 1.19; the largest miss is `stat0`, 1.84
+against 1.75, then `late` and `thr05` at 0.07) and the single-root fraction within
+three points except `R1` (48 % predicted, 81 % observed) and `thr05` (54 against 62); per-run correlation 0.87 to 0.99 on
 the arms with spread. Under flat weights the comb is the identity and the multinomial
 is not: four flat multinomial passes leave 1.58 roots of 4. The pre-registered
 prediction for `thr05` (1.84 roots, 61 % single-root, 1.12 resamplings) came out
@@ -788,6 +790,10 @@ stream and changes the later DDIM noise; with one it does not; the two are two
 random runs of the same filter. Each of the four choices alone costs 0.05 to 0.06 in `smc/` (`stat0`
 -0.050, `multi` -0.061, `vae` +0.009, `idx` -0.051, 40 prompts each); the guide's VAE
 changes which root survives in 70 % of prompts while leaving the reward unchanged.
+*Superseded on 23/09 evening:* those four costs and the 70 % pair fast-card arms with the A2
+reference. Against the reference of the same machine they read -0.013, -0.024, +0.045 and -0.014,
+and the guide's VAE keeps the reference's roots in 78 % of prompts (`collapse_lab/r_solutions.py`,
+`p_two_rewards.py`).
 
 **Result, three scales** (`scripts/fig_three_scales.py`, `figures/fig8_three_scales.png`).
 Minimum ESS over the run divided by k, and pixel diversity of the finals relative to
@@ -817,8 +823,25 @@ between the two paths (`out/latents_0.json`, `out/latents_1.json`). Slot pairing
 between files from different sessions is therefore invalid and the wrong-root rate
 of run 17 is not measurable that way.
 
+*Settled on 23/09 evening (session D, `collapse_lab/y_sessionD.py`).* The pod came back at
+18:02 on an NVIDIA A2, and `probe.py` records the device since 18:47. Session D on the A2
+returns the 21/09 reference and the 22/09-morning arms of `probe.json` slot by slot, `lam0`
+included, and differs from session C on `ctl`, `lam0` and `floor2` alike. The "machine
+execution path" above is the GPU model: the 87-90 s group is the A2, the 55-60 s group a
+faster card whose model was not recorded. The free path does not reproduce across the two
+either; the correlation of 1.00 between session C's `lam0` and `bon4` is a comparison inside
+the fast group. Every slot or root pairing across groups is invalid, and eight arms of the
+probe (`R1`, `idx`, `late`, `multi`, `rise`, `stat0`, `thr05`, `vae`, fast card) had been
+paired with the A2 reference; `collapse_lab/r_solutions.py` and `p_two_rewards.py` now pair
+each arm with the `ctl` of its own group (`collapse_lab/commun.py`, `references()`).
+
 **Session C (23/09, `collapse_lab/out/probe_C.json`).** `ctl`, `lam0` and `floor2` at
-100 prompts in one process. `lam0` returns `bon4`'s four rewards slot by slot at
+100 prompts in one process. At the first scheduled step (t = 80) the four guide rewards
+of a `ctl` run span 0.905 on average (median 0.777; `r_at_schedule[0]`), which at
+lambda = 10 is 9 nats between the largest and the smallest weight; the median ESS there
+is 1.18, then 1.63, 2.21, 3.29 and 2.71 at t = 60, 40, 20, 0, with 3.69 resamplings of 5
+per run. `ctl` ends on one root in 93 runs and two in 7; `floor2` on 1, 2, 3, 4 roots in
+4, 24, 37 and 35 runs (`div_pix` 0.300 against 0.109). `lam0` returns `bon4`'s four rewards slot by slot at
 correlation 1.00 (`ir_max` +0.009 +/- 0.006): the free path of the wrapper reproduces
 across sessions, and only the resampling path does not (`ctl` against the 21/09 file:
 correlation 0.70, same root in 30 % of prompts, `ir_max` -0.026 +/- 0.058). Paired by
@@ -830,6 +853,21 @@ first-step ranking and the free outcome **+0.137 +/- 0.050**, top-1 35 % against
 best free root A 0.779, mean root M 0.233, the root `ctl` keeps read free B 0.466, what
 `ctl` makes of it C 0.799, so **B - M +0.233 +/- 0.047**, **A - B +0.313 +/- 0.042**,
 **C - B +0.333 +/- 0.038**, C - A +0.021 +/- 0.038.
+
+**Session D (23/09 18:47 to 24/09 03:05, `collapse_lab/out/session_D/probe_D.json`).** `ctl`,
+`lam0` and `floor2` at 100 prompts in one process on the NVIDIA A2, 88.3 s per run, the device and
+`session_id` in every record, the four finals and the guide's decoded Tweedie estimates at the five
+scheduled steps saved for every prompt and arm (`images/`), and HPS v2.1 of the 1200 finals
+(`hps_finals.json`, `collapse_lab/w_hps_finals.py`). `ctl` equals the 21/09 reference slot by slot on
+100 of 100 prompts and session A's arms on all their prompts; nothing equals session C. On the A2:
+`ctl` 0.826, 1.04 roots, one root in 96 runs; `floor2` 2.96 roots, `floor2 - ctl` -0.043 +/- 0.037
+on `ir_max` and -0.261 +/- 0.043 on the mean of the four; FK against the best of the four free runs
+of the same process +0.043 +/- 0.038 (session C: +0.021 +/- 0.038); `ctl` D - C on the same x_T
++0.026 +/- 0.058, same roots in 30 % of prompts; HPS `ctl` - best-of-4 -0.003 +/- 0.002. The t = 80
+thumbnails of the three arms are equal (0/255 on 100 prompts), the ESS rebuilt from `logG` matches
+the record to 1.3e-4. The selection rule, read on session D, keeps 46 complete prompts of 46 and
+changes 5 of its 8 gains against session C (`data/visual_selection.json`). Readout:
+`collapse_lab/y_sessionD.py`; predictions and outcome: `docs/protocol_sd.md`.
 
 **What it changed.** The gap to the paper is bounded, not closed, and it is not in
 the implementation. The collapse has a mechanism with a predictive model behind it.
