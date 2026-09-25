@@ -13,14 +13,71 @@ guided sampling of diffusion models:
 - **PG-DLM** (Dang et al., 2025): Particle Gibbs on full trajectories, for
   masked diffusion language models. Coming next.
 
-All the SMC is plain PyTorch, in `smc/`. Two base models share the same
-schedule (linear β, T = 1000) and the same `step` / `predict_x0` interface:
+All the SMC is plain PyTorch, in `smc/`. Three base models sit behind the same
+`step` / `predict_x0` interface:
 
+- Stable Diffusion v1.5 with ImageReward as the reward, the paper's own experiment;
 - a DDPM trained here on CIFAR-10 (8.4M-parameter U-Net, `notebooks/demo_DDPM.ipynb`);
 - `google/ddpm-ema-celebahq-256` from the Hub, 256 px faces, where the damage
   done by λ is visible to the eye.
 
-### Results so far
+The write-up is the blog post [`docs/paper.md`](docs/paper.md), *Four particles, one image*.
+
+### The reproduction on Stable Diffusion v1.5
+
+![SD v1.5, ImageReward and HPS](figures/f3_reproduction.png)
+
+Stable Diffusion v1.5 with ImageReward as the reward, the SD row of the paper's
+table 1 at the paper's setting (λ = 10, k = 4, MAX potential, five scheduled
+steps), 100 prompts, three seeds, budget matched on UNet rows:
+
+| | ImageReward | HPS v2.1 | paper (IR / HPS) |
+|---|---|---|---|
+| one sample | 0.237 ± 0.082 | 0.245 | 0.187 / 0.245 |
+| best-of-4 | 0.758 ± 0.069 | 0.258 | 0.737 / 0.265 |
+| FK, k = 4 | 0.820 ± 0.069 | 0.259 | 0.898 / 0.263 |
+
+Best-of-4 lands on the paper; one sample sits 0.05 above it. FK beats best-of-4
+at equal budget, by +0.062 ± 0.026 on 100 paired prompts (69 prompts won), where
+the paper has +0.161; HPS, the judge nobody optimises, does not move. The
+diagnostics say where the rest went: at the first scheduled step the median ESS
+is 1.18 out of 4, and 93 to 96 FK runs of 100 (one rerun on each GPU) end with
+their four particles descending from one initial noise.
+
+![The four finals of one prompt](figures/f5_root_grid.png)
+
+The four finals of one prompt under the free sampler, FK at the paper's setting and
+floor + λ = 2, on the same four noises, each framed in the colour of its root: the FK
+row is four near-copies of one image.
+
+The collapse has a mechanism and a price (`collapse_lab/FINDINGS.md`,
+`docs/results.md` block 18). Reweighting best-of-4's four free draws by
+exp(10 ir) already gives an ESS of 1.23 out of 4: at lambda = 10 the target
+itself carries about one particle. The number of roots that survive is a
+function of the recorded weights and the resampler alone, recovered within 0.09
+on eighteen steered arms without knowing anything about the steering. Of the corrections
+tried (the released code's floor at 0, a smaller lambda, a lambda bisected to
+hold the ESS, a threshold, a later schedule), one keeps the lineages, the floor
+with lambda = 2: 3.0 roots of 4, at -0.01 against FK on the best image paired by
+x_T and -0.25 on the mean of the four. No configuration beats best-of-4 by more than the
+noise on the best image, while the diversity varies by a factor three.
+
+The reference: the paper's stated configuration is this repository's, up to two
+choices that were screened (the increment form of MAX and the systematic resampler).
+The authors' released code, run from its own clone on the same prompts, returns
+best-of-4's rewards to the fourth decimal without its filter; with it, four runs on
+40 prompts land between -0.35 and +0.10 against best-of-4. Moving the released
+code's choices into this repository's filter one at a time does not close the gap
+to the paper, which stays open (`docs/reference_config.md`, post section 7).
+
+Every number of the post is printed by a script that `scripts/post_numbers.py` runs,
+or stands in a dated block of `docs/results.md`; `bash scripts/check_all.sh` runs the
+post's checks (prose, numbers, build, format, figures, language), and `docs/data_freeze.md`
+holds the sha256 of every record it reads. `docs/collapse_findings_en.md` is an English
+summary of the collapse lab, and `docs/demo/index.html` an interactive version of its
+figures.
+
+### Earlier stages: CIFAR-10 and CelebA-HQ
 
 The first reward is a deliberately simple "red" score. FK Steering pushes it up
 with λ, and that is the problem: `sum` pushes it past its own bound of 10.19,
@@ -73,44 +130,6 @@ The lots keep the sixteen particles of each run, duplication included, so these
 are pessimistic bounds. Each choice behind these numbers is one entry of
 `docs/decisions.md`.
 
-![SD v1.5, ImageReward and HPS](figures/fig4_sd_ir_hps.png)
-
-Stable Diffusion v1.5 with ImageReward as the reward, the SD row of the paper's
-table 1 at the paper's setting (λ = 10, k = 4, MAX potential, five scheduled
-steps), 100 prompts, three seeds, budget matched on UNet rows:
-
-| | ImageReward | HPS v2.1 | paper (IR / HPS) |
-|---|---|---|---|
-| one sample | 0.237 ± 0.082 | 0.245 | 0.187 / 0.245 |
-| best-of-4 | 0.758 ± 0.069 | 0.258 | 0.737 / 0.265 |
-| FK, k = 4 | 0.820 ± 0.069 | 0.259 | 0.898 / 0.263 |
-
-The two baselines land on the paper. FK beats best-of-4 at equal budget, by
-+0.062 on 100 paired prompts (2.4 standard errors, 69 prompts won), where the
-paper has +0.161; HPS, the judge nobody optimises, does not move. The
-diagnostics say where the rest went: at the first scheduled step the median ESS
-is 1.18 out of 4, and 96 FK runs of 100 end with their four particles descending
-from one initial noise.
-
-The collapse has a mechanism and a price (`collapse_lab/FINDINGS.md`,
-`docs/results.md` block 18). Reweighting best-of-4's four free draws by
-exp(10 ir) already gives an ESS of 1.23 out of 4: at lambda = 10 the target
-itself carries about one particle. The number of roots that survive is a
-function of the recorded weights and the resampler alone, predicted within 0.07
-on fifteen arms without knowing anything about the steering. Of the corrections
-tried (the released code's floor at 0, a smaller lambda, a lambda bisected to
-hold the ESS, a threshold, a later schedule), one keeps the lineages, the floor
-with lambda = 2: 3.0 roots of 4, at -0.01 on the best image paired by x_T and
--0.25 on the mean of the four. No configuration beats best-of-4 by more than the
-noise on the best image, while the diversity varies by a factor three.
-
-The reference: the paper's stated configuration is this repository's. The
-authors' released code, run from its own clone on the same prompts, returns
-best-of-4's rewards to the fourth decimal without its filter; with it, its four
-runs on 40 prompts land between -0.35 and +0.10 against best-of-4, -0.110 ± 0.036
-pooled over 220 run-prompts. The gap to the paper is bounded, not closed, and it
-does not live in the implementation.
-
 ## Getting started
 
 ### Code and environment
@@ -122,8 +141,15 @@ pip install -r requirements.txt && pip install -e .    # pinned, anywhere
 pip install -r requirements-onyxia.txt && pip install -e .   # inside the SSP Cloud image, keeps its torch
 ```
 
-The experiments ran on one Tesla T4 (16 GB). The 256 px model needs about
-11 GB at k = 16 in fp16; the CIFAR model and the tests need much less. The
+The experiments ran on one shared 16 GB GPU, which the computing service
+allocated per session: an NVIDIA A2 for some sessions, a faster card for others
+(its model was not recorded before 23/09; the first week's notes say T4). Stable
+Diffusion runs reproduce to the fourth decimal on one GPU model and not across
+two, so a rerun on another card returns other images and other numbers for the
+same seeds; runs are paired by noise only within one machine
+(`collapse_lab/commun.py`, `groupe`). Since 23/09 every `collapse_lab/probe.py`
+record names its process and device. The 256 px model needs about 11 GB at
+k = 16 in fp16; the CIFAR model and the tests need much less. The
 fast tests run on CPU:
 
 ```bash
@@ -199,12 +225,21 @@ python scripts/plot_fig5_k.py                     # figures/fig5_sweep_k.png
 # SD v1.5 (separate venv, see scripts/setup_sd_env.sh)
 HF_HOME=/home/onyxia/work/hf_cache python scripts/run_sd_baseline.py \
        --prompts data/imagereward-benchmark-prompts.json --seeds 2024 2025 2026
-python scripts/plot_fig4_sd.py                    # figures/fig4_sd_ir_hps.png
+python scripts/plot_fig4_sd.py                    # figures/f3_reproduction.png
 python scripts/make_table_sd.py
 scripts/run_sd_variants.sh && scripts/run_sd_lambda_t.sh && scripts/run_sd_tempering.sh   # results/sd_variants/
 python scripts/compare_sd_variants.py             # the paired table of the screen
 python scripts/plot_fig6_sd_grid.py --rows bon4 fk4 T2A05 T2tA05   # figures/fig6_sd_collapse.png
 python scripts/analyze_sd_collapse.py             # figures/fig7_ess_vs_gain.png, and the bootstrap
+
+# the collapse lab, sessions C and D (one process each, ctl, lam0, floor2 at 100 prompts)
+collapse_lab/nuitD.sh                             # collapse_lab/out/session_D/, with images and Tweedie thumbnails
+collapse_lab/nuitD_hps.sh                         # HPS v2.1 of session D's finals
+python scripts/select_visual_prompts.py collapse_lab/out/session_D/probe_D.json   # data/visual_selection.json
+
+# every number the post quotes, from the committed records (CPU, about 10 min), and the checks
+/home/onyxia/work/.venvs/ddpm/bin/python scripts/post_numbers.py   # results/post_numbers.json
+bash scripts/check_all.sh
 ```
 
 `results/` and `figures/` in the repo are the outputs of these commands.
@@ -215,22 +250,38 @@ python scripts/analyze_sd_collapse.py             # figures/fig7_ess_vs_gain.png
 smc/
   weights.py, resampling.py   normalised log-weights, ESS, resamplers (return indices)
   fk.py                       fk_steer, best_of_n, the three potentials
-  models.py, scheduler.py     the DDPM behind step / predict_x0; DDPM and DDIM schedulers
+  models.py, scheduler.py     the DDPM and SD wrappers behind step / predict_x0; DDPM and DDIM schedulers
   unet.py, ema.py             the CIFAR-10 network and its EMA
   pretrained.py               a Hub UNet behind the same interface
-  rewards.py, classifier.py   red and classifier rewards; small VGG and ResNet-18
-  rng.py                      one torch.Generator per run
-experiments/                  training and sampling runs, JSON in results/
-scripts/                      lambda sweep, FID, figures, Onyxia and S3 plumbing
+  rewards.py, rewards_sd.py   red and classifier rewards; ImageReward on SD
+  classifier.py, rng.py       small VGG and ResNet-18; one torch.Generator per run
 tests/                        one property per test; `particles` is the oracle for the resamplers
-docs/architecture.md          the three stacks, every network and every parameter value
-docs/decisions.md             why each choice, one short entry each
-docs/results.md               one block per run: what it tested, what it cost, what it gave
-docs/chronology.md            the thread from one stage to the next, and the questions that drove it
-docs/max_potential.md         why the max potential underperforms, and what was ruled out
-docs/protocol_potentials.md   the two paper-code mismatches, and the run that settles the second
-docs/protocol_sd.md           the SD block, written before it was launched, predictions included
-docs/ONYXIA_setup.md          bringing an ephemeral instance back
+experiments/                  training and sampling runs, JSON in results/
+scripts/
+  run_*.py, run_*.sh          the lambda sweep, FID, the SD baseline and its launchers
+  plot_*.py, fig_*.py         the figures, from results/ only (figstyle.py holds the palette)
+  post_numbers.py, check_*.py every number the post quotes, and the post's checks (check_all.sh)
+  build_post.py               the post in the conference's format
+  sync_s3.sh, onyxia_*.sh     S3 backup and the Onyxia bootstrap
+collapse_lab/                 the collapse study: probe, readouts, coalescence model, released-code driver
+results/                      one JSON per run; post_numbers/ holds what each analysis script prints
+figures/                      every figure, rebuilt from results/ and collapse_lab/out/
+data/                         the ImageReward benchmark prompts and the selection of the prompts shown
+docs/
+  paper.md, post/             the blog post and its .bib
+  results.md                  one block per run: what it tested, what it cost, what it gave
+  protocol_sd.md              the SD block, written before it was launched, predictions included
+  reference_config.md         the paper against the released code, cell by cell
+  decisions.md                why each choice, one short entry each
+  architecture.md             the three stacks, every network and every parameter value
+  chronology.md               the thread from one stage to the next, and the questions that drove it
+  max_potential.md            why the max potential underperforms, and what was ruled out
+  protocol_potentials.md      the two paper-code mismatches, and the run that settles the second
+  collapse_findings_en.md     the collapse lab's final state, in English
+  visual_selection.md         the rule that picked the prompts shown as images
+  data_freeze.md              the sha256 of every record the post reads
+  demo/                       the interactive figures, one standalone HTML page
+  ONYXIA_setup.md             bringing an ephemeral instance back
 LEARNING.md                   the bugs that cost more than twenty minutes
 notebooks/, third_party/      the DDPM training notebook; the MDLM checkpoint for PG-DLM
 ```
