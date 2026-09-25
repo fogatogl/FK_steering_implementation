@@ -27,13 +27,20 @@ venv/
 *.log
 wandb/
 .claude/
+.vscode/
 
 # --- Editable install ---
 *.egg-info/
 
 # --- Collapse lab: GPU outputs that are rebuilt, never committed ---
 collapse_lab/out/images
-collapse_lab/out/fig_grid_0*.png
+collapse_lab/out/fig_grid_*.png
 collapse_lab/out/probe_backup*.json
 collapse_lab/out/*.tmp
 *.json.tmp
+collapse_lab/out/*/images
+
+# --- The post: the build (scripts/build_post.py) and the figure variants it does not include ---
+docs/post/build/
+figures/*_appendix.*
+figures/*_b1.*
