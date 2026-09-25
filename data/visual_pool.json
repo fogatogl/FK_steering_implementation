@@ -1,0 +1,317 @@
+{
+  "written": "2026-09-23, before session C, from prompt text only (no reward seen)",
+  "source": "data/imagereward-benchmark-prompts.json",
+  "eligibility": {
+    "E1": "the prompt names a concrete subject, object or attribute a reader can check by eye (a noun, a colour, a material, a count, a spatial relation)",
+    "E2": "no named person, artist, brand or franchise",
+    "E3": "no human portrait as the main subject",
+    "E4": "an abstract or style-only prompt is out"
+  },
+  "categories": [
+    "animal",
+    "vehicle",
+    "food",
+    "object",
+    "scene",
+    "figure"
+  ],
+  "eligible": [
+    {
+      "id": "005937-0170",
+      "cat": "animal",
+      "check": "a cat"
+    },
+    {
+      "id": "010374-0099",
+      "cat": "animal",
+      "check": "a cat wearing bunny ears"
+    },
+    {
+      "id": "010366-0012",
+      "cat": "animal",
+      "check": "a green parrot, visibly fat"
+    },
+    {
+      "id": "010525-0074",
+      "cat": "animal",
+      "check": "retriever with white chest and pink nose"
+    },
+    {
+      "id": "008614-0134",
+      "cat": "animal",
+      "check": "a wolfdog, black and white"
+    },
+    {
+      "id": "007242-0101",
+      "cat": "animal",
+      "check": "a cat-dog hybrid"
+    },
+    {
+      "id": "008569-0060",
+      "cat": "animal",
+      "check": "several cats"
+    },
+    {
+      "id": "010490-0075",
+      "cat": "animal",
+      "check": "a cat with cyberpunk elements"
+    },
+    {
+      "id": "005765-0094",
+      "cat": "animal",
+      "check": "a crow creature in a forest"
+    },
+    {
+      "id": "005895-0035",
+      "cat": "animal",
+      "check": "fox in white shirt, khaki cargo pants, glasses"
+    },
+    {
+      "id": "000304-0153",
+      "cat": "animal",
+      "check": "a chicken"
+    },
+    {
+      "id": "001273-0046",
+      "cat": "vehicle",
+      "check": "a car, red"
+    },
+    {
+      "id": "001737-0018",
+      "cat": "vehicle",
+      "check": "a car on a beach at sunset"
+    },
+    {
+      "id": "004971-0071",
+      "cat": "vehicle",
+      "check": "a sports car with motion blur"
+    },
+    {
+      "id": "007086-0024",
+      "cat": "vehicle",
+      "check": "a flying car, night, rain"
+    },
+    {
+      "id": "005695-0057",
+      "cat": "vehicle",
+      "check": "a vehicle"
+    },
+    {
+      "id": "010856-0009",
+      "cat": "food",
+      "check": "peanut butter"
+    },
+    {
+      "id": "001161-0086",
+      "cat": "food",
+      "check": "a burger, mouldy and messy"
+    },
+    {
+      "id": "011623-0101",
+      "cat": "food",
+      "check": "a cheeseburger"
+    },
+    {
+      "id": "007749-0112",
+      "cat": "food",
+      "check": "a plate of food"
+    },
+    {
+      "id": "005456-0082",
+      "cat": "food",
+      "check": "packs of bubblegum"
+    },
+    {
+      "id": "007171-0104",
+      "cat": "food",
+      "check": "a bag of breaded scampi"
+    },
+    {
+      "id": "008222-0061",
+      "cat": "object",
+      "check": "a frosted glass sphere on a wooden table"
+    },
+    {
+      "id": "009624-0144",
+      "cat": "object",
+      "check": "a table shaped like an avocado"
+    },
+    {
+      "id": "000562-0011",
+      "cat": "object",
+      "check": "a coffee mug made of cardboard"
+    },
+    {
+      "id": "000324-0042",
+      "cat": "object",
+      "check": "a water bottle"
+    },
+    {
+      "id": "007045-0013",
+      "cat": "object",
+      "check": "atom model of glass marbles and chrome rods"
+    },
+    {
+      "id": "007654-0033",
+      "cat": "object",
+      "check": "wood logs arranged in a square"
+    },
+    {
+      "id": "007837-0019",
+      "cat": "object",
+      "check": "plants and flowers in a bowl"
+    },
+    {
+      "id": "008265-0060",
+      "cat": "object",
+      "check": "a coin bag as a game UI item"
+    },
+    {
+      "id": "000606-0024",
+      "cat": "object",
+      "check": "a logo about frozen food"
+    },
+    {
+      "id": "009606-0136",
+      "cat": "object",
+      "check": "a coffee-chain logo"
+    },
+    {
+      "id": "007204-0161",
+      "cat": "object",
+      "check": "a mossy marble sculpture of a dragonfly"
+    },
+    {
+      "id": "010482-0092",
+      "cat": "object",
+      "check": "an arcade game"
+    },
+    {
+      "id": "005937-0167",
+      "cat": "scene",
+      "check": "an ocean with clouds and birds"
+    },
+    {
+      "id": "001720-0044",
+      "cat": "scene",
+      "check": "a field of light blue lotus flowers"
+    },
+    {
+      "id": "007171-0040",
+      "cat": "scene",
+      "check": "a foggy forest, cherry blossom on the ground"
+    },
+    {
+      "id": "007726-0050",
+      "cat": "scene",
+      "check": "a treehouse mansion on a mountain"
+    },
+    {
+      "id": "002870-0080",
+      "cat": "scene",
+      "check": "a living room, giant window, pool outside"
+    },
+    {
+      "id": "007187-0044",
+      "cat": "scene",
+      "check": "a rollercoaster under water"
+    },
+    {
+      "id": "008707-0095",
+      "cat": "scene",
+      "check": "a forest seen from above"
+    },
+    {
+      "id": "001227-0027",
+      "cat": "figure",
+      "check": "an astronaut on a tropical beach"
+    },
+    {
+      "id": "010361-0095",
+      "cat": "figure",
+      "check": "an astronaut in a car next to Jupiter"
+    },
+    {
+      "id": "000539-0052",
+      "cat": "figure",
+      "check": "an old man with a white beard riding a lion"
+    },
+    {
+      "id": "007019-0095",
+      "cat": "figure",
+      "check": "an astronaut floating in space"
+    },
+    {
+      "id": "007178-0111",
+      "cat": "figure",
+      "check": "an astronaut stepping through a portal"
+    }
+  ],
+  "excluded": {
+    "E2_named": [
+      "001173-0078",
+      "007048-0049",
+      "010873-0040",
+      "011041-0080",
+      "005912-0052",
+      "005903-0142",
+      "001369-0084",
+      "011729-0165",
+      "007206-0148",
+      "007258-0005",
+      "007214-0194",
+      "007191-0058",
+      "007029-0027",
+      "007109-0002",
+      "008173-0073",
+      "007249-0011",
+      "003940-0078",
+      "003532-0061",
+      "007202-0104",
+      "007109-0000",
+      "007268-0100",
+      "007135-0056",
+      "005351-0071",
+      "007209-0011",
+      "008866-0195",
+      "005895-0048"
+    ],
+    "E3_portrait": [
+      "001205-0101",
+      "005846-0102",
+      "008775-0090",
+      "010795-0050",
+      "007133-0110",
+      "008317-0143"
+    ],
+    "E4_abstract": [
+      "005633-0081",
+      "012203-0031",
+      "002298-0089",
+      "001637-0022",
+      "001238-0091",
+      "010984-0022",
+      "001251-0073",
+      "005784-0093",
+      "001230-0030",
+      "001973-0059",
+      "000246-0117",
+      "007086-0087",
+      "008251-0021",
+      "009639-0195",
+      "009662-0003",
+      "005848-0000",
+      "007129-0041",
+      "007205-0046",
+      "000969-0041",
+      "002188-0054",
+      "001013-0094",
+      "008247-0049"
+    ]
+  },
+  "hand_picked": {
+    "id": "010856-0009",
+    "why": "the example that started the project; shown in the appendix under this label if the rule does not select it"
+  },
+  "note_2026-09-23": "005895-0048 ('double hatchet ... art by artgerm and greg rutkowski and alphonse mucha') was missing from the 23/09 classification; added to E2_named by the assistant on 23/09 from the prompt text alone (three named artists), no reward consulted."
+}
