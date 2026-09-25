@@ -111,7 +111,7 @@ def main():
             "seed": args.seed, "seed_effective": effective, "k": 4, "lam": 10.0,
             "ir": ir, "ir_max": max(ir), "ir_mean": round(float(np.mean(ir)), 4),
             "n_distinct_images": n_distinct, "div_pix": diversite(images),
-            "seconds": round(dt, 1), "versions": versions,
+            "seconds": round(dt, 1), "versions": versions, "device": torch.cuda.get_device_name(0),
         }
         if args.hps:
             rec["hps"] = [round(float(v), 4) for v in res["HumanPreference"]["result"]]

@@ -646,3 +646,28 @@ FK against best-of-4 of the same process: +0.043 +/- 0.038 (session C: +0.021 +/
 at the image ImageReward selects, `ctl` - best-of-4: -0.003 +/- 0.002 (predicted within +/-
 0.01: held). The selection rule changes 5 of its 8 gains against the rule read on session C
 (predicted at least 3: held).
+
+## Pre-registration of session E (25/09, 18h38 UTC, before any run of it)
+
+The pod runs on an NVIDIA T4 (15 GB). Two questions, one launcher (`collapse_lab/nuitE.sh`), nothing
+added to the frozen records: the outputs go to `collapse_lab/out/session_E/` and
+`results/sd_authors_R0_100.json`.
+
+1. *Which machine was the faster card.* The author states that the runs used an A2 and a T4; the
+   records before 23/09 18:47 name no device. `ctl` and `lam0` of `probe.py` on the benchmark's
+   first two prompts (`005695-0057`, `005784-0093`), seed 2024. Prediction: equal to session C
+   (`probe_C.json`, the faster card) on all eight slots of each arm within 1e-4, and 52 to 65 s per
+   run. If they equal session D (the A2) instead, or neither, the faster card was not this T4 and
+   the post keeps "a faster card".
+2. *The released code on all 100 prompts.* Its seed-2024 runs covered the benchmark's first 40
+   prompts only, where this repository's filter with the released code's choices (`R1`) reads
+   +0.108 +/- 0.057 against best-of-4 and -0.090 +/- 0.055 on the other 60. `run_authors.py
+   --config paper --seed 2024` completes both seedings (global seed, then `--generator`) to the
+   100 prompts, the 80 records of 23/09 copied in first so that only positions 40 to 99 run.
+   Predictions, if the machine check of 1 holds (otherwise the 60 new prompts pair by prompt only):
+   - global seed: minus `R1` within +/- 0.05 on the 60 new prompts (on the first 40: -0.004 +/-
+     0.012); minus best-of-4 on all 100 within 0.05 of `R1`'s -0.011, so the released code does not
+     reach the +0.12 of the gap test either;
+   - generator: if its gap of -0.229 to the global seed on the first 40 belongs to the seeding, the
+     60 new prompts give a negative gap again (generator under global seed by 0.1 or more); if it is
+     the draw of two random streams, a gap within +/- 0.1 of zero. No sign is assumed.
