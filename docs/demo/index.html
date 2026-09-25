@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FK steering demo</title>
+<meta name="description" content="Interactive companion to the post: weights and ESS, the genealogy of four particles, a coalescence simulator, the reproduction table.">
+<style>
+  :root {
+    --bg: #ffffff; --ink: #2B2B2B; --ink-light: #8A8A8A; --grid: #E6E6E6; --spine: #CCCCCC;
+    --panel: #F7F7F7; --accent: #0072B2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161616; --ink: #E4E4E4; --ink-light: #9A9A9A; --grid: #2E2E2E; --spine: #444444;
+      --panel: #202020; --accent: #56B4E9;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #161616; --ink: #E4E4E4; --ink-light: #9A9A9A; --grid: #2E2E2E; --spine: #444444;
+    --panel: #202020; --accent: #56B4E9;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.5rem; font-weight: 600; margin: 0 0 4px; }
+  h2 { font-size: 1.15rem; font-weight: 600; margin: 48px 0 8px; padding-top: 16px; border-top: 1px solid var(--grid); }
+  p { margin: 0 0 12px; }
+  .lead { color: var(--ink-light); }
+  .muted { color: var(--ink-light); font-size: 0.9rem; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; margin: 12px 0; }
+  .controls label { display: inline-flex; align-items: center; gap: 6px; font-size: 0.92rem; white-space: nowrap; }
+  .controls input[type=range] { width: 130px; accent-color: var(--accent); }
+  .controls select { font: inherit; font-size: 0.92rem; max-width: 100%; }
+  .controls .val { font-variant-numeric: tabular-nums; min-width: 3.2em; display: inline-block; }
+  .panel { background: var(--panel); border-radius: 6px; padding: 12px 14px; }
+  .prompt { font-style: italic; margin: 6px 0 10px; }
+  svg { display: block; width: 100%; height: auto; }
+  .finals { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0 8px; }
+  .final { width: 104px; text-align: center; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+  .final .sq { width: 104px; height: 104px; border: 5px solid; border-radius: 3px; display: flex; align-items: center; justify-content: center; overflow: hidden; color: var(--ink-light); font-size: 0.8rem; }
+  .final .sq img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .counters { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; }
+  .counter { flex: 1 1 200px; background: var(--panel); border-radius: 6px; padding: 10px 14px; }
+  .counter .big { font-size: 1.8rem; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.2; }
+  .counter .lab { font-size: 0.85rem; color: var(--ink-light); }
+  button { font: inherit; font-size: 0.9rem; padding: 4px 10px; border: 1px solid var(--spine); border-radius: 4px; background: var(--bg); color: var(--ink); cursor: pointer; }
+  button:hover { border-color: var(--ink-light); }
+  .bars { margin: 8px 0; }
+  .bar-row { display: grid; grid-template-columns: 4.5em 1fr 3.5em; align-items: center; gap: 8px; margin: 4px 0; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+  .bar-row .track { height: 16px; background: var(--grid); border-radius: 2px; overflow: hidden; }
+  .bar-row .fill { height: 100%; background: var(--accent); }
+  table { border-collapse: collapse; font-size: 0.92rem; font-variant-numeric: tabular-nums; margin: 8px 0; width: 100%; }
+  td, th { text-align: left; padding: 4px 8px 4px 0; border-bottom: 1px solid var(--grid); }
+  th { font-weight: 600; color: var(--ink-light); }
+  td.num, th.num { text-align: right; }
+  code { font-size: 0.9em; background: var(--panel); padding: 0 4px; border-radius: 3px; }
+  footer { margin-top: 48px; color: var(--ink-light); font-size: 0.85rem; border-top: 1px solid var(--grid); padding-top: 12px; }
+</style>
+</head>
+<body>
+<main>
+<h1>FK steering, played by hand</h1>
+<p class="lead">Interactive companion to the post. Everything here is computed in the browser from the recorded runs: Stable Diffusion 1.5, 100 prompts of the ImageReward benchmark, four particles, seed 2024. No network request beyond the page's own files.</p>
+
+<!-- W4 start -->
+<h2 id="w4">Weights and ESS</h2>
+<p>Four particles have a guide reward each; the resampler gives particle <i>i</i> the weight exp(λ r<sub>i</sub>), normalised. The effective sample size, ESS = 1 / Σ w<sub>i</sub><sup>2</sup>, counts how many of the four still matter: move λ, or shift every reward by the same amount, and watch what changes.</p>
+<div id="w4-widget" class="panel">
+  <div class="controls">
+    <label>r<sub>1</sub> <input type="range" min="-2" max="2" step="0.01" value="-0.55" data-r> <span class="val"></span></label>
+    <label>r<sub>2</sub> <input type="range" min="-2" max="2" step="0.01" value="-2.26" data-r> <span class="val"></span></label>
+    <label>r<sub>3</sub> <input type="range" min="-2" max="2" step="0.01" value="-1.45" data-r> <span class="val"></span></label>
+    <label>r<sub>4</sub> <input type="range" min="-2" max="2" step="0.01" value="-1.09" data-r> <span class="val"></span></label>
+  </div>
+  <div class="controls">
+    <label>λ <input type="range" min="0" max="20" step="0.1" value="10" id="w4-lam"> <span class="val" id="w4-lam-val"></span></label>
+    <label><input type="checkbox" id="w4-shift"> add a constant to all rewards (+1.0)</label>
+  </div>
+  <div class="bars" id="w4-bars"></div>
+  <div><b>ESS = <span id="w4-ess"></span></b> <span class="muted">of 4</span></div>
+</div>
+<script>
+(function () {
+  var root = document.getElementById('w4-widget');
+  var sliders = root.querySelectorAll('input[data-r]');
+  var lam = document.getElementById('w4-lam'), shift = document.getElementById('w4-shift');
+  var bars = document.getElementById('w4-bars'), essOut = document.getElementById('w4-ess'), lamVal = document.getElementById('w4-lam-val');
+  var colors = ['#0072B2', '#E69F00', '#009E73', '#CC79A7'];
+  function update() {
+    var r = [], i, mx = -Infinity, w = [], s = 0, ess = 0, html = '';
+    for (i = 0; i < sliders.length; i++) {
+      r[i] = parseFloat(sliders[i].value) + (shift.checked ? 1.0 : 0);
+      sliders[i].nextElementSibling.textContent = r[i].toFixed(2);
+    }
+    lamVal.textContent = parseFloat(lam.value).toFixed(1);
+    for (i = 0; i < r.length; i++) { w[i] = lam.value * r[i]; if (w[i] > mx) mx = w[i]; }
+    for (i = 0; i < r.length; i++) { w[i] = Math.exp(w[i] - mx); s += w[i]; }
+    for (i = 0; i < r.length; i++) {
+      w[i] /= s; ess += w[i] * w[i];
+      html += '<div class="bar-row"><span>w<sub>' + (i + 1) + '</sub></span><div class="track"><div class="fill" style="width:' + (100 * w[i]).toFixed(1) + '%;background:' + colors[i] + '"></div></div><span>' + w[i].toFixed(3) + '</span></div>';
+    }
+    bars.innerHTML = html;
+    essOut.textContent = (1 / ess).toFixed(2);
+  }
+  root.addEventListener('input', update);
+  root.addEventListener('change', update);
+  update();
+})();
+</script>
+<!-- W4 end -->
+
+<h2 id="w1">Genealogy explorer</h2>
+<p>One prompt, four particles, five scheduled steps (t = 80 down to 0 of a 100-step DDIM). At each step the guide scores the four current images and the resampler picks parents for the next step: an edge's thickness is the parent's normalised weight, a grey node is a particle nobody copied, and the colour is the starting noise x<sub>T</sub> that a particle descends from.</p>
+<div class="controls">
+  <label>prompt <select id="w1-prompt"></select></label>
+  <label>arm <select id="w1-arm"></select></label>
+  <label>step <input type="range" min="1" max="5" step="1" value="5" id="w1-step"> <span class="val" id="w1-step-val"></span></label>
+</div>
+<p class="prompt" id="w1-text"></p>
+<div id="w1-tree"></div>
+<div class="finals" id="w1-finals"></div>
+<p class="muted" id="w1-caption"></p>
+
+<h2 id="w3">Coalescence simulator</h2>
+<p>Given the weights at each scheduled step, and nothing else about the steering, how many of the k starting noises are expected to survive to the end? The model enumerates every assignment the resampler can produce (the systematic comb over its offset, or the multinomial draw) and propagates the law of the roots exactly (at k = 4; above, a Monte Carlo of 4000 genealogies); the tree below is one realisation.</p>
+<div class="controls">
+  <label>rewards <select id="w3-source"><option value="recorded">a recorded prompt (FK, paper setting)</option><option value="synthetic">synthetic, drawn once</option></select></label>
+  <label id="w3-prompt-lab">prompt <select id="w3-prompt"></select></label>
+  <label id="w3-spread-lab">spread <input type="range" min="0" max="2" step="0.05" value="0.5" id="w3-spread"> <span class="val" id="w3-spread-val"></span></label>
+</div>
+<div class="controls">
+  <label>k <input type="range" min="4" max="16" step="1" value="4" id="w3-k"> <span class="val" id="w3-k-val"></span></label>
+  <label>λ <input type="range" min="0" max="20" step="0.5" value="10" id="w3-lam"> <span class="val" id="w3-lam-val"></span></label>
+  <label>scheduled steps <input type="range" min="1" max="10" step="1" value="4" id="w3-n"> <span class="val" id="w3-n-val"></span></label>
+</div>
+<div class="controls">
+  <label>resampler <select id="w3-res"><option value="systematic">systematic</option><option value="multinomial">multinomial</option></select></label>
+  <label><input type="checkbox" id="w3-floor"> floor at 0</label>
+  <label>current step <input type="range" min="1" max="4" step="1" value="4" id="w3-step"> <span class="val" id="w3-step-val"></span></label>
+  <button id="w3-redraw">another realisation</button>
+</div>
+<p class="prompt" id="w3-text"></p>
+<div class="counters">
+  <div class="counter"><div class="big" id="w3-ess"></div><div class="lab">ESS at the current step, of k</div></div>
+  <div class="counter"><div class="big" id="w3-roots"></div><div class="lab" id="w3-roots-lab">expected surviving roots after this step</div></div>
+</div>
+<div id="w3-tree"></div>
+<p class="muted" id="w3-caption"></p>
+
+<h2 id="w5">Reproduction table</h2>
+<p>Three ways to make an image for the same 100 prompts: one free sample, the best of four free samples, and FK steering at the paper's setting (four particles, λ = 10, systematic resampling at t = 80, 60, 40, 20, 0). The bars are means over prompts with their standard error, seeds averaged first; the line under the table is the difference FK minus best-of-4, computed on the same prompts.</p>
+<div class="controls">
+  <label>metric <select id="w5-metric"><option value="max">ir_max (best of the run's images)</option><option value="mean">ir_mean (all its images)</option></select></label>
+  <label>pairing <select id="w5-pair"><option value="paired">paired by prompt</option><option value="unpaired">unpaired means</option></select></label>
+  <label>seeds <select id="w5-seeds"><option value="one">2024 only</option><option value="three">2024, 2025, 2026</option></select></label>
+</div>
+<div id="w5-chart"></div>
+<table id="w5-table"></table>
+<p id="w5-diff"></p>
+
+<footer>Colours: Okabe-Ito, the same as the figures of the post. Data: the recorded session (probe_C.json) and the baseline runs (sd_baseline.json), exported by <code>scripts/export_demo_data.py</code>. Model code: <code>coalescence.js</code>, a port of <code>collapse_lab/n_coalescence.py</code>.</footer>
+</main>
+
+<script src="data.js"></script>
+<script src="coalescence.js"></script>
+<script>
+(function () {
+  'use strict';
+  const D = window.DEMO, M = window.Coalescence;
+  // scripts/figstyle.py, same hex values
+  const ARM_COLOR = { ctl: '#333333', bon4: '#999999', lam0: '#BBBBBB', k1: '#BBBBBB', fk4: '#333333', floor2: '#0072B2', floor: '#56B4E9', lam2: '#009E73' };
+  const ARM_LABEL = { ctl: 'FK, paper setting (λ = 10)', floor2: 'floor + λ = 2', lam0: 'free sampler', k1: 'one free sample', bon4: 'best-of-4', fk4: 'FK, paper setting (λ = 10)' };
+  const ROOT_COLORS = ['#0072B2', '#E69F00', '#009E73', '#CC79A7'];
+  const EXTRA = ['#D55E00', '#56B4E9', '#F0E442', '#000000'];   // roots 5 to 8 in W3; beyond, grey
+  const GREY_LIGHT = '#BBBBBB', GRID = '#E6E6E6', INK_LIGHT = '#8A8A8A';
+  const isDark = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const rootColor = i => i < 4 ? ROOT_COLORS[i] : (i < 8 ? EXTRA[i - 4] : '#888888');
+  const $ = id => document.getElementById(id);
+  const fmt = (x, n) => (x < 0 ? '−' : '') + Math.abs(x).toFixed(n);
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+  /* ---- one tree drawing for W1 and W3 -------------------------------------------------
+     anc: rows of parents, one per column but the first (row m gives the parent, in column
+     m, of each node in column m + 1); the last row is the identity.
+     steps: [{w, ess}] per non-terminal column. reveal: number of columns drawn. */
+  function drawTree(el, anc, steps, k, labels, reveal, rewards) {
+    const cols = anc.length, colW = Math.max(90, Math.min(130, 640 / cols)), rowH = k > 8 ? 26 : (k > 4 ? 36 : 58);
+    const x0 = 44, y0 = 30, W = x0 + colW * (cols - 1) + 44, H = y0 + rowH * (k - 1) + 46;
+    const X = m => x0 + m * colW, Y = j => y0 + j * rowH, R = k > 8 ? 5 : (k > 4 ? 7 : 9);
+    // roots per column, alive flags
+    const roots = [Array.from({ length: k }, (_, j) => j)];
+    for (let m = 0; m + 1 < cols; m++) roots.push(anc[m].map(i => roots[m][i]));
+    const alive = [];
+    for (let m = 0; m < cols; m++) alive.push(Array.from({ length: k }, (_, i) => m === cols - 1 || anc[m].some(p => p === i)));
+    let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="inherit" font-size="11">`;
+    for (let m = 0; m < Math.min(reveal, cols); m++) {
+      s += `<text x="${X(m)}" y="14" text-anchor="middle" fill="${INK_LIGHT}">${labels[m]}</text>`;
+      if (m + 1 < Math.min(reveal, cols)) {
+        for (let j = 0; j < k; j++) {
+          const p = anc[m][j], w = steps[m] ? steps[m].w[p] : 1 / k;
+          s += `<line x1="${X(m) + R}" y1="${Y(p)}" x2="${X(m + 1) - R}" y2="${Y(j)}" stroke="${rootColor(roots[m][p])}" stroke-opacity="0.75" stroke-width="${(0.6 + 10 * w).toFixed(2)}" stroke-linecap="round"/>`;
+        }
+      }
+      for (let j = 0; j < k; j++) {
+        const dead = !alive[m][j] && m + 1 < reveal;
+        s += `<circle cx="${X(m)}" cy="${Y(j)}" r="${R}" fill="${dead ? (isDark() ? '#333' : GRID) : rootColor(roots[m][j])}" stroke="${dead ? GREY_LIGHT : 'none'}"/>`;
+        if (rewards && k <= 8) s += `<text x="${X(m)}" y="${Y(j) + R + 12}" text-anchor="middle" fill="${dead ? GREY_LIGHT : INK_LIGHT}" font-size="10">${fmt(rewards[m][j], 2)}</text>`;
+      }
+      if (steps[m]) s += `<text x="${X(m)}" y="${H - 6}" text-anchor="middle" fill="${INK_LIGHT}">ESS ${steps[m].ess.toFixed(2)}</text>`;
+    }
+    s += '</svg>';
+    el.innerHTML = s;
+  }
+
+  /* ---- W1 --------------------------------------------------------------------------- */
+  (function w1() {
+    const ids = D.w1.slice();
+    for (const pid of Object.keys(D.prompts)) {          // any exported prompt that has images today
+      if (!ids.includes(pid) && Object.keys(D.prompts[pid].images).length) ids.push(pid);
+    }
+    const selP = $('w1-prompt'), selA = $('w1-arm'), step = $('w1-step');
+    selP.innerHTML = ids.map(pid => `<option value="${pid}">${pid}${Object.keys(D.prompts[pid].images).length ? ' (images)' : ''} · ${esc(D.prompts[pid].prompt.slice(0, 48))}</option>`).join('');
+    selA.innerHTML = ['ctl', 'floor2', 'lam0'].map(a => `<option value="${a}">${ARM_LABEL[a]}</option>`).join('');
+    function update() {
+      const pid = selP.value, arm = selA.value, P = D.prompts[pid], A = P.arms[arm], k = A.anc[0].length;
+      const reveal = +step.value;
+      $('w1-step-val').textContent = 't = ' + D.schedule_t[reveal - 1];
+      $('w1-text').textContent = P.prompt;
+      const logG = M.logGFromRewards(A.r, A.anc, A.lam, A.floor);
+      const steps = M.stepsFromLogG(logG, D.threshold);
+      drawTree($('w1-tree'), A.anc, steps, k, D.schedule_t.map(t => 't = ' + t), reveal, A.r);
+      const imgs = P.images[arm] || [];
+      $('w1-finals').innerHTML = A.ir.map((ir, j) => {
+        const c = ROOT_COLORS[A.root_slots[j]], best = ir === A.ir_max;
+        const inner = imgs.includes(j)
+          ? `<img src="img/${arm}/${pid}_${j}.webp" alt="final image, slot ${j + 1}" onerror="this.parentNode.textContent='root ${A.root_slots[j] + 1}';this.parentNode.style.background='${c}33'">`
+          : `root ${A.root_slots[j] + 1}`;
+        return `<div class="final" style="opacity:${reveal === 5 ? 1 : 0.35}"><div class="sq" style="border-color:${c};background:${imgs.includes(j) ? 'none' : c + '33'}">${inner}</div>${best ? '<b>' : ''}ir ${fmt(ir, 2)}${best ? '</b>' : ''}</div>`;
+      }).join('');
+      const survivors = M.nDistinct(A.root_slots.join(','));
+      $('w1-caption').textContent = `${survivors} of 4 starting noises survive to t = 0 (${A.n_resamplings} resampling${A.n_resamplings === 1 ? '' : 's'} where the weights were not flat); ir_max = ${fmt(A.ir_max, 2)} (bold). `
+        + (imgs.length ? 'Final images from the recorded run.' : 'Final images not rendered yet: each square stands for one final image, coloured by its root.');
+    }
+    [selP, selA, step].forEach(e => ['input', 'change'].forEach(ev => e.addEventListener(ev, update)));
+    update();
+  })();
+
+  /* ---- W3 --------------------------------------------------------------------------- */
+  (function w3() {
+    const ids = Object.keys(D.w3).sort();
+    const selS = $('w3-source'), selP = $('w3-prompt'), spread = $('w3-spread'), kIn = $('w3-k'), lam = $('w3-lam'),
+      nIn = $('w3-n'), res = $('w3-res'), floor = $('w3-floor'), stepIn = $('w3-step');
+    selP.innerHTML = ids.map(pid => `<option value="${pid}">${pid} · ${esc(D.w3[pid].prompt.slice(0, 48))}</option>`).join('');
+    // synthetic rewards: standard normals drawn once (fixed seed), scaled by the spread slider
+    const rngR = M.mulberry32(2024), Z = [];
+    const gauss = () => { const u = rngR() || 1e-12, v = rngR(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+    for (let m = 0; m < 10; m++) { Z.push([]); for (let j = 0; j < 16; j++) Z[m].push(gauss()); }
+    let seed = 1;
+    $('w3-redraw').addEventListener('click', () => { seed += 1; update(); });
+    function update() {
+      const recorded = selS.value === 'recorded';
+      $('w3-prompt-lab').style.display = recorded ? '' : 'none';
+      $('w3-spread-lab').style.display = recorded ? 'none' : '';
+      kIn.disabled = recorded;
+      if (recorded) { kIn.value = 4; nIn.max = 4; if (+nIn.value > 4) nIn.value = 4; } else { nIn.max = 10; }
+      const k = +kIn.value, n = +nIn.value, L = +lam.value, sp = +spread.value, fl = floor.checked;
+      stepIn.max = n; if (+stepIn.value > n) stepIn.value = n;
+      const cur = +stepIn.value;
+      $('w3-k-val').textContent = k; $('w3-lam-val').textContent = L.toFixed(1); $('w3-n-val').textContent = n;
+      $('w3-spread-val').textContent = sp.toFixed(2); $('w3-step-val').textContent = cur + ' / ' + n;
+      let steps, rewards, observed = null;
+      if (recorded) {
+        const P = D.w3[selP.value];
+        $('w3-text').textContent = P.prompt;
+        rewards = P.r;
+        steps = M.stepsFromLogG(M.logGFromRewards(P.r, P.anc, L, fl), D.threshold).slice(0, n);
+        observed = P.n_lineages;
+      } else {
+        $('w3-text').textContent = '';
+        rewards = [];
+        const logG = [];
+        for (let m = 0; m <= n; m++) {         // n non-terminal steps and a terminal one
+          rewards.push(Z[Math.min(m, 9)].slice(0, k).map(z => sp * z));
+          logG.push(rewards[m].map(r => L * (fl ? Math.max(r, 0) : r)));
+        }
+        steps = M.stepsFromLogG(logG, D.threshold);
+      }
+      const upto = steps.slice(0, cur);
+      const exact = k === 4;
+      const pred = exact ? M.predict(upto, k, res.value) : M.predictMC(upto, k, res.value, 4000, 11);
+      $('w3-ess').textContent = steps[cur - 1].ess.toFixed(2) + ' / ' + k;
+      $('w3-roots').textContent = pred.eDist.toFixed(2) + ' / ' + k;
+      $('w3-roots-lab').textContent = 'expected surviving roots after this step (' + (exact ? 'exact' : 'Monte Carlo, N = 4000') + ')';
+      const anc = M.simulateOne(steps, k, res.value, M.mulberry32(seed));
+      const labels = steps.map((_, m) => recorded ? 't = ' + D.schedule_t[m] : 'step ' + (m + 1)).concat([recorded ? 't = ' + D.schedule_t[n] : 'final']);
+      drawTree($('w3-tree'), anc, steps, k, labels, cur + 1, recorded || k <= 8 ? rewards : null);
+      const roots = M.nDistinct(M.rootsFromAncestors(anc.slice(0, cur + 1)).join(','));
+      $('w3-caption').textContent = `P(one root) = ${pred.pOne.toFixed(2)}; ${pred.nRes} resampling${pred.nRes === 1 ? '' : 's'} so far`
+        + (res.value === 'systematic' ? ' (the comb skips a step whose weights are flat)' : ' (the multinomial resamples at every step, flat weights included)')
+        + `. This realisation keeps ${roots} root${roots === 1 ? '' : 's'}.`
+        + (observed !== null && cur === 4 && L === 10 && !fl ? ` The recorded run kept ${observed}.` : '')
+        + (recorded ? ' Recorded prompt: the weights are rebuilt from the guide rewards and the recorded parents under the chosen λ and floor (running-max increment, as in the code).' : ' Synthetic: each cell draws a reward once, weight = exp(λ r) normalised, a per-step tilt.');
+    }
+    [selS, selP, spread, kIn, lam, nIn, res, floor, stepIn].forEach(e => ['input', 'change'].forEach(ev => e.addEventListener(ev, update)));
+    update();
+  })();
+
+  /* ---- W5 --------------------------------------------------------------------------- */
+  (function w5() {
+    const ROWS = ['k1', 'bon4', 'fk4'];
+    const runs = D.w5.runs, prompts = D.w5.prompts;
+    function perPrompt(sampler, metric, seeds) {
+      const acc = {};
+      for (const r of runs) {
+        if (r.s !== sampler || !seeds.includes(r.seed)) continue;
+        const v = metric === 'max' ? r.ir_max : r.ir.reduce((a, b) => a + b, 0) / r.ir.length;
+        (acc[r.pid] = acc[r.pid] || []).push(v);
+      }
+      return prompts.map(p => acc[p].reduce((a, b) => a + b, 0) / acc[p].length);
+    }
+    const mean = a => a.reduce((x, y) => x + y, 0) / a.length;
+    const se = a => { const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) * (x - m), 0) / (a.length - 1) / a.length); };
+    function update() {
+      const metric = $('w5-metric').value, paired = $('w5-pair').value === 'paired';
+      const seeds = $('w5-seeds').value === 'one' ? [2024] : D.w5.seeds;
+      const vals = {}, stats = {};
+      for (const s of ROWS) { vals[s] = perPrompt(s, metric, seeds); stats[s] = { m: mean(vals[s]), se: se(vals[s]) }; }
+      const lo = Math.min(0, ...ROWS.map(s => stats[s].m - stats[s].se)) - 0.05, hi = Math.max(...ROWS.map(s => stats[s].m + stats[s].se)) + 0.1;
+      const W = 640, H = 120, x0 = 150, sx = v => x0 + (v - lo) / (hi - lo) * (W - x0 - 20);
+      let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-size="12" font-family="inherit">`;
+      svg += `<line x1="${sx(0)}" y1="4" x2="${sx(0)}" y2="${H - 24}" stroke="${GRID}"/>`;
+      ROWS.forEach((s, i) => {
+        const y = 12 + i * 32, st = stats[s];
+        svg += `<text x="${x0 - 8}" y="${y + 13}" text-anchor="end" fill="currentColor">${ARM_LABEL[s]}</text>`;
+        svg += `<rect x="${Math.min(sx(0), sx(st.m))}" y="${y}" width="${Math.abs(sx(st.m) - sx(0))}" height="18" fill="${ARM_COLOR[s]}"/>`;
+        svg += `<line x1="${sx(st.m - st.se)}" y1="${y + 9}" x2="${sx(st.m + st.se)}" y2="${y + 9}" stroke="${isDark() ? '#eee' : '#000'}" stroke-width="1.5"/>`;
+        svg += `<line x1="${sx(st.m - st.se)}" y1="${y + 4}" x2="${sx(st.m - st.se)}" y2="${y + 14}" stroke="${isDark() ? '#eee' : '#000'}"/><line x1="${sx(st.m + st.se)}" y1="${y + 4}" x2="${sx(st.m + st.se)}" y2="${y + 14}" stroke="${isDark() ? '#eee' : '#000'}"/>`;
+      });
+      for (let v = Math.ceil(lo * 2) / 2; v <= hi; v += 0.5) svg += `<text x="${sx(v)}" y="${H - 8}" text-anchor="middle" fill="${INK_LIGHT}">${v.toFixed(1)}</text>`;
+      svg += `<text x="${W - 4}" y="${H - 8}" text-anchor="end" fill="${INK_LIGHT}">ImageReward</text></svg>`;
+      $('w5-chart').innerHTML = svg;
+      $('w5-table').innerHTML = `<tr><th>row</th><th class="num">${metric === 'max' ? 'ir_max' : 'ir_mean'}</th><th class="num">SE</th><th class="num">n prompts</th></tr>`
+        + ROWS.map(s => `<tr><td>${ARM_LABEL[s]}</td><td class="num">${fmt(stats[s].m, 3)}</td><td class="num">${stats[s].se.toFixed(3)}</td><td class="num">${prompts.length}</td></tr>`).join('');
+      const diffs = prompts.map((_, i) => vals.fk4[i] - vals.bon4[i]);
+      const won = diffs.filter(d => d > 0).length;
+      const d = mean(diffs), sePaired = se(diffs), seUnpaired = Math.sqrt(stats.fk4.se * stats.fk4.se + stats.bon4.se * stats.bon4.se);
+      $('w5-diff').innerHTML = `FK − best-of-4, ${metric === 'max' ? 'ir_max' : 'ir_mean'}: <b>${fmt(d, 3)} ± ${(paired ? sePaired : seUnpaired).toFixed(3)}</b> (${paired ? 'SE of the per-prompt differences' : 'SE of the two means added in quadrature'}, ${seeds.length} seed${seeds.length > 1 ? 's averaged first' : ''}, n = ${prompts.length} prompts)`
+        + (paired ? `; FK wins on ${won} of ${prompts.length} prompts, ties ${diffs.filter(x => x === 0).length}.` : '.');
+    }
+    ['w5-metric', 'w5-pair', 'w5-seeds'].forEach(id => ['input', 'change'].forEach(ev => $(id).addEventListener(ev, update)));
+    update();
+  })();
+})();
+</script>
+</body>
+</html>

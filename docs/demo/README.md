@@ -1,0 +1,6 @@
+# docs/demo: the interactive companion of the post
+
+Open `index.html` in a browser (double-click works, no server needed); it loads `data.js` and `coalescence.js` from the same folder. Regenerate the data with `/home/onyxia/work/.venvs/ddpm/bin/python scripts/export_demo_data.py`, which reads `collapse_lab/out/probe_C.json`, `results/sd_baseline.json` and `data/visual_selection.json`, writes `data.js`, and copies the final images it finds in `collapse_lab/out/images/index.json` for the W1/W2 prompts to `img/<arm>/<prompt_id>_<slot>.webp` (256 px).
+`w4_inline.html` is the weights-and-ESS block alone, the same markup as between the `W4 start` / `W4 end` markers of `index.html`, for pasting into the post if the site's build keeps inline scripts.
+`coalescence.js` is the JavaScript port of `collapse_lab/n_coalescence.py`; each function names the Python one it mirrors, and it was checked per run against the Python on the 300 runs of probe_C (exact to 1e-14 on the recorded weights).
+Missing until the GPU run: final images for the ten W1 prompts (today only 005765-0094, a W2 prompt, has them, so W1 lists it as an eleventh entry to exercise the image path), the Tweedie thumbnails at each scheduled step, and the W2 widget (pick the winner), which needs those thumbnails.

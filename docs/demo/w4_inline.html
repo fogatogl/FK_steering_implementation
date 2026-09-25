@@ -1,0 +1,57 @@
+<!-- W4, weights and ESS: self-contained block for the post. Same block as docs/demo/index.html between the W4 markers. -->
+<style>
+  #w4-widget { max-width: 700px; font: 16px/1.5 -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #F7F7F7; border-radius: 6px; padding: 12px 14px; }
+  #w4-widget .controls { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; margin: 8px 0; }
+  #w4-widget label { display: inline-flex; align-items: center; gap: 6px; font-size: 0.92rem; white-space: nowrap; }
+  #w4-widget input[type=range] { width: 130px; accent-color: #0072B2; }
+  #w4-widget .val { font-variant-numeric: tabular-nums; min-width: 3.2em; display: inline-block; }
+  #w4-widget .bar-row { display: grid; grid-template-columns: 4.5em 1fr 3.5em; align-items: center; gap: 8px; margin: 4px 0; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+  #w4-widget .track { height: 16px; background: #E6E6E6; border-radius: 2px; overflow: hidden; }
+  #w4-widget .fill { height: 100%; }
+  #w4-widget .muted { color: #8A8A8A; font-size: 0.9rem; }
+</style>
+<!-- W4 start -->
+<p>Four particles have a guide reward each; the resampler gives particle <i>i</i> the weight exp(λ r<sub>i</sub>), normalised. The effective sample size, ESS = 1 / Σ w<sub>i</sub><sup>2</sup>, counts how many of the four still matter: move λ, or shift every reward by the same amount, and watch what changes.</p>
+<div id="w4-widget" class="panel">
+  <div class="controls">
+    <label>r<sub>1</sub> <input type="range" min="-2" max="2" step="0.01" value="-0.55" data-r> <span class="val"></span></label>
+    <label>r<sub>2</sub> <input type="range" min="-2" max="2" step="0.01" value="-2.26" data-r> <span class="val"></span></label>
+    <label>r<sub>3</sub> <input type="range" min="-2" max="2" step="0.01" value="-1.45" data-r> <span class="val"></span></label>
+    <label>r<sub>4</sub> <input type="range" min="-2" max="2" step="0.01" value="-1.09" data-r> <span class="val"></span></label>
+  </div>
+  <div class="controls">
+    <label>λ <input type="range" min="0" max="20" step="0.1" value="10" id="w4-lam"> <span class="val" id="w4-lam-val"></span></label>
+    <label><input type="checkbox" id="w4-shift"> add a constant to all rewards (+1.0)</label>
+  </div>
+  <div class="bars" id="w4-bars"></div>
+  <div><b>ESS = <span id="w4-ess"></span></b> <span class="muted">of 4</span></div>
+</div>
+<script>
+(function () {
+  var root = document.getElementById('w4-widget');
+  var sliders = root.querySelectorAll('input[data-r]');
+  var lam = document.getElementById('w4-lam'), shift = document.getElementById('w4-shift');
+  var bars = document.getElementById('w4-bars'), essOut = document.getElementById('w4-ess'), lamVal = document.getElementById('w4-lam-val');
+  var colors = ['#0072B2', '#E69F00', '#009E73', '#CC79A7'];
+  function update() {
+    var r = [], i, mx = -Infinity, w = [], s = 0, ess = 0, html = '';
+    for (i = 0; i < sliders.length; i++) {
+      r[i] = parseFloat(sliders[i].value) + (shift.checked ? 1.0 : 0);
+      sliders[i].nextElementSibling.textContent = r[i].toFixed(2);
+    }
+    lamVal.textContent = parseFloat(lam.value).toFixed(1);
+    for (i = 0; i < r.length; i++) { w[i] = lam.value * r[i]; if (w[i] > mx) mx = w[i]; }
+    for (i = 0; i < r.length; i++) { w[i] = Math.exp(w[i] - mx); s += w[i]; }
+    for (i = 0; i < r.length; i++) {
+      w[i] /= s; ess += w[i] * w[i];
+      html += '<div class="bar-row"><span>w<sub>' + (i + 1) + '</sub></span><div class="track"><div class="fill" style="width:' + (100 * w[i]).toFixed(1) + '%;background:' + colors[i] + '"></div></div><span>' + w[i].toFixed(3) + '</span></div>';
+    }
+    bars.innerHTML = html;
+    essOut.textContent = (1 / ess).toFixed(2);
+  }
+  root.addEventListener('input', update);
+  root.addEventListener('change', update);
+  update();
+})();
+</script>
+<!-- W4 end -->
