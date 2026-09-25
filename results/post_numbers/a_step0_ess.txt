@@ -1,0 +1,16 @@
+A. Is the logged ESS exactly the one that lam * r_phi implies? 
+
+fk4_stat   20 runs with r_at_schedule: |ESS_recalc - ESS_logged| median 4.29e-05  max 4.79e-04  (20/20 under 1e-3)
+fk4_diff   20 runs with r_at_schedule: |ESS_recalc - ESS_logged| median 4.29e-05  max 4.79e-04  (20/20 under 1e-3)
+ref100    100 runs, no r_at_schedule (file older than 21/09)
+
+Scale of the guide reward r_phi(predict_x0), 20 runs, k=4   (Q1 | med | Q3)
+                               level           range max-min             gap 1st-2nd         ESS at lam=10
+  t = 80       -2.255 |-1.918 |-1.268   0.361 | 0.915 | 1.364   0.057 | 0.189 | 0.526 1.018 | 1.338 | 2.261
+  t = 60       -1.130 |-0.313 | 0.417   0.484 | 0.741 | 1.453   0.112 | 0.170 | 0.345 1.120 | 1.485 | 1.712
+  t = 40       -0.284 | 0.247 | 0.833   0.401 | 0.511 | 0.610   0.087 | 0.150 | 0.259 1.215 | 1.814 | 2.077
+  t = 20       -0.067 | 0.887 | 1.234   0.203 | 0.373 | 0.541   0.037 | 0.075 | 0.137 1.787 | 2.130 | 3.001
+  t = 0         0.177 | 1.025 | 1.407   0.173 | 0.217 | 0.366   0.019 | 0.052 | 0.126 1.973 | 2.533 | 3.064
+
+  logged ESS (median) per row: t=80:1.34  t=60:1.48  t=40:2.09  t=20:2.67  t=0:2.39
+  max weight at lam=10 (median): t=80:0.852  t=60:0.803  t=40:0.704  t=20:0.553  t=0:0.534

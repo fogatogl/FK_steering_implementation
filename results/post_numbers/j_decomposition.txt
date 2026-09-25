@@ -1,0 +1,21 @@
+J. Where does the gain of fk4 over bon4 come from, once the root is lost? 
+
+  100 prompts, seed 2024
+
+  A  best of the 4 roots, free             : +0.7698
+  M  mean root, free                       : +0.2232
+  B  root kept by fk, free                 : +0.3592
+  C  what fk gets out of it                : +0.8257
+
+  B - M  the kept root is better than chance        : +0.1360 +/- 0.0569
+  B - A  what the collapse costs on the root        : -0.4106 +/- 0.0601
+  C - B  what the steering adds with the root fixed : +0.4665 +/- 0.0728
+  C - A  the published gain of fk4 over bon4        : +0.0559 +/- 0.0516
+
+  Check that the decomposition closes: (B-A) + (C-B) = +0.0559, C - A = +0.0559
+
+  Reading: fk4 starts from a root 0.411 worse than the one that
+  best-of-4 picks, and climbs back 0.467 by steering. The net gain of
+  +0.056 is therefore not 'fk picks a better root': it is
+  'fk picks worse but steers', and the collapse is the price of the steering,
+  not its means.

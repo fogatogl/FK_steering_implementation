@@ -1,0 +1,31 @@
+I. The surviving root, on 100 prompts instead of 20. 
+
+  100 paired runs, 0 seed_effective mismatches (ok)
+
+  rank of the kept root among the 4 (0 = the best), 104 roots:
+    mean 1.231 +/- 0.107   (1.500 by chance)
+    distribution: rank 0: 34%  rank 1: 26%  rank 2: 24%  rank 3: 16%   (25 % each by chance)
+
+  the best root survives in 35% of runs
+    chance level, given the number of surviving roots (1.04 per run): 26%
+
+  cost in ImageReward:
+    ir(best) - ir(kept root)   : +0.4046 +/- 0.0583
+    ir(best) - ir(random root) : +0.5467 +/- 0.0343
+    paired: ir(kept root) - ir(mean of the 4) = +0.1360 +/- 0.0569 over 100 prompts
+
+  (reading after the check below)
+
+  check, one observation per run:
+    mean rank per run: 1.220  bootstrap 95 % CI [1.020, 1.430]  (1.500 by chance)
+    gain over the mean root: +0.1360  bootstrap 95 % CI [+0.0234, +0.2462]
+    share of the mean-root / best-root gap recovered: 25 %
+     96 runs with 1 root(s): gain +0.1405 +/- 0.0592
+      4 runs with 2 root(s): gain +0.0271 +/- 0.0540
+
+  Takeaway: the kept root is NOT drawn at random at n = 100. It recovers
+  about a quarter of the available gap, where best-of-4 recovers all of it
+  by construction. But root_slots is the product of ALL the resamplings,
+  not of the step t = 80 alone: in the runs where two roots survive at t = 80, it is
+  t = 60 that decides, with a guide reward already less noisy. Finding 3, which
+  isolates the step t = 80 alone, measures something else and stands as it is.

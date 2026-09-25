@@ -1,0 +1,11 @@
+L. The target itself: what is the ESS of exp(lam * ir) over four free draws? 
+  100 prompts, median range of the free final ir: 1.04
+
+  lambda |  median ESS |       Q1 - Q3 | share < 1.5
+     0.5 |        3.85 |  3.71 -  3.93 | 0%
+     1.0 |        3.51 |  3.16 -  3.74 | 0%
+     2.0 |        2.83 |  2.28 -  3.26 | 6%
+     5.0 |        1.89 |  1.25 -  2.45 | 37%
+    10.0 |        1.23 |  1.02 -  1.90 | 59%
+
+  for comparison: median ESS of fk4 at the first scheduled step (t = 80), lam = 10: 1.24

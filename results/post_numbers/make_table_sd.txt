@@ -1,0 +1,18 @@
+| sampler | prompts | ImageReward (ir_max) | paper | diff | ir_mean | HPS | paper | diff | UNet rows | UNet calls | seconds |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| k1 | 100 | 0.237 +/- 0.013 | 0.187 | +0.050 | 0.237 | 0.245 +/- 0.004 | 0.245 | +0.000 | 200 | 100 | 15.5 |
+| bon4 | 100 | 0.758 +/- 0.038 | 0.737 | +0.021 | 0.207 | 0.258 +/- 0.001 | 0.265 | -0.007 | 800 | 100 | 56.1 |
+| fk4 | 100 | 0.820 +/- 0.031 | 0.898 | -0.078 | 0.687 | 0.259 +/- 0.001 | 0.263 | -0.004 | 800 | 100 | 62.5 |
+
+Aggregate of the file as is: records 900, distinct prompts 100, seeds [2024, 2025, 2026]. diff = measured - paper; ImageReward and HPS are those of the particle that ImageReward picks; ir_mean averages the k particles of a prompt first. The matched budget reads on the UNet rows, not on the calls: the k particles go through one batched forward. +/- is the sigma of the prompt mean across seeds.
+
+bon4: ir_max 0.758 +/- 0.069 (standard error over 100 prompts)
+fk4: ir_max 0.820 +/- 0.069 (standard error over 100 prompts)
+k1: ir_max 0.237 +/- 0.082 (standard error over 100 prompts)
+fk4 - bon4 paired: +0.0619 +/- 0.0259, 69/100 won, bootstrap 95 % [+0.009, +0.110], worst prompt 001369-0084 -1.30
+fk4 - bon4 at seed 2024: +0.030 +/- 0.037 (100 prompts)
+fk4 - bon4 at seed 2025: +0.089 +/- 0.034 (100 prompts)
+fk4 - bon4 at seed 2026: +0.068 +/- 0.050 (100 prompts)
+At equal wall clock FK buys best-of-4.45 (62.48 s against 56.15 s per run).
+On medians: 62.5 s against 54.7 s per run, best-of-4.57 (11 of the bon4 runs took over 75 s).
+mean of the four, fk4 - bon4 paired: +0.481 +/- 0.030 (100 prompts)

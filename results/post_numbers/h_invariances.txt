@@ -1,0 +1,26 @@
+H. What can change the ESS, and what cannot. 
+
+  r = [-2.2530999183654785, -0.4343999922275543, -0.6895999908447266, -0.895799994468689], lambda = 10.0
+  ESS as is                                 : 1.1761
+  centred (r - mean)                        : 1.1761
+  shifted by +100                           : 1.1761
+  minus the shared running max (0.5)        : 1.1761
+  normalised by the standard deviation      : 1.0933
+  floored at 0 (reward_min_value)           : 4.0000
+  lambda divided by 5                       : 2.6970
+
+  The first three transformed lines equal the first line bit for bit: a
+  shared shift does nothing. Normalising by the standard deviation does change
+  the scale and hence the ESS, but it also changes the target exp(lambda * r(x_0)).
+
+  The lambda_t that would hold the ESS at k/2 = 2, computed by smc.fk.bisect_lambda on
+  the r_phi actually recorded (20 runs):
+    t =  80: median   3.91   Q1   2.55  Q3  15.49   (the run uses 10.0 throughout)
+    t =  60: median   4.24   Q1   3.00  Q3   7.02   (the run uses 10.0 throughout)
+    t =  40: median   8.53   Q1   5.01  Q3  11.19   (the run uses 10.0 throughout)
+    t =  20: median  11.93   Q1   8.15  Q3  20.07   (the run uses 10.0 throughout)
+    t =   0: median  15.22   Q1   9.73  Q3  62.39   (the run uses 10.0 throughout)
+  Reading: the lambda that would keep two particles alive is about 2 at the first
+  step and rises afterwards, because the range of r_phi narrows. The run does
+  the opposite: lambda constant at 10, hence maximal pressure where the range
+  is widest and the signal weakest.

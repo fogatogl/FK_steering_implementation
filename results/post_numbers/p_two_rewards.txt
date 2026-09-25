@@ -1,0 +1,21 @@
+F7: what keeping more roots does to the best image's reward and to the mean of the four. 
+
+  arm       n |     ir_max - ctl |    mean ir - ctl |   roots
+  late     20 | +0.094 +/- 0.080 | +0.158 +/- 0.096 |    1.00
+  adapt    40 | -0.099 +/- 0.044 | -0.171 +/- 0.056 |    1.40
+  floor    40 | -0.091 +/- 0.055 | -0.153 +/- 0.075 |    1.73
+  lam2     40 | -0.039 +/- 0.079 | -0.113 +/- 0.084 |    1.82
+  fadapt   40 | -0.106 +/- 0.058 | -0.214 +/- 0.078 |    2.12
+  floor2   34 | -0.036 +/- 0.058 | -0.285 +/- 0.084 |    2.94
+  thr05    40 | -0.021 +/- 0.053 | -0.118 +/- 0.072 |    2.00
+  rise     20 | +0.053 +/- 0.075 | -0.058 +/- 0.113 |    1.95
+  stat0    40 | -0.013 +/- 0.054 | -0.083 +/- 0.074 |    1.75
+  multi    40 | -0.024 +/- 0.041 | +0.014 +/- 0.037 |    1.00
+  vae      40 | +0.045 +/- 0.059 | +0.067 +/- 0.063 |    1.05
+  idx      40 | -0.014 +/- 0.054 | -0.003 +/- 0.056 |    1.00
+  R1      100 | -0.040 +/- 0.043 | -0.038 +/- 0.048 |    1.19
+  lam0     17 | -0.070 +/- 0.082 | -0.557 +/- 0.133 |    4.00
+  bon4    100 | -0.030 +/- 0.037 | -0.428 +/- 0.047 |    4.00   (reference, not drawn)
+  (mean +/- standard error over the prompts paired with ctl; the figure's lines are 1.96 standard errors)
+
+wrote /home/onyxia/work/diffusion-models/.claude/worktrees/collapse-solutions/figures/f7_two_rewards.png /home/onyxia/work/diffusion-models/.claude/worktrees/collapse-solutions/figures/f7_two_rewards.svg

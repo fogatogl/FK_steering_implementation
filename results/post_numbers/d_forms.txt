@@ -1,0 +1,16 @@
+D. The first step does not depend on the potential: max, difference and statistic coincide there. 
+
+  20 common prompts
+  row 0 of r_phi identical           : max gap 0.00e+00
+  ESS at step 0 identical            : max gap 0.00e+00
+  root kept identical                : 19/20 prompts
+  max/statistic  mean ir_max +0.9759  lineages 1.05  resamplings 3.85
+  difference     mean ir_max +0.9802  lineages 1.05  resamplings 4.00
+  paired difference max - difference: -0.0043 +/- 0.0240
+    t= 80: max gap between the two files on r_phi = 0.000   <- identical
+    t= 60: max gap between the two files on r_phi = 0.000   <- identical
+    t= 40: max gap between the two files on r_phi = 0.622
+    t= 20: max gap between the two files on r_phi = 1.163
+    t=  0: max gap between the two files on r_phi = 1.093
+
+  statistic form (fk4_stat) - increment form (21/09 reference), same machine: +0.0151 +/- 0.0091 (n=20)

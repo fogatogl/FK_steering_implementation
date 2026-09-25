@@ -1,0 +1,29 @@
+B. How many distinct ancestors does the systematic comb leave alive? 
+
+At the first scheduled step ALONE (t=80), over 20 runs, lam=10:
+  expected number of distinct ancestors: 1.835  (median 1.590)
+  P(a single lineage from this step on): 0.460
+    P(1 ancestors) mean: 0.460
+    P(2 ancestors) mean: 0.303
+    P(3 ancestors) mean: 0.182
+    P(4 ancestors) mean: 0.056
+
+  n_lineages observed at the end of the run: mean 1.050, 19/20 with a single lineage
+  (the number of lineages can only decrease: 4 resamplings, mean n_resamplings 3.85)
+
+S80 control (schedule [0, 80]: ONE resampling only, at t=80):
+  n_lineages observed: mean 1.850, distribution {1: 6, 2: 11, 3: 3} over 20 runs
+  predicted by the comb at step t=80: 1.835 expected ancestors
+  median ESS at t=80 on S80: 1.48
+
+The same first step, at other lambdas (and under the authors' floor):
+  regime                   median ESS  expected ancestors P(1 lineage)  inert step
+  lam=10 (reference)             1.34               1.835        0.460          0%
+  lam=5                          1.79               2.223        0.266          0%
+  lam=2                          2.72               2.898        0.024          0%
+  lam=1                          3.50               3.365        0.000          0%
+  lam=10 + floor 0               4.00               3.849        0.013         90%
+  lam=2 + floor 0                4.00               3.970        0.000         90%
+  (inert step = the four logG are equal, so ESS = k exactly: at threshold 1.0
+   smc/weights.py:should_resample tests ESS < threshold*k strictly, so it does not
+   resample and the four lineages survive intact)

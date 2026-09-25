@@ -1,0 +1,30 @@
+C. Does the selection that kills the lineages carry information? 
+
+20 fk4 runs paired with bon4 on (prompt_id, seed=2024)
+
+  pairing check: 0 seed_effective mismatches (ok)
+
+  row 0 (t=80) of r_phi  against  final ir of the SAME root under bon4:
+    mean Kendall tau: +0.067 +/- 0.071   (median +0.000)
+    the best at t=80 is the final best: 15% of runs (3/20), chance 25 %
+
+  to bound it: how much reward does the chosen root cost?
+    ir(best) - ir(root chosen at t=80)  : +0.6269
+    ir(best) - ir(random root)          : +0.5676
+    paired difference (chosen - random) : +0.0593 +/- 0.1320
+    -> indistinguishable from chance; the sign is unfavourable but the standard error covers it by a wide margin
+
+  and does the information rise along the trajectory?
+    (tau between row m and row 4 of the SAME run: valid only if the lineage
+     is unique, otherwise the ranks of row m do not follow the slots of row 4)
+    t= 80: median range 0.902  -> at lam=10, 9.0 nats between the best and the worst slot
+    t= 60: median range 0.774  -> at lam=10, 7.7 nats between the best and the worst slot
+    t= 40: median range 0.521  -> at lam=10, 5.2 nats between the best and the worst slot
+    t= 20: median range 0.338  -> at lam=10, 3.4 nats between the best and the worst slot
+
+  reference: standard deviation of r_phi across the 4 slots, per row
+    t= 80: mean level -1.620, within-run standard deviation 0.387, runs where all 4 r_phi are < 0: 90%
+    t= 60: mean level -0.334, within-run standard deviation 0.390, runs where all 4 r_phi are < 0: 40%
+    t= 40: mean level +0.322, within-run standard deviation 0.233, runs where all 4 r_phi are < 0: 25%
+    t= 20: mean level +0.656, within-run standard deviation 0.157, runs where all 4 r_phi are < 0: 15%
+    t=  0: mean level +0.828, within-run standard deviation 0.112, runs where all 4 r_phi are < 0: 10%

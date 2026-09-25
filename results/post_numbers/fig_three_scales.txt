@@ -1,0 +1,21 @@
+CIFAR 32 px, k = 16
+  lambda    0  ESS_min / k = 1.000 +/- 0.000  (n = 3), ESS_min = 16.00 of 16
+  lambda  0.5  ESS_min / k = 0.274 +/- 0.036  (n = 3), ESS_min = 4.38 of 16
+  lambda    1  ESS_min / k = 0.131 +/- 0.017  (n = 3), ESS_min = 2.10 of 16
+  lambda    2  ESS_min / k = 0.075 +/- 0.004  (n = 3), ESS_min = 1.20 of 16
+  lambda    4  ESS_min / k = 0.066 +/- 0.003  (n = 3), ESS_min = 1.05 of 16
+  floor of the ratio (one particle carries everything): 1/k = 0.062
+CelebA 256 px, k = 16
+  lambda    0  ESS_min / k = 1.000 +/- 0.000  (n = 3), ESS_min = 16.00 of 16
+  lambda  0.5  ESS_min / k = 0.260 +/- 0.047  (n = 3), ESS_min = 4.17 of 16
+  lambda    1  ESS_min / k = 0.137 +/- 0.054  (n = 3), ESS_min = 2.20 of 16
+  lambda    2  ESS_min / k = 0.074 +/- 0.011  (n = 3), ESS_min = 1.18 of 16
+  lambda    4  ESS_min / k = 0.063 +/- 0.000  (n = 3), ESS_min = 1.00 of 16
+  floor of the ratio (one particle carries everything): 1/k = 0.062
+SD 512 px, k = 4
+  lambda    0  ESS_min / k = 1.000 +/- 0.000  (n = 17), ESS_min = 4.00 of 4
+  lambda    2  ESS_min / k = 0.541 +/- 0.043  (n = 17), ESS_min = 2.17 of 4
+  lambda   10  ESS_min / k = 0.300 +/- 0.021  (n = 17), ESS_min = 1.20 of 4
+  floor of the ratio (one particle carries everything): 1/k = 0.250
+error bars: standard error over the 3 seeds (CIFAR, CelebA) or over the prompts the three SD arms share
+/home/onyxia/work/diffusion-models/.claude/worktrees/collapse-solutions/figures/f8_three_scales.png /home/onyxia/work/diffusion-models/.claude/worktrees/collapse-solutions/figures/f8_three_scales.svg

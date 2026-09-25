@@ -1,0 +1,35 @@
+Y. Session D (NVIDIA A2, 23/09 evening): which machine group, and what it measures there.
+  records: ctl 100, lam0 100, floor2 100; device ['NVIDIA A2']; 88.3 s per run (median), sessions 1
+
+0. which group: slot rewards equal to 0.001
+   ctl    against 21/09 reference (A2)  : 100/100 prompts equal, max slot gap 0.0000
+   ctl    against session A (A2)        : 40/40 prompts equal, max slot gap 0.0000
+   lam0   against session A (A2)        : 17/17 prompts equal, max slot gap 0.0000
+   floor2 against session A (A2)        : 17/17 prompts equal, max slot gap 0.0000
+   ctl    against session C (fast)      : 0/100 prompts equal, max slot gap 2.1747
+   lam0   against session C (fast)      : 0/100 prompts equal, max slot gap 3.5584
+   floor2 against session C (fast)      : 0/100 prompts equal, max slot gap 3.7607
+   lam0 D against lam0 C: slot correlation 0.62, mean |ir_max gap| 0.303 (n=100; predicted >= 0.99 and < 0.02)
+
+1. the same measurements on the A2, paired by x_T inside session D
+   ctl: ir_max 0.826, roots 1.04, one root in 96/100, div_pix 0.094  (predicted within 0.08 of 0.799, 1.0-1.15 roots)
+   ctl after the first resampling (t = 80): 1.68 roots, one root in 53/100; resamplings per run at most 4
+   floor2: roots 2.96, one root in 4/100, div_pix 0.293  (predicted 2.8-3.2 roots)
+   lam0: div_pix 0.354
+   floor2 - ctl, ir_max: -0.043 +/- 0.037 (n=100)  (predicted in [-0.10, +0.08]); mean of the four: -0.261 +/- 0.043 (n=100)
+   ctl - best-of-4 (lam0's best slot, same x_T, same process): +0.043 +/- 0.038 (n=100), won 48/100
+   the same on session C, same prompts: +0.021 +/- 0.038 (n=100)
+   ctl D - ctl C, same x_T, two machines: +0.026 +/- 0.058 (n=100), same roots kept in 30%
+   same roots kept across the two machines, 95 % Wilson interval: 30/100 = 30% [22%, 40%]
+   floor2 - best-of-4 (lam0's best slot, same x_T, same process): +0.000 +/- 0.018 (n=100)
+   one root, 95 % Wilson interval: ctl 96/100 = 96% [90%, 98%], floor2 4/100 = 4% [2%, 10%]
+
+2. thumbnails: t = 80 is before any resampling, so ctl, lam0 and floor2 share it
+   max pixel gap at t = 80 over 100 prompts: 0/255 (predicted <= 1)
+
+3. HPS v2.1 at the image ImageReward selects: ctl - best-of-4 -0.003 +/- 0.002 (n=100)  (predicted within +/- 0.01)
+
+4. late - ctl on the A2 (sd_s60_full against sd_ref_fields100, seed 2024): +0.041 +/- 0.037 (n=100)
+   late at seed 2024: one root in 84%, roots 1.16, div_pix 0.107 (n=100)
+5. seconds per run, A2: median 88.3, 5 to 95 % 88 to 90 (n=525)
+5. seconds per run, fast: median 58.6, 5 to 95 % 55 to 63 (n=1084)

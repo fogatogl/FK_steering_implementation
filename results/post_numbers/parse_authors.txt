@@ -1,0 +1,71 @@
+Readout of R0: the authors' code against bon4, ctl and table 1 of the paper. 
+
+authors_free (seed 42): 40 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}
+   mean ir_max 0.824   mean ir of the 4 0.295   distinct images 4.00/4 (fewer than 4 in 0% of runs)   div_pix 0.359   52 s/run
+   paper, SD v1.5: k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_free - bon4 on ir_max: -0.022 +/- 0.083 (n=40)   (20/40 won)
+   authors_free - k1   on ir_max: +0.516 +/- 0.120 (n=40)   (33/40 won)
+   authors_free - ctl  on ir_max: -0.134 +/- 0.063 (n=40)   (16/40 won)
+   authors_free - R1   on ir_max: -0.129 +/- 0.098 (n=40)   (same implementation choices, different code)
+
+authors_free_g (seed 42): 40 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}
+   mean ir_max 0.824   mean ir of the 4 0.295   distinct images 4.00/4 (fewer than 4 in 0% of runs)   div_pix 0.359   52 s/run
+   paper, SD v1.5: k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_free_g - bon4 on ir_max: -0.022 +/- 0.083 (n=40)   (20/40 won)
+   authors_free_g - k1   on ir_max: +0.516 +/- 0.120 (n=40)   (33/40 won)
+   authors_free_g - ctl  on ir_max: -0.134 +/- 0.063 (n=40)   (16/40 won)
+   authors_free_g - R1   on ir_max: -0.129 +/- 0.098 (n=40)   (same implementation choices, different code)
+
+authors_free_g (seed 2024): 5 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}  <- same x_T as bon4 / ctl / R1
+   mean ir_max 0.948   mean ir of the 4 0.509   distinct images 4.00/4 (fewer than 4 in 0% of runs)   div_pix 0.333   52 s/run
+   paper, SD v1.5: k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_free_g - bon4 on ir_max: +0.000 +/- 0.000 (n=5)   (2/5 won)
+   authors_free_g - k1   on ir_max: +0.309 +/- 0.100 (n=5)   (4/5 won)
+   authors_free_g - ctl  on ir_max: -0.268 +/- 0.078 (n=5)   (0/5 won)
+   authors_free_g - R1   on ir_max: -0.038 +/- 0.150 (n=5)   (same implementation choices, different code)
+
+authors_paper (seed 42): 100 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}
+   mean ir_max 0.554   mean ir of the 4 0.414   distinct images 3.81/4 (fewer than 4 in 8% of runs)   div_pix 0.104   61 s/run
+   paper, SD v1.5: k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_paper - bon4 on ir_max: -0.216 +/- 0.061 (n=100)   (41/100 won)
+   authors_paper - k1   on ir_max: +0.330 +/- 0.083 (n=100)   (71/100 won)
+   authors_paper - ctl  on ir_max: -0.272 +/- 0.067 (n=100)   (34/100 won)
+   authors_paper - R1   on ir_max: -0.206 +/- 0.072 (n=100)   (same implementation choices, different code)
+
+authors_paper (seed 2024): 40 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}
+   mean ir_max 0.949   mean ir of the 4 0.838   distinct images 3.58/4 (fewer than 4 in 18% of runs)   div_pix 0.081   60 s/run
+   paper, SD v1.5: k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_paper - bon4 on ir_max: +0.103 +/- 0.056 (n=40)   (25/40 won)
+   authors_paper - k1   on ir_max: +0.641 +/- 0.130 (n=40)   (32/40 won)
+   authors_paper - ctl  on ir_max: -0.009 +/- 0.100 (n=40)   (18/40 won)
+   authors_paper - R1   on ir_max: -0.004 +/- 0.012 (n=40)   (same implementation choices, different code)
+
+authors_paper_g (seed 42): 40 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}
+   mean ir_max 0.807   mean ir of the 4 0.674   distinct images 3.67/4 (fewer than 4 in 12% of runs)   div_pix 0.091   59 s/run
+   paper, SD v1.5: k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_paper_g - bon4 on ir_max: -0.039 +/- 0.073 (n=40)   (20/40 won)
+   authors_paper_g - k1   on ir_max: +0.499 +/- 0.111 (n=40)   (35/40 won)
+   authors_paper_g - ctl  on ir_max: -0.152 +/- 0.072 (n=40)   (16/40 won)
+   authors_paper_g - R1   on ir_max: -0.147 +/- 0.092 (n=40)   (same implementation choices, different code)
+
+authors_paper_g (seed 2024): 40 prompts, {'potential_type': 'max', 'resample_frequency': 20, 'resampling_t_start': 20, 'resampling_t_end': 80}  <- same x_T as bon4 / ctl / R1
+   mean ir_max 0.720   mean ir of the 4 0.564   distinct images 3.77/4 (fewer than 4 in 10% of runs)   div_pix 0.079   59 s/run
+   paper, SD v1.5: k1 0.187, bon4 0.737, FK 0.898 (FK - bon4 = +0.161)
+   authors_paper_g - bon4 on ir_max: -0.126 +/- 0.070 (n=40)   (19/40 won)
+   authors_paper_g - k1   on ir_max: +0.412 +/- 0.126 (n=40)   (31/40 won)
+   authors_paper_g - ctl  on ir_max: -0.238 +/- 0.103 (n=40)   (14/40 won)
+   authors_paper_g - R1   on ir_max: -0.233 +/- 0.085 (n=40)   (same implementation choices, different code)
+
+R1 - bon4 paired, 100 prompts: -0.011 +/- 0.041 (n=100); against ctl: -0.067 +/- 0.055 (n=100)
+   rule: gap to the paper BOUNDED (threshold +0.12; paper +0.161; ctl - bon4 = +0.056 on these prompts)
+   R1: lineages 1.19, one root in 81%, resamplings 4.00, t=80 inert in 81%
+  authors_paper seed 42 on the common prompts: -0.349 +/- 0.091 (n=40), 5.60 standard errors under the paper's +0.161
+  authors_paper seed 2024 on the common prompts: +0.103 +/- 0.056 (n=40), 1.03 standard errors under the paper's +0.161
+  authors_paper_g seed 42 on the common prompts: -0.039 +/- 0.073 (n=40), 2.75 standard errors under the paper's +0.161
+  authors_paper_g seed 2024 on the common prompts: -0.126 +/- 0.070 (n=40), 4.11 standard errors under the paper's +0.161
+
+The 4 runs of the released FK on their 40 common prompts, averaged per prompt, minus bon4: -0.103 +/- 0.048 (n=40); ir_max 0.743
+Seed 2024, own seeding - through a generator, same x_T: +0.229 +/- 0.085 (n=40) (2.7 standard errors); R1 ir_max 0.759 over 100 prompts
+Seed 42, free sampler under both seedings: 40/40 prompts equal on every slot
+Seed 42, own seeding - through a generator, same x_T: -0.310 +/- 0.077 (n=40) (-4.0 standard errors)
+The four run means on the common prompts: 0.497, 0.949, 0.807, 0.720; their standard deviation 0.19, against 0.07 expected from the run-to-run spread within a prompt (RMS 0.44) if the runs were exchangeable

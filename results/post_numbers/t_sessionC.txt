@@ -1,0 +1,23 @@
+T. Session C: ctl, lam0 and floor2 on 100 prompts in one process (out/probe_C.json).
+  arms: ctl 100, lam0 100, floor2 100
+
+0. ctl_C against ref100 (21/09), 100 prompts: ir_max -0.026 +/- 0.058 (n=100), slot correlation 0.70, same root kept 30%
+   lam0_C against bon4 (20/09), 100 prompts: ir_max +0.009 +/- 0.006 (n=100), slot correlation 1.00 (predicted < 0.7)
+
+1. floor2 - ctl (x_T paired), 100 prompts: ir_max -0.012 [-0.082, +0.060] (predicted [-0.14, -0.02]); mean ir -0.250 +/- 0.045 (n=100)
+   floor2: 3.03 roots (predicted 2.8-3.1), 4% on one root (predicted 5-10 %), div_pix 0.300; ctl: 1.07 roots, 93%
+   floor2 - bon4 ir_max +0.018 +/- 0.012 (n=100); ctl - bon4 +0.030 +/- 0.037 (n=100)   (bon4 = the 20/09 file, same machine)
+   against the best of the four free draws of the same process (lam0): floor2 +0.009 +/- 0.012 (n=100), ctl +0.021 +/- 0.038 (n=100)
+   one root, 95 % Wilson interval: ctl 93/100 = 93% [86%, 97%], floor2 4/100 = 4% [2%, 10%]
+
+2. finding 3 recomputed: Kendall tau between ctl's r_phi(t=80) and the free ir (lam0) of the same root: +0.137 +/- 0.050 (predicted < 0.15); top-1 35% against 25 % by chance, n=100
+   top-1, 95 % Wilson interval: 35/100 = 35% [26%, 45%]
+
+3. finding 5 bis recomputed (n=100): A best free root +0.779, M mean root +0.233, B root(s) kept by ctl, read free +0.466, C what ctl makes of it +0.799
+   B - M +0.233 +/- 0.047 (n=100) (is the kept root better than chance); A - B +0.313 +/- 0.042 (n=100) (predicted [0.25, 0.50]); C - B +0.333 +/- 0.038 (n=100) (what follows the choice); C - A +0.021 +/- 0.038 (n=100) (= ctl - lam0 on ir_max)
+   C - B split: the mean of ctl's four - B +0.185 +/- 0.036 (n=100) (the particles move up), C - that mean +0.148 +/- 0.011 (n=100) (ir_max picks the best of four near-copies)
+   mean rank of the kept root among the 4 free ones: 2.04 (2.5 at random, for a rank from 1 to 4)
+
+4. ctl in session C, n=100: median ESS at t = 80, 60, 40, 20, 0: 1.18, 1.63, 2.21, 3.29, 2.71; span of the four guide rewards at t = 80: mean 0.905, median 0.777; resamplings per run 3.69
+   after the first resampling (t = 80): ctl 1.80 roots, one root in 46/100; at the end 1.07; resamplings per run at most 4
+   div_pix: ctl 0.109 +/- 0.006, floor2 0.300 +/- 0.008, lam0 0.355 +/- 0.005
