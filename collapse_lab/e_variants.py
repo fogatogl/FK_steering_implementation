@@ -1,8 +1,8 @@
-"""E. Ce que les 19 variantes deja sur disque disent de l'effondrement.
+"""E. What the 19 variants already on disk say about the collapse.
 
-n_lineages n'existe que depuis le 21/09 ; div_pix, lui, est dans tous les
-fichiers et separe "quatre images identiques" de "quatre images differentes".
-bon4 donne le plafond (quatre tirages libres), fk4 le plancher observe.
+n_lineages exists only since 21/09; div_pix, on the other hand, is in every
+file and separates "four identical images" from "four different images".
+bon4 gives the ceiling (four free draws), fk4 the observed floor.
 """
 import json, statistics as st
 from pathlib import Path
@@ -11,15 +11,15 @@ R = Path(__file__).resolve().parent.parent / "results"
 load = lambda p: json.loads((R / p).read_text())["runs"]
 
 base = load("sd_baseline.json")
-div = load("sd_baseline_div20.json")   # div_pix n'existe que dans ce fichier
+div = load("sd_baseline_div20.json")   # div_pix exists only in this file
 ref = {r["prompt_id"]: r for r in base if r["sampler"] == "bon4" and r["seed"] == 2024}
 plancher = st.mean(r["div_pix"] for r in div if r["sampler"] == "fk4")
 plafond = st.mean(r["div_pix"] for r in div if r["sampler"] == "bon4")
 print(__doc__.splitlines()[0], "\n")
-print(f"  bon4 (4 tirages libres)  div_pix {plafond:.4f}   <- plafond")
-print(f"  fk4  (reference, 20)       div_pix {plancher:.4f}   <- plancher\n")
-print(f"  {'variante':10s} {'lam':>5s} {'seuil':>6s} {'calendrier':>22s} {'div_pix':>8s} "
-      f"{'lignees':>8s} {'resampl':>8s} {'ir_max':>8s} {'ecart/fk4':>10s}")
+print(f"  bon4 (4 free draws)   div_pix {plafond:.4f}   <- ceiling")
+print(f"  fk4  (reference, 20)  div_pix {plancher:.4f}   <- floor\n")
+print(f"  {'variant':10s} {'lam':>5s} {'thresh':>6s} {'schedule':>22s} {'div_pix':>8s} "
+      f"{'lineages':>8s} {'resampl':>8s} {'ir_max':>8s} {'gap/fk4':>10s}")
 
 fkref = {r["prompt_id"]: r for r in base if r["sampler"] == "fk4" and r["seed"] == 2024}
 for nom in ("S80", "S60", "S40", "D10", "L2", "L5", "L20", "A05", "T1", "T2", "T1A05",
@@ -40,7 +40,7 @@ for nom in ("S80", "S60", "S40", "D10", "L2", "L5", "L20", "A05", "T1", "T2", "T
           f"{st.mean(r['ir_max'] for r in runs):+8.4f} "
           f"{(f'{st.mean(d):+.4f}' if d else '-'):>10s}")
 
-print("\n  lecture : aucune variante ne remonte div_pix vers le plafond de bon4 sauf celles")
-print("  qui affaiblissent le PREMIER pas (T2, lambda_1 = 0.4) ou le suppriment (S80 n'en a")
-print("  qu'un). Le calendrier, la rampe, la forme du potentiel et le potentiel lui-meme")
-print("  laissent div_pix au plancher.")
+print("\n  reading: no variant brings div_pix back up toward the bon4 ceiling except those")
+print("  that weaken the FIRST step (T2, lambda_1 = 0.4) or remove it (S80 has only")
+print("  one). The schedule, the ramp, the form of the potential and the potential itself")
+print("  leave div_pix at the floor.")

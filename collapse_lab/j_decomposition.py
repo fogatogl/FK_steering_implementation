@@ -1,14 +1,14 @@
-"""J. D'ou vient le gain de fk4 sur bon4, une fois la racine perdue ?
+"""J. Where does the gain of fk4 over bon4 come from, once the root is lost?
 
-Trois quantites par prompt, toutes sur les memes quatre x_T :
+Three quantities per prompt, all on the same four x_T:
 
-  A = bon4.ir_max                   la meilleure des 4 racines, menee librement
-  B = bon4.ir[racine gardee par fk] ce que la racine que fk garde aurait donne seule
-  C = fk4.ir_max                    ce que fk en tire reellement
+  A = bon4.ir_max                   the best of the 4 roots, run freely
+  B = bon4.ir[root kept by fk]      what the root that fk keeps would have given alone
+  C = fk4.ir_max                    what fk actually gets out of it
 
-C - A est le gain publie. B - A est ce que coute l'effondrement au niveau de la
-racine. C - B est ce que le pilotage ajoute le long de la trajectoire, a racine
-fixee : la selection entre freres aux pas tardifs, la ou r_phi predit enfin.
+C - A is the published gain. B - A is what the collapse costs at the level of the
+root. C - B is what the steering adds along the trajectory, with the root
+fixed: the selection among siblings at the late steps, where r_phi finally predicts.
 """
 import json
 from pathlib import Path
@@ -27,18 +27,18 @@ C = np.array([r["ir_max"] for r in fk])
 M = np.array([np.mean(bon[r["prompt_id"]]["ir"]) for r in fk])
 se = lambda v: v.std(ddof=1) / len(v) ** .5
 print(f"  {len(fk)} prompts, seed 2024\n")
-print(f"  A  meilleure des 4 racines, libre        : {A.mean():+.4f}")
-print(f"  M  racine moyenne, libre                 : {M.mean():+.4f}")
-print(f"  B  racine gardee par fk, libre           : {B.mean():+.4f}")
-print(f"  C  ce que fk en tire                     : {C.mean():+.4f}")
-print(f"\n  B - M  la racine gardee vaut mieux que le hasard : {(B-M).mean():+.4f} +/- {se(B-M):.4f}")
-print(f"  B - A  ce que l'effondrement coute sur la racine : {(B-A).mean():+.4f} +/- {se(B-A):.4f}")
-print(f"  C - B  ce que le pilotage ajoute a racine fixee  : {(C-B).mean():+.4f} +/- {se(C-B):.4f}")
-print(f"  C - A  le gain publie de fk4 sur bon4           : {(C-A).mean():+.4f} +/- {se(C-A):.4f}")
-print(f"\n  Verification que la decomposition ferme : (B-A) + (C-B) = {((B-A)+(C-B)).mean():+.4f}, "
+print(f"  A  best of the 4 roots, free             : {A.mean():+.4f}")
+print(f"  M  mean root, free                       : {M.mean():+.4f}")
+print(f"  B  root kept by fk, free                 : {B.mean():+.4f}")
+print(f"  C  what fk gets out of it                : {C.mean():+.4f}")
+print(f"\n  B - M  the kept root is better than chance        : {(B-M).mean():+.4f} +/- {se(B-M):.4f}")
+print(f"  B - A  what the collapse costs on the root        : {(B-A).mean():+.4f} +/- {se(B-A):.4f}")
+print(f"  C - B  what the steering adds with the root fixed : {(C-B).mean():+.4f} +/- {se(C-B):.4f}")
+print(f"  C - A  the published gain of fk4 over bon4        : {(C-A).mean():+.4f} +/- {se(C-A):.4f}")
+print(f"\n  Check that the decomposition closes: (B-A) + (C-B) = {((B-A)+(C-B)).mean():+.4f}, "
       f"C - A = {(C-A).mean():+.4f}")
-print(f"\n  Lecture : fk4 part d'une racine {abs((B-A).mean()):.3f} moins bonne que celle que")
-print(f"  best-of-4 choisit, et remonte {(C-B).mean():.3f} en pilotant. Le gain net de")
-print(f"  {(C-A).mean():+.3f} n'est donc pas 'fk choisit une meilleure racine' : c'est")
-print(f"  'fk choisit moins bien mais pilote', et l'effondrement est le prix du pilotage,")
-print(f"  pas son moyen.")
+print(f"\n  Reading: fk4 starts from a root {abs((B-A).mean()):.3f} worse than the one that")
+print(f"  best-of-4 picks, and climbs back {(C-B).mean():.3f} by steering. The net gain of")
+print(f"  {(C-A).mean():+.3f} is therefore not 'fk picks a better root': it is")
+print(f"  'fk picks worse but steers', and the collapse is the price of the steering,")
+print(f"  not its means.")

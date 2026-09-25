@@ -1,11 +1,11 @@
-"""Depouillement de R0 : le code des auteurs contre bon4, ctl et la table 1 du papier.
+"""Readout of R0: the authors' code against bon4, ctl and table 1 of the paper.
 
-Lit results/sd_authors_R0.json (run_authors.py), results/sd_baseline.json (bon4, k1, fk4 a
-seed 2024), results/sd_ref_fields100.json (ctl = la ligne FK du code actuel) et
-out/probe.json (R1 si present). Tout est apparie par prompt_id ; R0 n'a pas nos x_T, la
-difference appariee est donc a lire comme deux echantillons sur les memes prompts, pas comme
-un contrefactuel a bruit fixe. Regle de decision pre-enregistree (docs/protocol_sd.md, 22/09) :
-ecart au papier "ferme" si R1 - bon4 >= +0.12 apparie, "borne" sinon.
+Reads results/sd_authors_R0.json (run_authors.py), results/sd_baseline.json (bon4, k1, fk4 at
+seed 2024), results/sd_ref_fields100.json (ctl = the FK row of the current code) and
+out/probe.json (R1 if present). Everything is paired by prompt_id; R0 does not have our x_T, so the
+paired difference is to be read as two samples on the same prompts, not as
+a counterfactual at fixed noise. Pre-registered decision rule (docs/protocol_sd.md, 22/09):
+the gap to the paper is "closed" if the paired R1 - bon4 >= +0.12, "bounded" otherwise.
 """
 import json
 from pathlib import Path
@@ -13,7 +13,7 @@ import numpy as np
 
 LAB = Path(__file__).resolve().parents[1]
 R = LAB.parent / "results"
-CHECKOUT = Path("/home/onyxia/work/diffusion-models/results")   # la sortie GPU est ecrite la
+CHECKOUT = Path("/home/onyxia/work/diffusion-models/results")   # the GPU output is written there
 PAPIER = {"k1": 0.187, "bon4": 0.737, "fk4": 0.898}              # experiments_new.tex:82-85, SD v1.5
 
 
@@ -27,7 +27,7 @@ src = Path(sys.argv[1]) if len(sys.argv) > 1 else (
     CHECKOUT / "sd_authors_R0.json" if (CHECKOUT / "sd_authors_R0.json").exists() else R / "sd_authors_R0.json")
 R0 = json.loads(src.read_text())["runs"] if src.exists() else []
 if not R0:
-    print(f"(pas encore de R0 : {src} absent)\n")
+    print(f"(no R0 yet: {src} missing)\n")
 base = json.loads((R / "sd_baseline.json").read_text())["runs"]
 bon = {r["prompt_id"]: r for r in base if r["sampler"] == "bon4" and r["seed"] == 2024}
 k1 = {r["prompt_id"]: r for r in base if r["sampler"] == "k1" and r["seed"] == 2024}
@@ -40,29 +40,64 @@ print(__doc__.splitlines()[0], "\n")
 for cfg, seed in sorted({(r["sampler"], r["seed"]) for r in R0}):
     d = {r["prompt_id"]: r for r in R0 if r["sampler"] == cfg and r["seed"] == seed}
     ps = sorted(d)
-    print(f"{cfg} (seed {seed}) : {len(ps)} prompts, {d[ps[0]]['config']}"
-          + ("  <- memes x_T que bon4 / ctl / R1" if seed == 2024 and "_g" in cfg else ""))
-    print(f"   ir_max moyen {np.mean([d[p]['ir_max'] for p in ps]):.3f}   ir moyen des 4 {np.mean([d[p]['ir_mean'] for p in ps]):.3f}"
-          f"   images distinctes {np.mean([d[p]['n_distinct_images'] for p in ps]):.2f}/4"
-          f" (moins de 4 dans {np.mean([d[p]['n_distinct_images'] < 4 for p in ps]):.0%} des runs)"
+    print(f"{cfg} (seed {seed}): {len(ps)} prompts, {d[ps[0]]['config']}"
+          + ("  <- same x_T as bon4 / ctl / R1" if seed == 2024 and "_g" in cfg else ""))
+    print(f"   mean ir_max {np.mean([d[p]['ir_max'] for p in ps]):.3f}   mean ir of the 4 {np.mean([d[p]['ir_mean'] for p in ps]):.3f}"
+          f"   distinct images {np.mean([d[p]['n_distinct_images'] for p in ps]):.2f}/4"
+          f" (fewer than 4 in {np.mean([d[p]['n_distinct_images'] < 4 for p in ps]):.0%} of runs)"
           f"   div_pix {np.mean([d[p]['div_pix'] for p in ps]):.3f}   {np.mean([d[p]['seconds'] for p in ps]):.0f} s/run")
-    print(f"   papier, SD v1.5 : k1 {PAPIER['k1']}, bon4 {PAPIER['bon4']}, FK {PAPIER['fk4']} (FK - bon4 = +0.161)")
+    print(f"   paper, SD v1.5: k1 {PAPIER['k1']}, bon4 {PAPIER['bon4']}, FK {PAPIER['fk4']} (FK - bon4 = +0.161)")
     for nom, ref in (("bon4", bon), ("k1", k1), ("ctl", ctl)):
         com = [p for p in ps if p in ref]
-        print(f"   {cfg} - {nom:4s} sur ir_max : {se([d[p]['ir_max'] - ref[p]['ir_max'] for p in com])}"
-              f"   ({sum(d[p]['ir_max'] > ref[p]['ir_max'] for p in com)}/{len(com)} gagnes)")
+        print(f"   {cfg} - {nom:4s} on ir_max: {se([d[p]['ir_max'] - ref[p]['ir_max'] for p in com])}"
+              f"   ({sum(d[p]['ir_max'] > ref[p]['ir_max'] for p in com)}/{len(com)} won)")
     if R1:
         com = [p for p in ps if p in R1]
         if com:
-            print(f"   {cfg} - R1   sur ir_max : {se([d[p]['ir_max'] - R1[p]['ir_max'] for p in com])}   (memes choix d'implementation, codes differents)")
+            print(f"   {cfg} - R1   on ir_max: {se([d[p]['ir_max'] - R1[p]['ir_max'] for p in com])}   (same implementation choices, different code)")
     print()
 
 if R1:
     ps = sorted(set(R1) & set(bon))
     x = np.array([R1[p]["ir_max"] - bon[p]["ir_max"] for p in ps])
-    print(f"R1 - bon4 apparie, {len(ps)} prompts : {se(x)} ; contre ctl : {se([R1[p]['ir_max'] - ctl[p]['ir_max'] for p in ps if p in ctl])}")
-    print(f"   regle : ecart au papier {'FERME' if x.mean() >= 0.12 else 'BORNE'} (seuil +0.12 ; papier +0.161 ; ctl - bon4 = "
-          f"{np.mean([ctl[p]['ir_max'] - bon[p]['ir_max'] for p in ps if p in ctl]):+.3f} sur ces prompts)")
-    print(f"   R1 : lignees {np.mean([R1[p]['n_lineages'] for p in ps]):.2f}, une racine dans {np.mean([R1[p]['n_lineages'] == 1 for p in ps]):.0%},"
-          f" reech {np.mean([R1[p]['n_resamplings'] for p in ps]):.2f}, t=80 inerte dans "
+    print(f"R1 - bon4 paired, {len(ps)} prompts: {se(x)}; against ctl: {se([R1[p]['ir_max'] - ctl[p]['ir_max'] for p in ps if p in ctl])}")
+    print(f"   rule: gap to the paper {'CLOSED' if x.mean() >= 0.12 else 'BOUNDED'} (threshold +0.12; paper +0.161; ctl - bon4 = "
+          f"{np.mean([ctl[p]['ir_max'] - bon[p]['ir_max'] for p in ps if p in ctl]):+.3f} on these prompts)")
+    print(f"   R1: lineages {np.mean([R1[p]['n_lineages'] for p in ps]):.2f}, one root in {np.mean([R1[p]['n_lineages'] == 1 for p in ps]):.0%},"
+          f" resamplings {np.mean([R1[p]['n_resamplings'] for p in ps]):.2f}, t=80 inert in "
           f"{np.mean([(np.ptp(R1[p]['logG_at_schedule'][0]) < 1e-9) for p in ps]):.0%}")
+
+# the four runs of the released FK on their 40 common prompts, averaged per prompt first (a pooled
+# row over 4 x 40 run-prompts would count each prompt four times and shrink the standard error)
+fk_runs = [{r["prompt_id"]: r for r in R0 if r["sampler"] == c and r["seed"] == s}
+           for c, s in sorted({(r["sampler"], r["seed"]) for r in R0 if r["sampler"].startswith("authors_paper")})]
+common = sorted(set.intersection(*(set(d) for d in fk_runs)) & set(bon))
+per_prompt = [np.mean([d[p]["ir_max"] for d in fk_runs]) - bon[p]["ir_max"] for p in common]
+names = sorted({(r["sampler"], r["seed"]) for r in R0 if r["sampler"].startswith("authors_paper")})
+for (c, sd), d in zip(names, fk_runs):
+    x = np.array([d[p]["ir_max"] - bon[p]["ir_max"] for p in common])
+    print(f"  {c} seed {sd} on the common prompts: {se(x)}, {(0.161 - x.mean()) / (x.std(ddof=1) / len(x) ** .5):.2f} "
+          f"standard errors under the paper's +0.161")
+print(f"\nThe {len(fk_runs)} runs of the released FK on their {len(common)} common prompts, averaged per prompt, "
+      f"minus bon4: {se(per_prompt)}; ir_max {np.mean([np.mean([d[p]['ir_max'] for d in fk_runs]) for p in common]):.3f}")
+pairs = {c: {r["prompt_id"]: r for r in R0 if r["sampler"] == c and r["seed"] == 2024} for c in ("authors_paper", "authors_paper_g")}
+com = sorted(set(pairs["authors_paper"]) & set(pairs["authors_paper_g"]))
+if com:
+    g = np.array([pairs['authors_paper'][p]['ir_max'] - pairs['authors_paper_g'][p]['ir_max'] for p in com])
+    print(f"Seed 2024, own seeding - through a generator, same x_T: "
+          f"{se(g)} ({g.mean() / (g.std(ddof=1) / len(g) ** .5):.1f} standard errors); "
+          f"R1 ir_max {np.mean([r['ir_max'] for r in R1.values()]):.3f} over {len(R1)} prompts")
+# the two seedings at seed 42 share their x_T (their free sampler agrees slot by slot), as at 2024
+fr = {c: {r["prompt_id"]: r for r in R0 if r["sampler"] == c and r["seed"] == 42} for c in ("authors_free", "authors_free_g")}
+cf = sorted(set(fr["authors_free"]) & set(fr["authors_free_g"]))
+print(f"Seed 42, free sampler under both seedings: {sum(fr['authors_free'][p]['ir'] == fr['authors_free_g'][p]['ir'] for p in cf)}/{len(cf)} prompts equal on every slot")
+p42 = {c: {r["prompt_id"]: r for r in R0 if r["sampler"] == c and r["seed"] == 42} for c in ("authors_paper", "authors_paper_g")}
+c42 = [p for p in common if p in p42["authors_paper"] and p in p42["authors_paper_g"]]
+g42 = np.array([p42["authors_paper"][p]["ir_max"] - p42["authors_paper_g"][p]["ir_max"] for p in c42])
+print(f"Seed 42, own seeding - through a generator, same x_T: {se(g42)} ({g42.mean() / (g42.std(ddof=1) / len(g42) ** .5):.1f} standard errors)")
+means = np.array([np.mean([d[p]["ir_max"] for p in common]) for d in fk_runs])
+within = np.sqrt(np.mean([np.var([d[p]["ir_max"] for d in fk_runs], ddof=1) for p in common]))
+print(f"The four run means on the common prompts: {', '.join(f'{m:.3f}' for m in means)}; their standard deviation "
+      f"{means.std(ddof=1):.2f}, against {within / len(common) ** .5:.2f} expected from the run-to-run spread within a prompt "
+      f"(RMS {within:.2f}) if the runs were exchangeable")
+

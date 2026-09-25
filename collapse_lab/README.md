@@ -1,85 +1,99 @@
-# `collapse_lab/` — pourquoi les quatre images finales descendent d'un seul x_T
+# `collapse_lab/`: why the four final images descend from a single x_T
 
-Dossier d'enquete, separe du depot : rien ici n'est importe par `smc/`, par
-`scripts/` ni par `tests/`, et rien ici n'a modifie `smc/`. Les scripts lisent
-`results/*.json` et appellent `smc.fk` / `smc.weights` en lecture.
+Investigation folder, kept apart from the repo: nothing here is imported by `smc/`,
+`scripts/` or `tests/`, and nothing here has modified `smc/`. The scripts read
+`results/*.json` and call `smc.fk` / `smc.weights` read-only.
 
-Les conclusions sont dans **`FINDINGS.md`**. Ce fichier dit seulement comment
-rejouer.
+The conclusions are in `FINDINGS.md`. This file only says how to replay.
 
-## Sans GPU, quelques secondes chacun
+## Without GPU, a few seconds each
 
-    python collapse_lab/a_step0_ess.py      # l'ESS loggee est-elle celle que lam*r implique
-    python collapse_lab/b_comb.py           # combien d'ancetres le peigne laisse vivre
-    python collapse_lab/c_information.py    # le classement a t=80 predit-il le classement final
-    python collapse_lab/d_forms.py          # max et difference coincident-ils au premier pas
-    python collapse_lab/e_variants.py       # ce que les 18 variantes sur disque disent
-    python collapse_lab/g_equivalence.py    # le bras `floor` est-il le potentiel des auteurs
-    python collapse_lab/h_invariances.py    # ce qui peut bouger l'ESS, et ce qui ne le peut pas
-    python collapse_lab/i_root100.py        # la racine gardee, sur 100 prompts
-    python collapse_lab/j_decomposition.py  # d'ou vient le gain de fk4 sur bon4
-    python collapse_lab/l_target_ess.py     # combien de particules la cible porte-t-elle, a chaque lambda
-    python collapse_lab/r_solutions.py      # les trois criteres de "resolu", par bras, IC bootstrap
-    python collapse_lab/n_coalescence.py    # les lignees predites depuis les poids seuls, contre l'observe
-    python collapse_lab/t_sessionC.py       # session C : constats 3 et 5 bis sur l'appariement par case valide
-    python collapse_lab/ref/parse_authors.py  # le code des auteurs contre bon4, ctl et la table 1
-    python collapse_lab/p_two_rewards.py    # F4 : ir_max et ir moyen apparies contre ctl (venv ddpm)
-    python collapse_lab/o_ancestry_fig.py --pid <id> --arms lam0 ctl floor2 R1   # F1
-    python collapse_lab/q_image_grid.py     # F2 depuis out/images/ (--choose : les six prompts par regle)
-    python collapse_lab/s_coalescence_fig.py  # F3
-    python scripts/fig_three_scales.py      # F5 : CIFAR / CelebA / SD (venv ddpm, samples/*.pt)
+    python collapse_lab/a_step0_ess.py      # is the logged ESS the one lam*r implies
+    python collapse_lab/b_comb.py           # how many ancestors the comb lets live
+    python collapse_lab/c_information.py    # does the ranking at t=80 predict the final ranking
+    python collapse_lab/d_forms.py          # do max and difference coincide at the first step
+    python collapse_lab/e_variants.py       # what the 19 variants on disk say
+    python collapse_lab/g_equivalence.py    # is the `floor` arm the authors' potential
+    python collapse_lab/h_invariances.py    # what can move the ESS, and what cannot
+    python collapse_lab/i_root100.py        # the root kept, on 100 prompts
+    python collapse_lab/j_decomposition.py  # where fk4's gain over bon4 comes from
+    python collapse_lab/l_target_ess.py     # how many particles the target carries, at each lambda
+    python collapse_lab/r_solutions.py      # the three criteria of "solved", per arm, bootstrap CI
+    python collapse_lab/n_coalescence.py    # the lineages predicted from the weights alone, against the observed
+    python collapse_lab/t_sessionC.py       # session C: findings 3 and 5 bis on the valid per-slot pairing
+    python collapse_lab/ref/parse_authors.py  # the authors' code against bon4, ctl and table 1
+    python collapse_lab/p_two_rewards.py    # F7: ir_max and mean ir paired against ctl (venv ddpm)
+    python collapse_lab/o_ancestry_fig.py    # F4: the ancestry of F5's prompt, FK against floor + lambda = 2
+    python collapse_lab/q_image_grid.py     # F5: the four finals per arm, framed by root (--appendix: the ten of A.3)
+    python collapse_lab/s_coalescence_fig.py  # F6: roots replayed from the weights against observed
+    python scripts/fig_three_scales.py      # F8: CIFAR / CelebA / SD (venv ddpm)
 
-Le code des auteurs est clone hors depot (`/home/onyxia/work/fkd_ref/`), lance depuis
-`ref/run_authors.py` dans le venv `sd` avec `ref/shim` sur le chemin (un module importe par
-leur code et jamais appele). Les runs de nuit sont `nuit*.sh` ; les predictions ecrites avant
-chaque run et leurs verdicts sont dans `ASSESSMENT.md` et dans `docs/protocol_sd.md`.
+The authors' code is cloned outside the repo (`/home/onyxia/work/fkd_ref/`) and launched
+from `ref/run_authors.py` in the `sd` venv with `ref/shim` on the path (a module their code
+imports and never calls). The night runs are `nuit*.sh`; the predictions written before
+each run and their verdicts are in `ASSESSMENT.md` and in `docs/protocol_sd.md`.
 
-`commun.py` porte la regle anti-double-comptage : `fk4_stat.json` et
-`fk4_diff.json` sont les memes 20 prompts aux memes x_T, et leur premier pas est
-identique a zero pres (constat 4). Les empiler diviserait les erreurs-types par
-racine de 2 sans ajouter une observation.
+The launchers, one per GPU session, kept as they ran (2026):
 
-## Avec GPU
+| launcher | when | what it ran |
+|---|---|---|
+| `nuit.sh` | 21-22/09 | session A: `lam0`, `ctl`, `floor`, `lam2`, `floor2`, `adapt`, `fadapt` on the A2 |
+| `nuit2.sh` | 22-23/09 | the reference night: the released code (`R0`), then the collapse arms |
+| `nuit2a.sh` to `nuit2i.sh` | 22-23/09 | its continuations: the corrections at equal n, the latents test, the released code through this repository's generator (`R0g`, `R0g24`), its pipeline without FK, and the `_b1` image replays |
+| `nuit3.sh` | 23/09 | session C: `ctl`, `lam0`, `floor2` at 100 prompts in one process, then the released code at seed 2024 |
+| `nuit4.sh` | 23/09 | the determinism test: `ctl` on two prompts in three processes |
+| `nuitD.sh`, `nuitD_hps.sh` | 23-24/09 | session D on the A2, with every image and Tweedie estimate saved, then HPS v2.1 of its finals |
+
+`commun.py` carries the rule against double counting: `fk4_stat.json` and
+`fk4_diff.json` are the same 20 prompts at the same x_T, and their first step is
+identical, to within zero (finding 4). Stacking them would divide the standard errors by
+root 2 without adding one observation.
+
+## With GPU
 
     /home/onyxia/work/.venvs/sd/bin/python collapse_lab/probe.py --arms ctl floor --limit 40
     /home/onyxia/work/.venvs/sd/bin/python collapse_lab/f_probe.py
     /home/onyxia/work/.venvs/sd/bin/python collapse_lab/k_figure.py
 
-`nuit.sh` enchaine les bras dans l'ordre : `lam0` court d'abord, parce qu'il decide si
-l'appariement avec `bon4` tient, puis les bras qui portent la correction. Il reprend
-depuis `out/probe.json`, les paires (prompt, bras) deja faites sont sautees.
+`nuit.sh` runs the arms in order: `lam0` first, because it decides whether the pairing
+with `bon4` holds, then the arms that carry the correction. It resumes from
+`out/probe.json`; the (prompt, arm) pairs already done are skipped.
 
-`probe.py` fait tourner `fk_steer` sur les memes prompts, les memes seeds et donc
-les memes x_T que `scripts/run_sd_baseline.py`, en gardant en plus **la matrice
-des ancetres**, qu'aucun fichier de `results/` ne conserve. Il verifie
-l'appariement avant de depenser la moindre seconde de GPU : le fichier de prompts
-doit etre `data/imagereward-benchmark-prompts.json`, dans cet ordre, sinon
-`seed_effective` ne correspond pas a `sd_baseline.json` et rien n'est comparable
-(`prompts_subset_40.json` a un autre ordre, et c'est le piege).
+`probe.py` runs `fk_steer` on the same prompts, the same seeds and therefore the
+same x_T as `scripts/run_sd_baseline.py`, and keeps in addition the ancestor
+matrix, which no file in `results/` preserves. It checks the pairing before
+spending a second of GPU: the prompt file must be
+`data/imagereward-benchmark-prompts.json`, in that order, otherwise
+`seed_effective` does not match `sd_baseline.json` and nothing is comparable
+(`prompts_subset_40.json` has another order, and that is the trap).
 
-Les bras :
+The arms:
 
-| bras | lambda | plancher | ce qu'il isole |
+| arm | lambda | floor | what it isolates |
 |---|---|---|---|
-| `ctl` | 10 | non | le `fk4` de reference, controle du pilote |
-| `floor` | 10 | oui | le `reward_min_value = 0.0` du code publie, seul |
-| `lam2` | 2 | non | la seule force du tilt |
-| `floor2` | 2 | oui | les deux |
-| `lam0` | 0 | non | controle d'appariement : doit redonner `bon4` case par case |
-| `adapt` | 10 max | non | lambda bisecte a ESS = k/2 aux pas non terminaux |
-| `fadapt` | 10 max | oui | le plancher et le lambda adaptatif ensemble |
+| `ctl` | 10 | no | the reference `fk4`, control for the steering |
+| `floor` | 10 | yes | the released code's `reward_min_value = 0.0`, alone |
+| `lam2` | 2 | no | the strength of the tilt alone |
+| `floor2` | 2 | yes | both |
+| `lam0` | 0 | no | pairing control: must return `bon4` slot by slot |
+| `adapt` | 10 max | no | lambda bisected to ESS = k/2 at the non-terminal steps |
+| `fadapt` | 10 max | yes | the floor and the adaptive lambda together |
 
-Pour `adapt` et `fadapt`, 10 est le plafond et le lambda du pas terminal :
-`bisect_lambda` rend le plafond des que l'ESS y est deja au-dessus de la cible, donc
-lambda_t ne peut que descendre. Ces deux bras testent « moins fort tot », pas le profil
-montant du constat 8 ; « plus fort tard » demanderait `lam_max = 100` et serait un
-autre bras.
+`probe.py --arms` also takes the arms added later (`late`, `stat0`, `multi`, `vae`,
+`idx`, `R1`, `thr05`, `rise`); tables A and B of `ASSESSMENT.md` say what each one
+changes.
 
-Le plancher passe par la **reward** (`max(r, 0)` avant `fk_steer`), pas par
-`smc/fk.py` : `g_equivalence.py` verifie a 9e-7 que c'est bien le potentiel `max`
-des auteurs, plancher compris.
+For `adapt` and `fadapt`, 10 is both the ceiling and the lambda of the terminal step:
+`bisect_lambda` returns the ceiling as soon as the ESS there is already above the
+target, so lambda_t can only go down. These two arms test "less hard early", not the
+rising profile of finding 8; "harder late" needs `lam_max = 100` and is another arm
+(`rise`).
 
-## Ce que ce dossier ne fait pas
+The floor goes through the reward (`max(r, 0)` before `fk_steer`), not through
+`smc/fk.py`: `g_equivalence.py` checks to 9e-7 that this is the authors' `max`
+potential, floor included.
 
-Il ne corrige rien dans `smc/`. `FINDINGS.md` section 9 dit ou les corrections
-vivraient et quel compromis chacune porte ; le code est a ecrire par l'auteur.
+## What this folder does not do
+
+It fixes nothing in `smc/`. `FINDINGS.md` section 9 says where the corrections
+would live and what trade-off each one carries; the code is the author's to write.

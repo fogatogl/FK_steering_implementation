@@ -1,10 +1,10 @@
-"""L. La cible elle-meme : que vaut l'ESS de exp(lam * ir) sur quatre tirages libres ?
+"""L. The target itself: what is the ESS of exp(lam * ir) over four free draws?
 
-Aucun echantillonneur n'est en cause ici. On prend les quatre images de bon4 (quatre
-racines menees librement), on les reponderer par exp(lam * ImageReward), et on lit
-l'ESS. C'est la concentration de la cible p(x0) exp(lam r(x0)) restreinte a quatre
-candidats : le plafond de diversite que quatre particules peuvent porter a ce lambda,
-quoi que fasse le noyau, le potentiel ou le calendrier.
+No sampler is involved here. We take the four images of bon4 (four
+roots run freely), reweight them by exp(lam * ImageReward), and read
+the ESS. This is the concentration of the target p(x0) exp(lam r(x0)) restricted to four
+candidates: the diversity ceiling that four particles can carry at this lambda,
+whatever the kernel, the potential or the schedule do.
 """
 import json
 from pathlib import Path
@@ -23,12 +23,12 @@ def ess(logw):
     return 1 / (w ** 2).sum()
 
 
-print(__doc__.splitlines()[0], f"\n  {len(bon)} prompts, etendue mediane de l'ir final libre :",
+print(__doc__.splitlines()[0], f"\n  {len(bon)} prompts, median range of the free final ir:",
       f"{np.median([np.ptp(r['ir']) for r in bon]):.2f}\n")
-print(f"  {'lambda':>6s} | {'ESS mediane':>11s} | {'Q1 - Q3':>13s} | part < 1.5")
+print(f"  {'lambda':>6s} | {'median ESS':>11s} | {'Q1 - Q3':>13s} | share < 1.5")
 for lam in (0.5, 1, 2, 5, 10):
     e = np.array([ess(lam * np.array(r["ir"])) for r in bon])
     print(f"  {lam:6.1f} | {np.median(e):11.2f} | {np.percentile(e, 25):5.2f} - {np.percentile(e, 75):5.2f} | {(e < 1.5).mean():.0%}")
 
 e80 = np.median([r["ess_at_schedule"][0] for r in fk])
-print(f"\n  a comparer : ESS mediane de fk4 au premier pas planifie (t = 80), lam = 10 : {e80:.2f}")
+print(f"\n  for comparison: median ESS of fk4 at the first scheduled step (t = 80), lam = 10: {e80:.2f}")
