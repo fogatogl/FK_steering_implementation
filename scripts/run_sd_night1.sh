@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Nuit 1 (docs/paper_plan.md, "Sixteen days") : ce qui ferme l'ablation du
+# Nuit 1 (plan editorial du 21/09, "Sixteen days") : ce qui ferme l'ablation du
 # calendrier, puis le run confirmatoire qui entre dans la table.
 #
 # Ordre court -> long : une nuit coupée en route garde l'ablation, qui est ce

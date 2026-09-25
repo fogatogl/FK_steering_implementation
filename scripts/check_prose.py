@@ -2,7 +2,7 @@
 
 Usage: python scripts/check_prose.py docs/paper.md [--appendix-marker "## Appendix"]
 
-Applies the part of docs/paper_plan.md section 4.2 that a grep can see: the blocking
+Applies the part of the post's style rules (editorial plan, section 4.2) that a grep can see: the blocking
 lexicon, sentence-opening connectors (warning above three per section), em-dashes
 outside code (blocking), bold outside the repo's convention (warning), Title Case
 headings (blocking), and the spread of paragraph lengths. One line per section, then
@@ -15,7 +15,7 @@ import re
 import sys
 from pathlib import Path
 
-# docs/paper_plan.md 4.2, plus the words the paper-loop skill found at zero in docs/.
+# the editorial plan's section 4.2, plus the words found zero times in docs/.
 LEXICON = [
     "delve", "tapestry", "testament", "pivotal", "crucial", "robust", "leverage",
     "landscape", "navigate", "underscore", "underscoring", "foster", "showcase", "seamless",
@@ -123,7 +123,7 @@ def check(path, appendix_marker):
         if bolds:
             warnings.append(f"bold in prose in '{head or '(preamble)'}': {bolds}")
         if len(results) > 1:
-            warnings.append(f"bold results in '{head or '(preamble)'}': {len(results)}, the skill allows one per block: {results}")
+            warnings.append(f"bold results in '{head or '(preamble)'}': {len(results)}, the rules allow one per block: {results}")
         plen = sorted(words_of(p) for p in paras)
         spread = f"{plen[0]}-{plen[-1]} words/para, median {plen[len(plen) // 2]}" if plen else "no prose"
         lines.append(f"  {head or '(preamble)':55.55s} {n:5d} w  {len(paras):2d} paras  {spread}"

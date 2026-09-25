@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Nuit 2 (docs/paper_plan.md) : le second résultat, la diversité, porté à
+# Nuit 2 (plan editorial du 21/09) : le second résultat, la diversité, porté à
 # l'échelle de la table, et la référence best-of-4 qu'il lui faut.
 #
 # T2tA05 est la variante que l'écran donne gagnante sur l'effondrement : rampe

@@ -1,4 +1,4 @@
-"""Check the figure scripts and their exports against docs/paper_plan.md, section 2.2.
+"""Check the figure scripts and their exports against the figure rules of the post's editorial plan (section 2.2).
 
 Usage: python scripts/check_figures.py [scripts or PNGs...]
 Default: every scripts/plot_*.py, scripts/fig_*.py, collapse_lab/*_fig.py,
