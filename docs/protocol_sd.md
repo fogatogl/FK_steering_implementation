@@ -671,3 +671,25 @@ added to the frozen records: the outputs go to `collapse_lab/out/session_E/` and
    - generator: if its gap of -0.229 to the global seed on the first 40 belongs to the seeding, the
      60 new prompts give a negative gap again (generator under global seed by 0.1 or more); if it is
      the draw of two random streams, a gap within +/- 0.1 of zero. No sign is assumed.
+
+## Pre-registration of session F (25/09, 18h47 UTC, before any run of it)
+
+The released repository has a commit of 15/06/2025, `699c929` "address max potential bug", which
+changes the MAX potential of `fkd_class.py`: before it, the weight is `exp(lambda max(r_t, r_prev))`
+with `r_prev` the raw reward of the previous scheduled step (floored at 0 only at the first), and the
+last step weighs `exp(lambda r(x_0))` over the product, as the paper's text writes; after it, the
+carried reward is the running maximum, floored at 0, including at the last step. Table 1 is older
+than the fix (arXiv v1, January 2025). Between the fix's parent (`6726324`) and the version run so far
+(`9413005`) the text-to-image code differs in this one change and an unused potential.
+
+Session F runs `6726324` (a separate checkout, `/home/onyxia/work/fkd_ref/prefix_6726324`) under the
+paper's configuration, seed 2024, global seed, on the 100 prompts, on the T4, after session E
+(`collapse_lab/nuitF.sh`, into `results/sd_authors_prefix.json`, sampler `authors_paper_prefix`).
+Paired by x_T with best-of-4 (`sd_baseline.json`, seed 2024) and with session E's post-fix run.
+
+- Decision, the gap test of 22/09 applied to it: if pre-fix minus best-of-4 on the best image reads
+  +0.12 or more on the 100 prompts, the code as it stood before the fix reproduces the published gain,
+  and the fix is the candidate for the gap; under +0.12, it does not account for it.
+- Prediction: pre-fix minus post-fix within +/- 0.10 on the best image (the two weigh the same first
+  step, floor included, and differ in which reward they carry after it); pre-fix on one root in 80 %
+  of runs or more.

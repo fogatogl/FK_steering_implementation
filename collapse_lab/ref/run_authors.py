@@ -19,14 +19,15 @@ Output: results/sd_authors_R0.json, pairable with bon4 / ctl by prompt_id.
 
   /home/onyxia/work/.venvs/sd/bin/python collapse_lab/ref/run_authors.py --config paper --limit 100
 """
-import argparse, json, os, sys, time
+import argparse, json, os, subprocess, sys, time
 from pathlib import Path
 
 import numpy as np
 import torch
 
 ROOT = Path(__file__).resolve().parents[2]
-FKD = Path("/home/onyxia/work/fkd_ref/Fk-Diffusion-Steering/text_to_image")
+# FKD_ROOT picks another checkout of the released repository (the pre-fix commit of session F)
+FKD = Path(os.environ.get("FKD_ROOT", "/home/onyxia/work/fkd_ref/Fk-Diffusion-Steering")) / "text_to_image"
 REPO = "stable-diffusion-v1-5/stable-diffusion-v1-5"
 CONFIGS = {
     "paper":    dict(potential_type="max",  resample_frequency=20, resampling_t_start=20, resampling_t_end=80),
@@ -50,6 +51,7 @@ def main():
     p.add_argument("--out", default="/home/onyxia/work/diffusion-models/results/sd_authors_R0.json")
     p.add_argument("--no-smc", action="store_true",
                    help="their pipeline without FK (fkd_args=None): four free draws, to compare with bon4")
+    p.add_argument("--tag", default="", help="suffix of the sampler name, e.g. _prefix")
     p.add_argument("--generator", action="store_true",
                    help="passes torch.Generator(seed_effective) to the pipeline; with --seed 2024, the same x_T and the "
                         "same DDIM noise as bon4 / ctl / R1 (the multinomial draws of their FKD stay on the global RNG)")
@@ -72,7 +74,7 @@ def main():
 
     out = Path(args.out)
     records = json.loads(out.read_text())["runs"] if out.exists() else []
-    sampler = ("authors_free" if args.no_smc else f"authors_{args.config}") + ("_g" if args.generator else "")
+    sampler = ("authors_free" if args.no_smc else f"authors_{args.config}") + ("_g" if args.generator else "") + args.tag
     faits = {(r["prompt_id"], r["sampler"], r["seed"]) for r in records}
 
     pipe = FKDStableDiffusion.from_pretrained(REPO, torch_dtype=torch.float16, variant="fp16",
@@ -85,7 +87,8 @@ def main():
     rewards.REWARDS_DICT["ImageReward"] = rewards_plat.REWARDS_DICT["ImageReward"] = rm_load(
         "ImageReward-v1.0", device="cuda", download_root=args.ir_cache)
     metrics = ["ImageReward"] + (["HumanPreference"] if args.hps else [])
-    versions = {"diffusers": diffusers.__version__, "torch": torch.__version__, "fkd_commit": "9413005"}
+    versions = {"diffusers": diffusers.__version__, "torch": torch.__version__, "fkd_commit": subprocess.run(["git", "-C", str(FKD), "rev-parse", "--short=7", "HEAD"],
+                                            capture_output=True, text=True).stdout.strip()}
 
     for i, item in enumerate(prompts):
         pid, prompt = item["id"], item["prompt"]
