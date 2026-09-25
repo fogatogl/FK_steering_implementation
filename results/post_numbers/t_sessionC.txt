@@ -8,6 +8,7 @@ T. Session C: ctl, lam0 and floor2 on 100 prompts in one process (out/probe_C.js
    floor2: 3.03 roots (predicted 2.8-3.1), 4% on one root (predicted 5-10 %), div_pix 0.300; ctl: 1.07 roots, 93%
    floor2 - bon4 ir_max +0.018 +/- 0.012 (n=100); ctl - bon4 +0.030 +/- 0.037 (n=100)   (bon4 = the 20/09 file, same machine)
    against the best of the four free draws of the same process (lam0): floor2 +0.009 +/- 0.012 (n=100), ctl +0.021 +/- 0.038 (n=100)
+   floor2 never resamples and returns lam0's four images in 17/100 prompts; 17 of its 35 four-root runs are these
    one root, 95 % Wilson interval: ctl 93/100 = 93% [86%, 97%], floor2 4/100 = 4% [2%, 10%]
 
 2. finding 3 recomputed: Kendall tau between ctl's r_phi(t=80) and the free ir (lam0) of the same root: +0.137 +/- 0.050 (predicted < 0.15); top-1 35% against 25 % by chance, n=100

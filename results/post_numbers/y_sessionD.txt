@@ -22,6 +22,7 @@ Y. Session D (NVIDIA A2, 23/09 evening): which machine group, and what it measur
    ctl D - ctl C, same x_T, two machines: +0.026 +/- 0.058 (n=100), same roots kept in 30%
    same roots kept across the two machines, 95 % Wilson interval: 30/100 = 30% [22%, 40%]
    floor2 - best-of-4 (lam0's best slot, same x_T, same process): +0.000 +/- 0.018 (n=100)
+   floor2 never resamples and returns lam0's four images in 20/100 prompts; 20 of its 34 four-root runs are these
    one root, 95 % Wilson interval: ctl 96/100 = 96% [90%, 98%], floor2 4/100 = 4% [2%, 10%]
 
 2. thumbnails: t = 80 is before any resampling, so ctl, lam0 and floor2 share it

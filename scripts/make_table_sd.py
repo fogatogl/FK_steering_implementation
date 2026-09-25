@@ -127,6 +127,18 @@ def main():
         q = sorted(set(mean4["fk4"]) & set(mean4["bon4"]))
         d = np.array([mean4["fk4"][c] - mean4["bon4"][c] for c in q])
         print(f"mean of the four, fk4 - bon4 paired: {d.mean():+.3f} +/- {d.std(ddof=1) / len(d) ** .5:.3f} ({len(d)} prompts)")
+    # HPS as the released evaluation reads it (fks_utils.do_eval): the best HPS of the k images, not
+    # the HPS of the image ImageReward picks; per prompt, seeds averaged first
+    for x in xs:
+        g = {}
+        for r in runs:
+            if r["sampler"] == x:
+                g.setdefault(r["prompt_id"], []).append(max(r["hps"]))
+        v = np.array([np.mean(h) for h in g.values()])
+        ref = paper.get(x)
+        spread = sigma_seeds([dict(r, hps_max=max(r["hps"])) for r in runs if r["sampler"] == x], "hps_max")
+        print(f"{x}: HPS best of k {v.mean():.4f} +/- {v.std(ddof=1) / len(v) ** .5:.4f} (standard error, {len(v)} prompts),"
+              f" seed spread {spread:.4f}" + (f", paper {ref[1]:.3f}, diff {v.mean() - ref[1]:+.4f}" if ref else ""))
     if args.out:
         Path(args.out).write_text(text)
         print(args.out)

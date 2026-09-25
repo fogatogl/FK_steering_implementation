@@ -25,7 +25,8 @@
     "010525-0074",
     "007171-0104"
   ],
-  "F5": "010525-0074",
+  "F5": "004971-0071",
+  "F5_first_rule": "010525-0074",
   "W1": [
     "001227-0027",
     "010361-0095",
@@ -61,7 +62,8 @@
       "g_free": 3.222,
       "g_bo4": 0.0283,
       "roots_ctl": 1,
-      "roots_floor2": 2
+      "roots_floor2": 2,
+      "rise_floor2": 1.0393
     },
     "010361-0095": {
       "cat": "figure",
@@ -71,7 +73,8 @@
       "g_free": 1.8102,
       "g_bo4": 0.2402,
       "roots_ctl": 1,
-      "roots_floor2": 2
+      "roots_floor2": 2,
+      "rise_floor2": 1.0287
     },
     "010525-0074": {
       "cat": "animal",
@@ -81,7 +84,8 @@
       "g_free": 1.5894,
       "g_bo4": 0.2911,
       "roots_ctl": 1,
-      "roots_floor2": 4
+      "roots_floor2": 4,
+      "rise_floor2": -0.0021
     },
     "000304-0153": {
       "cat": "animal",
@@ -91,7 +95,8 @@
       "g_free": 1.4102,
       "g_bo4": 0.2868,
       "roots_ctl": 1,
-      "roots_floor2": 3
+      "roots_floor2": 3,
+      "rise_floor2": 0.1491
     },
     "007171-0104": {
       "cat": "food",
@@ -101,7 +106,8 @@
       "g_free": 1.3141,
       "g_bo4": 0.7267,
       "roots_ctl": 1,
-      "roots_floor2": 4
+      "roots_floor2": 4,
+      "rise_floor2": 0.0
     },
     "008265-0060": {
       "cat": "object",
@@ -111,7 +117,8 @@
       "g_free": 1.2963,
       "g_bo4": 1.2661,
       "roots_ctl": 1,
-      "roots_floor2": 4
+      "roots_floor2": 4,
+      "rise_floor2": 0.0
     },
     "007187-0044": {
       "cat": "scene",
@@ -121,7 +128,8 @@
       "g_free": 1.235,
       "g_bo4": 0.3084,
       "roots_ctl": 1,
-      "roots_floor2": 2
+      "roots_floor2": 2,
+      "rise_floor2": 0.8171
     },
     "007654-0033": {
       "cat": "object",
@@ -131,7 +139,8 @@
       "g_free": 1.2134,
       "g_bo4": 0.6576,
       "roots_ctl": 1,
-      "roots_floor2": 4
+      "roots_floor2": 4,
+      "rise_floor2": 0.2481
     },
     "008614-0134": {
       "cat": "animal",
@@ -141,7 +150,8 @@
       "g_free": 0.5694,
       "g_bo4": -0.028,
       "roots_ctl": 1,
-      "roots_floor2": 3
+      "roots_floor2": 3,
+      "rise_floor2": 0.1325
     },
     "009606-0136": {
       "cat": "object",
@@ -151,7 +161,8 @@
       "g_free": 0.2789,
       "g_bo4": -0.1764,
       "roots_ctl": 1,
-      "roots_floor2": 1
+      "roots_floor2": 1,
+      "rise_floor2": 0.7895
     },
     "002870-0080": {
       "cat": "scene",
@@ -161,7 +172,19 @@
       "g_free": -0.6828,
       "g_bo4": -0.815,
       "roots_ctl": 1,
-      "roots_floor2": 3
+      "roots_floor2": 3,
+      "rise_floor2": -0.1844
+    },
+    "004971-0071": {
+      "cat": "vehicle",
+      "free": 0.3442,
+      "bo4": 1.7549,
+      "fk": 1.4413,
+      "g_free": 1.0971,
+      "g_bo4": -0.3136,
+      "roots_ctl": 1,
+      "roots_floor2": 4,
+      "rise_floor2": 0.4345
     }
   }
 }

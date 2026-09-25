@@ -100,6 +100,11 @@ both = sorted(set(D.get("floor2", {})) & set(D.get("lam0", {})))
 if both:
     print(f"   floor2 - best-of-4 (lam0's best slot, same x_T, same process): "
           f"{se([D['floor2'][p]['ir_max'] - D['lam0'][p]['ir_max'] for p in both])}")
+    same = [p for p in both if D['floor2'][p]['n_resamplings'] == 0
+            and np.allclose(D['floor2'][p]['ir'], D['lam0'][p]['ir'], atol=1e-4)]
+    four = [p for p in both if D['floor2'][p]['n_lineages'] == 4]
+    print(f"   floor2 never resamples and returns lam0's four images in {len(same)}/{len(both)} prompts;"
+          f" {len(set(same) & set(four))} of its {len(four)} four-root runs are these")
 if "ctl" in D and "floor2" in D:
     print(f"   one root, 95 % Wilson interval: ctl {wilson(sum(r['n_lineages'] == 1 for r in D['ctl'].values()), len(D['ctl']))},"
           f" floor2 {wilson(sum(r['n_lineages'] == 1 for r in D['floor2'].values()), len(D['floor2']))}")

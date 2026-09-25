@@ -97,6 +97,18 @@ the eight gains differ from the pre-amendment selection read on session C, as th
 predicted for a change of machine. `funny peanut butter` is not selected and appears in the
 appendix under its hand-picked label.
 
+## Amendment, 25/09/2026 (F5 only, written after the images were seen)
+
+On the first rule's F5 prompt (`010525-0074`, the retriever) the free sampler's row and
+floor + lambda = 2's are nearly the same four images: the weights stay nearly flat at every
+step (ESS 3.8 to 4.0 of 4), so the variant barely moves its four images, and the figure shows the collapse of FK but
+not what keeping the lineages does. F5 is therefore chosen by a second rule, stated here after
+the images were seen and applied to the records alone: among the 46 complete eligible prompts
+where `ctl` ends on one root and `floor2` keeps four, the one where `floor2`'s mean ImageReward
+rises most above `lam0`'s. It returns `004971-0071` ("a sports car, motion blur"), at +0.43.
+The first rule's choice stays in `data/visual_selection.json` as `F5_first_rule`. F1, W1 and W2
+are unchanged. The post says, in A.3, that F5 was chosen after the data.
+
 ## Running it
 
     python scripts/select_visual_prompts.py collapse_lab/out/session_D/probe_D.json

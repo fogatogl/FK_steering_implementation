@@ -72,6 +72,10 @@ if com:
     own = sorted(set(com) & set(lam0))
     print(f"   against the best of the four free draws of the same process (lam0): floor2 {se([fl2[p]['ir_max'] - lam0[p]['ir_max'] for p in own])},"
           f" ctl {se([ctl[p]['ir_max'] - lam0[p]['ir_max'] for p in own])}")
+    same = [p for p in own if fl2[p]["n_resamplings"] == 0 and np.allclose(fl2[p]["ir"], lam0[p]["ir"], atol=1e-4)]
+    four = [p for p in own if fl2[p]["n_lineages"] == 4]
+    print(f"   floor2 never resamples and returns lam0's four images in {len(same)}/{len(own)} prompts;"
+          f" {len(set(same) & set(four))} of its {len(four)} four-root runs are these")
     print(f"   one root, 95 % Wilson interval: ctl {wilson(sum(ctl[p]['n_lineages'] == 1 for p in com), len(com))},"
           f" floor2 {wilson(sum(fl2[p]['n_lineages'] == 1 for p in com), len(com))}")
 

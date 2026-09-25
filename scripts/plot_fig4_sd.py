@@ -1,6 +1,7 @@
 """F3: best-of-4 lands on the paper's ImageReward and FK at k = 4 sits under it, while HPS v2.1, the judge, barely moves for any sampler.
 
-Left panel ImageReward, right panel HPS v2.1, one bar per sampler (one sample, best-of-4,
+Left panel ImageReward of the best image, right panel the best HPS v2.1 of the k images (the
+statistic the released evaluation, fks_utils.do_eval, reports), one bar per sampler (one sample, best-of-4,
 FK at the paper setting) read from results/sd_baseline.json rows k1, bon4, fk4. Each bar is
 the mean over the 100 prompts of the prompt's value averaged over its three seeds first, the
 error bar the standard error over those 100 prompt means (seeds of one prompt are not
@@ -35,7 +36,7 @@ def per_prompt(raw):
     for r in raw:
         groups.setdefault((r["sampler"], r["prompt_id"]), []).append(r)
     return [{"sampler": s, "ir_max": np.mean([x["ir_max"] for x in g]),
-             "hps_at_ir_max": np.mean([x["hps_at_ir_max"] for x in g])}
+             "hps_max": np.mean([max(x["hps"]) for x in g])}
             for (s, _), g in groups.items()]
 
 
@@ -61,18 +62,18 @@ def main():
 
     runs = per_prompt(load_runs(args.json))
     xs, ir, ir_sd, cnt = aggregate(runs, "sampler", "ir_max")
-    _, hps, hps_sd, _ = aggregate(runs, "sampler", "hps_at_ir_max")
+    _, hps, hps_sd, _ = aggregate(runs, "sampler", "hps_max")
     idx = [list(xs).index(s) for s in SAMPLERS]
     ir, ir_sd, hps, hps_sd, cnt = (v[idx] for v in (ir, ir_sd, hps, hps_sd, cnt))
     sem = np.sqrt(cnt)
 
     paper = {r["sampler"]: r for r in json.loads(Path(args.paper).read_text())["rows"]}
     paper_ir = [paper[s]["ir_max"] for s in SAMPLERS]
-    paper_hps = [paper[s]["hps_at_ir_max"] for s in SAMPLERS]
+    paper_hps = [paper[s]["hps_at_ir_max"] for s in SAMPLERS]   # the paper's HPS column, whatever the key says
 
     fig, axes = figstyle.figure(3.4, ncols=2)
-    panel(axes[0], ir, ir_sd / sem, paper_ir, "ImageReward of the picked particle")
-    panel(axes[1], hps, hps_sd / sem, paper_hps, "HPS v2.1 of the picked particle")
+    panel(axes[0], ir, ir_sd / sem, paper_ir, "ImageReward, best of the k images")
+    panel(axes[1], hps, hps_sd / sem, paper_hps, "HPS v2.1, best of the k images")
 
     Path(args.out).parent.mkdir(exist_ok=True)
     png, svg = figstyle.save(fig, args.out)

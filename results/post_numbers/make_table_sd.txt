@@ -16,3 +16,6 @@ fk4 - bon4 at seed 2026: +0.068 +/- 0.050 (100 prompts)
 At equal wall clock FK buys best-of-4.45 (62.48 s against 56.15 s per run).
 On medians: 62.5 s against 54.7 s per run, best-of-4.57 (11 of the bon4 runs took over 75 s).
 mean of the four, fk4 - bon4 paired: +0.481 +/- 0.030 (100 prompts)
+bon4: HPS best of k 0.2662 +/- 0.0031 (standard error, 100 prompts), seed spread 0.0020, paper 0.265, diff +0.0012
+fk4: HPS best of k 0.2649 +/- 0.0031 (standard error, 100 prompts), seed spread 0.0010, paper 0.263, diff +0.0019
+k1: HPS best of k 0.2453 +/- 0.0032 (standard error, 100 prompts), seed spread 0.0036, paper 0.245, diff +0.0003
