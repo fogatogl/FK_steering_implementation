@@ -3,7 +3,8 @@
 Written 22/09 before the reference night, from the paper source
 (`.claude/arXiv-2501.06848v5.tar.gz`, v5) and the released repository
 (`zacharyhorvitz/Fk-Diffusion-Steering`, commit 9413005 of 2025-06-25, read in
-`/home/onyxia/work/fkd_ref/`, not copied into this repository). Each cell names its source.
+`/home/onyxia/work/fkd_ref/`, not copied into this repository). Each cell names its source; the line numbers of the released code
+were rechecked at 9413005 on 25/09.
 "This repo" is `smc/fk.py` as run by `scripts/run_sd_baseline.py --samplers fk4` and by
 `collapse_lab/probe.py --arms ctl`.
 
@@ -24,19 +25,19 @@ which is `ir_max`. Its k = 1 and BoN rows sit 0.05 and 0.02 under this repo's, i
 
 | item | paper (text) | released code (defaults, or the flags `launch.sh` uses) | this repo |
 |---|---|---|---|
-| model | SD v1.4, v1.5, v2.1, SDXL (`experiments_new.tex:76-97`) | `runwayml/stable-diffusion-v1-5`, fp16, no `variant` (`launch_eval_runs.py:84-86, 306`) | `stable-diffusion-v1-5/stable-diffusion-v1-5`, fp16 variant |
-| sampler | DDIM, eta = 1, T = 100, CFG 7.5 (`experiments_new.tex:34`) | `DDIMScheduler.from_config`, `--eta 1.0`, `--num_inference_steps 100`, pipeline default `guidance_scale=7.5` (`launch_eval_runs.py:91, 264-265`; `fkd_pipeline_sd.py:225`) | same |
-| reward | ImageReward on the denoised state `x0_hat` (`experiments_new.tex:32`) | `step_dict["pred_original_sample"]`, decoded by **the pipeline's own VAE**, then ImageReward-v1.0 `score_batched` (`fkd_pipeline_sd.py:543-551, 466-479`; `rewards.py:do_image_reward`) | `predict_x0` (Tweedie, same formula), decoded by **`stabilityai/sd-vae-ft-mse`** (decision 6, `docs/protocol_sd.md`) |
-| lambda, k | 10, 4 (`experiments_new.tex:35`) | `--lmbda 10.0`, `--num_particles` forced by `--model_idx % 4` (`launch_eval_runs.py:281-292`) | 10, 4 |
-| schedule | `[0, 20, 40, 60, 80]`, "t = 0 is the terminal step" (`experiments_new.tex:35`) | loop indices `arange(t_start, t_end + 1, freq)` plus `time_steps - 1`; **defaults 5-30-5** = {5, 10, ..., 30, 99} (`fkd_class.py:109-113`; `launch_eval_runs.py:275-277`); `launch.sh` uses 20-80-20 = {20, 40, 60, 80, 99} | indices {19, 39, 59, 79, 99} (`t` -> `99 - t`), i.e. the paper's schedule one index earlier than `launch.sh` |
-| potential | `G_t = exp(lambda max_{s >= t} r_phi(x_s))` (`experiments_new.tex:35`) | **default `diff`**; `launch.sh` uses `max` (`launch_eval_runs.py:278`) | `max` |
-| max potential, weight | the statistic itself | `w = exp(lambda * max(r_t, population_rs))`, `population_rs` initialised at **`reward_min_value = 0.0`** and carried through resampling (`fkd_class.py:80-82, 119-121`) | increment form `exp(lambda (M_t - M_{t-1}))` with `M` initialised at -inf; `potential_form="statistic"` exists as a flag; no floor |
-| terminal step | `G_0` closes the product (`method.tex`) | `w = exp(lambda r_0) / product_of_potentials`, then **adaptive resampling at the last step if ESS < k/2** (`fkd_class.py:135-139, 145-163`): the four returned images can be duplicates | `logG_last = lambda r_0 - acc` under the statistic form; `resample_last=False`: the returned images are never resampled |
-| resampler | multinomial at every step (Algorithm 1, `method.tex:75`) | `torch.multinomial(w, k, replacement=True)`, at **every** scheduled step when `adaptive_resampling` is off, uniform weights included (`fkd_class.py:143, 168-172`) | systematic comb, only if ESS < k (strict), so never at exactly uniform weights (`smc/resampling.py`, `smc/weights.py`) |
-| adaptive resampling | appendix C.3 sketches it | off by default; on: resample only if ESS < k/2 (`fkd_class.py:143-147`) | `--fk-threshold`, default 1.0 |
+| model | SD v1.4, v1.5, v2.1, SDXL (`experiments_new.tex:76-97`) | `runwayml/stable-diffusion-v1-5`, fp16, no `variant` (`launch_eval_runs.py:86, 303`) | `stable-diffusion-v1-5/stable-diffusion-v1-5`, fp16 variant |
+| sampler | DDIM, eta = 1, T = 100, CFG 7.5 (`experiments_new.tex:34`) | `DDIMScheduler.from_config`, `--eta 1.0`, `--num_inference_steps 100`, pipeline default `guidance_scale=7.5` (`launch_eval_runs.py:100, 254-256`; `fkd_pipeline_sd.py:225`) | same |
+| reward | ImageReward on the denoised state `x0_hat` (`experiments_new.tex:32`) | `step_dict["pred_original_sample"]`, decoded by **the pipeline's own VAE**, then ImageReward-v1.0 `score_batched` (`fkd_pipeline_sd.py:539-545, 484, 607-647`; `rewards.py:do_image_reward`) | `predict_x0` (Tweedie, same formula), decoded by **`stabilityai/sd-vae-ft-mse`** (decision 6, `docs/protocol_sd.md`) |
+| lambda, k | 10, 4 (`experiments_new.tex:35`) | `--lmbda 10.0`, `--num_particles` forced by `--model_idx % 4` (`launch_eval_runs.py:284-294`) | 10, 4 |
+| schedule | `[0, 20, 40, 60, 80]`, "t = 0 is the terminal step" (`experiments_new.tex:35`) | loop indices `arange(t_start, t_end + 1, freq)` plus `time_steps - 1`; **defaults 5-30-5** = {5, 10, ..., 30, 99} (`fkd_class.py:98-101`; `launch_eval_runs.py:273-275`); `launch.sh` uses 20-80-20 = {20, 40, 60, 80, 99} | indices {19, 39, 59, 79, 99} (`t` -> `99 - t`), i.e. the paper's schedule one index earlier than `launch.sh` |
+| potential | `G_t = exp(lambda max_{s >= t} r_phi(x_s))` (`experiments_new.tex:35`) | **default `diff`**; `launch.sh` uses `max` (`launch_eval_runs.py:276`) | `max` |
+| max potential, weight | the statistic itself | `rs = max(r_t, population_rs)`, `w = exp(lambda * rs)`, `population_rs` initialised at **`reward_min_value = 0.0`** and set to the resampled `rs`, the floored running maximum (`fkd_class.py:77-79, 111-113, 148, 168`); before commit `699c929` (15/06/2025, "address max potential bug") it carried the raw current reward | increment form `exp(lambda (M_t - M_{t-1}))` with `M` initialised at -inf; `potential_form="statistic"` exists as a flag; no floor |
+| terminal step | `G_0` closes the product (`method.tex`) | `w = exp(lambda rs) / product_of_potentials` with `rs` the floored running maximum at 9413005 (`r_0` itself before `699c929`), then **adaptive resampling at the last step if ESS < k/2** (`fkd_class.py:125-131, 136-163`): the four returned images can be duplicates | `logG_last = lambda r_0 - acc` under the statistic form; `resample_last=False`: the returned images are never resampled |
+| resampler | multinomial at every step (Algorithm 1, `method.tex:75`) | `torch.multinomial(w, k, replacement=True)`, at **every** scheduled step when `adaptive_resampling` is off, uniform weights included (`fkd_class.py:144, 165`) | systematic comb, only if ESS < k (strict), so never at exactly uniform weights (`smc/resampling.py`, `smc/weights.py`) |
+| adaptive resampling | appendix C.3 sketches it | off by default; on: resample only if ESS < k/2 (`fkd_class.py:136-146`) | `--fk-threshold`, default 1.0 |
 | prompts | ImageReward benchmark prompts (`experiments_new.tex:104`) | `prompt_files/benchmark_ir.json`, 100 prompts | `data/imagereward-benchmark-prompts.json`: **byte-identical ids, order and text** |
-| seeds | not stated | `torch.manual_seed(seed)` once per pass, seeds 42, 43, 44, no `generator` (`launch_eval_runs.py:60-62, 336`) | `seed_effective = seed * 1000 + i` per prompt, generator passed |
-| what is scored | best particle | `do_eval` on the four final images, IR and HPS v2.1, per-prompt `max`/`mean`, averaged over prompts (`fks_utils.py:do_eval`; `launch_eval_runs.py:200-215`) | `ir_max`, `ir` per slot, HPS at `ir_max` |
+| seeds | not stated | `torch.manual_seed(seed)` once per pass, seeds 42, 43, 44, no `generator` (`launch_eval_runs.py:50-52, 335`) | `seed_effective = seed * 1000 + i` per prompt, generator passed |
+| what is scored | best particle | `do_eval` on the four final images: the maximum and the mean over the four of each metric, HPS included, independently of ImageReward, averaged over prompts (`fks_utils.py:40-103`; `launch_eval_runs.py:176-215`) | `ir_max`, `ir` per slot, HPS at `ir_max` |
 | time | 8.1 s for FK k = 4 on SD v1.5 (`experiments_new.tex:134`) | not measured on this service | 62.5 s per run on the faster card (model not recorded; about 88 s on the A2) |
 
 ## What this settles before any run
