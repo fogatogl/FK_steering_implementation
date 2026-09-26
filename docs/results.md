@@ -908,5 +908,8 @@ reads not closed (+0.12 needed).
 **What it changed.** On the benchmark and on the noises it shares with best-of-4, the released code as
 it is today gains nothing over best-of-4 and agrees with this repository's filter; its version from
 before the fix gains +0.077, about as much as this repository's FK, and still sits 0.08 under the
-paper's +0.161. The fix accounts for part of the distance between the released code and Table 1, not
-for the gap.
+paper's +0.161. Amended 26/09 (eighth cold review): one run of each version does not say how much of
+that distance the fix accounts for. On the first 40 prompts the released code's four run means (0.497,
+0.949, 0.807, 0.720) spread by 0.19 where the spread within a prompt predicts 0.07 for exchangeable
+runs (`collapse_lab/ref/parse_authors.py`), so every +/- on a released-code run in this block is the
+spread within that run.
