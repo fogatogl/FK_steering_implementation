@@ -1,7 +1,8 @@
 # Four particles, one image: reproducing FK Steering on Stable Diffusion, and what its gain over best-of-N buys
 
-*Draft, pass 22 (26/09). Every number of the main text is printed by a script that
-`scripts/post_numbers.py` runs, or stands in a dated block of `docs/results.md`.
+*Draft, pass 22 (26/09). Every number measured here is printed by a script that
+`scripts/post_numbers.py` runs, or stands in a dated block of `docs/results.md`; the paper's come
+from its source.
 Citations are `[@key]` and resolve in `docs/post/four-particles-one-image.bib`.*
 
 ## Context of the project
@@ -17,11 +18,11 @@ collapse; an AI assistant wrote the launch and figure scripts and the documentat
 FK Steering beats best-of-4 on Stable Diffusion v1.5 by less than the paper reports: +0.062 ± 0.026
 ImageReward on 100 paired prompts against +0.161, while best-of-4 lands on the paper's value. At the
 paper's setting the four images of a run descend from one initial noise in 93 to 96 runs of 100.
-Resampling weighs rewards read on a blurred image, and each pass removes lineages. A weaker weight
-on the reward, floored at zero, keeps three lineages of four: the best image returns to best-of-4's
-level, and the mean of the four falls 0.250 below FK's. Run here once per version under the paper's
-configuration, the authors' released code is level with best-of-4 and with this repository's FK, and
-gains +0.077 before a later fix: neither code reproduces Table 1's FK gain.
+Resampling weighs rewards read on a blurred image, and each pass drops some of the four noises.
+Weighting the reward less and ignoring negative rewards keeps three noises of four: the best image
+returns to best-of-4's level, and the mean of the four falls 0.250 below FK's. The authors' released
+code, run here under the paper's configuration, does not settle the gap: four runs of its current
+version never beat best-of-4, and one run of its version from before a later fix gains +0.077.
 
 ## 1. What inference-time steering does to an image
 
@@ -30,7 +31,7 @@ denoises all four and keeps the one scored highest by ImageReward [@xu2023imager
 human-preference score that runs from about -2 to +2 on these prompts (A.1). FK Steering denoises the four together and, up to four times on the way down, copies the promising
 ones over the others.
 
-![F1. A free sample, best-of-4 and the best of FK's four particles, from the same four initial noises, with ImageReward and HPS v2.1 under each image; three prompts picked by a rule fixed before the session it reads (A.3).](../figures/f1_hero_grid.png)
+![F1. A free sample, best-of-4 and the best of FK's four particles, from the same four initial noises, with ImageReward and HPS v2.1 under each image; three of the gains a rule fixed before the session selects, one category chosen by eye (A.3), labels shortened.](../figures/f1_hero_grid.png)
 
 The three prompts are the best gains over the free sample in three categories of 46 eligible prompts
 (A.3), so they show what FK can do: over the 46, in the run the images come from, FK's median margin over
@@ -56,8 +57,8 @@ particles target something other than $\pi$. The paper gives three potentials th
 constraint. I use MAX, which weights a particle by the best reward its lineage has reached,
 $G_t = \exp(\lambda\, \max_{s \ge t} r(\hat x_0(x_s)))$. The paper weights each scheduled step by $G_t$
 itself; I weight it by the ratio of $G_t$ to its value at the previous step, and set the last step's weight so that
-the product along a lineage is $e^{\lambda r(x_0)}$. Both target $\pi$; on a 20-prompt screen the paper's
-form reads 0.015 ± 0.009 above mine on the best image.
+the product along a lineage is $e^{\lambda r(x_0)}$. Both target $\pi$; on 20 prompts the paper's form
+reads 0.015 ± 0.009 above mine on the best image.
 
 A **lineage**, or root, is the initial noise $x_T$ a final image descends from, found by walking the
 ancestor indices backwards [@jacob2015path]. Four particles start from four roots, and each resampling
@@ -75,7 +76,8 @@ resampler on the recorded weights checks the count and forecast one variant.
 
 ## 3. The reproduction
 
-A comparison is a test when A.5 lists a prediction for it, and a screen otherwise. I reproduce the
+A comparison is a test when A.5 lists a prediction with a tolerance for it, and a screen otherwise.
+I reproduce the
 ImageReward and HPS columns of Table 1 on Stable Diffusion v1.5 [@rombach2022ldm], not its GenEval
 column: DDIM [@song2021ddim] with
 $\eta = 1$, 100 steps, guidance 7.5, 512 px, the 100 prompts of the ImageReward benchmark, $\lambda = 10$,
@@ -84,9 +86,7 @@ MAX as increments (section 2), and a systematic resampler (A.1) that runs only w
 unequal, where Algorithm 1 draws a multinomial at every step (section 7). Three seeds per prompt, 300
 runs per row; an FK run and the best-of-4 run of the same prompt and seed share their four initial
 noises. HPS v2.1 [@wu2023hpsv2], a second preference model that nothing optimises, is read on the
-best of the $k$ images, as the released evaluation and the paper's appendix rows for best-of-4 read
-it; at the image ImageReward picks, which the paper's "highest reward particle" also allows,
-best-of-4 and FK read 0.258 and 0.259 (seed spread 0.001, A.4).
+best of the $k$ images, as the released evaluation reads it (the other reading in A.4).
 
 These 900 runs used an NVIDIA T4, inferred from their run times and from session C (A.2); the project
 also ran on an A2, and runs pair slot by slot only within one machine (section 9).
@@ -98,25 +98,27 @@ also ran on an A2, and runs pair slot by slot only within one machine (section 9
 | FK, $k = 4$ | 0.820 ± 0.069 | 0.265 ± 0.003 | 0.687 | 0.898 / 0.263 |
 
 Intervals are standard errors over the 100 prompts, the seeds of a prompt averaged first. Against the
-paper's values, from the same prompts, the spread that matters is that of a 100-prompt mean across
-the three seeds, a rough scale: 0.013 for one sample, 0.038 for best-of-4 and 0.031 for FK.
-Best-of-4 lands on the paper (+0.021), one sample sits 0.050 above, about four of its seed spreads,
-and FK 0.078 under; on HPS, read as the best of $k$, the three rows land within 0.002 of the paper. The main comparison, the paper's own, set before the runs without
-a tolerance and so not a test, pairs the shared noises: FK gains +0.062 ± 0.026 over best-of-4, 69
-prompts of 100 won, bootstrap interval [+0.009, +0.110]. The three seeds
-read +0.030 ± 0.037, +0.089 ± 0.034 and +0.068 ± 0.050 on their own.
+paper's values, which come from the same prompts, what matters is how far a 100-prompt mean moves from
+one seed to another, roughly 0.013 for one sample, 0.038 for best-of-4 and 0.031 for FK. On that
+scale best-of-4 lands on the paper (+0.021), one sample sits 0.050 above and FK 0.078 under; HPS, read
+as the best of $k$, lands within 0.002 on all three rows.
+
+The paper's own comparison pairs the shared noises: FK gains +0.062 ± 0.026 over best-of-4, 69
+prompts of 100 won, bootstrap interval [+0.009, +0.110]. It was set before the runs without a
+tolerance, so it is not a test.
 
 | FK − best-of-4, ImageReward | | runs |
 |---|---|---|
-| paper, Table 1 | +0.161 | command and seeds not published |
-| this repository | +0.062 ± 0.026 | 3 seeds |
-| released code, run here | 0.000 ± 0.041 | one run, seed 2024 |
+| paper, Table 1 | +0.161 | which command and seeds, not stated |
+| this repository | +0.062 ± 0.026 | 100 prompts, 3 seeds |
+| released code, run here | -0.216 to 0.000 | four runs, two seeds, two seedings (A.4) |
 | released code before its 2025 fix | +0.077 ± 0.039 | one run, seed 2024 |
 
-Best-of-4, which the steering does not touch, lands on the paper; the FK gain is reproduced by neither
-code, and on the same noises the two codes are level (section 7).
+Best-of-4, which the steering does not touch, lands on the paper, and this repository's FK does not
+reproduce the gain. The released code's runs spread by 0.19 between them (section 7), so single runs
+cannot settle its gain; its highest of five is the one before the fix.
 
-![F3. ImageReward of the best image (left) and best HPS v2.1 of the k images (right), 100 prompts times three seeds; error bars are standard errors over prompts, the dark tick the paper's value. On ImageReward best-of-4 sits on its tick, one sample above and FK under; on HPS all three sit on theirs.](../figures/f3_reproduction.png)
+![F3. ImageReward of the best image (left) and best HPS v2.1 of the k images (right), 100 prompts times three seeds, the paper's value as a dark tick. The bars are standard errors over prompts; the text compares with the paper on the spread across seeds, which is smaller and not drawn.](../figures/f3_reproduction.png)
 
 FK and best-of-4 send the same 800 sample rows per run through the UNet (A.1), but FK decodes and
 scores five times per particle and takes a median 62.5 s against 54.7 s: at equal time the baseline
@@ -143,33 +145,33 @@ chosen root and sit near their best (section 6).
 
 The effective sample size, $\mathrm{ESS} = 1 / \sum_i w_i^2$ over the $k$ normalised weights
 [@kong1994ess], equals $k$ under flat weights and 1 when one particle carries everything. On 100 runs
-of FK at the paper's setting on the T4, its median at the five scheduled steps reads 1.18,
-1.63, 2.21, 3.29 and 2.71 of 4: at the first step one particle carries most of the weight.
+of FK at the paper's setting (T4), its median is 1.18 of 4 at the first scheduled step, where one
+particle carries most of the weight, and 1.63 to 3.29 at the next four.
 
 At the first scheduled step the weight of a particle is $e^{\lambda r}$ up to a factor shared by the
 four, so only the spread of their rewards matters. At
 $t = 80$ the four guide rewards of a run span 0.905 on average (median 0.777). At $\lambda = 10$ the mean
 is 9 nats between the largest and the smallest weight, on a reward read before the image has formed.
 
-That first resampling already leaves 1.80 roots on the T4 and 1.68 on the A2 (n = 100 each), with 46
-and 53 runs on one. A second degeneracy, of the paths, does the rest: each resampling copies
+That first resampling already leaves 1.80 roots on average, 46 runs of 100 on one (T4; the A2 in
+A.2). A second degeneracy, of the paths, does the rest: each resampling copies
 some particles over others, and after a few passes every survivor descends from one ancestor, as long
 as the weights are unequal when it resamples. Adaptive $\lambda$, which bisects $\lambda \le 10$ at
 every step before the last to keep the ESS at 2 of 4 or above (adaptive tempering
 [@chopin2020smc]), still ends on 1.40 roots, 60 % of its
-runs ([45, 74] %) on one (n = 40; a test, missed, A.5).
+runs ([45, 74] %) on one (n = 40), under the 1.5 to 2 predicted (A.5).
 
 Given the log-weights a run recorded, the expected number of roots it ends on follows from the
 resampler alone [@jacob2015path], averaged over the one
 uniform draw that shifts the systematic resampler's comb (A.1). With a correct resampler and correct
-ancestry records the two must agree, and on the eighteen steered arms I recorded (fourteen variants,
-FK among them, and four 100-prompt reruns) they do within 0.09, fourteen of them within 0.05. This
-checks the bookkeeping, conditional on the recorded weights.
+ancestry records the two should agree, up to the later weights, which the replay holds fixed; on the
+eighteen steered arms I recorded (fourteen variants, FK among them, and four 100-prompt reruns) they
+agree within 0.09, fourteen of them within 0.05. This checks the bookkeeping.
 
 The replay also forecast one variant before it ran (a test). From the weights of a variant that floors
 the reward at 0 (section 6), resampling only under ESS $< k/2$ [@chopin2020smc] would end on 1.84
-roots, 61 % single-root and 1.12 resamplings; the run returned 2.00 ± 0.22, 62 % ([47, 76] %) and 0.97
-(n = 40), 0.7 standard errors from the forecast. A miss would have meant that changing when the filter
+roots; the run returned 2.00 ± 0.22 (n = 40), 0.7 standard errors off, and its single-root share and
+resampling count came out as forecast (A.5). A miss would have meant that changing when the filter
 resamples moves the later weights too far for the replay, which keeps them fixed.
 
 ![F6. Mean final roots replayed from the recorded weights and the resampler (x) against observed (y), one point per arm (the free sampler at 4, 4), a square per 100-prompt rerun, standard errors over prompts. The points sit on the diagonal.](../figures/f6_coalescence.png)
@@ -198,16 +200,14 @@ sampler's four images: half of its four-root runs are these.
 
 On the best image, in screens of 20 to 40 prompts, the 95 % intervals of six of the seven variants
 that change the weights (the eighth only drops the step at $t = 80$) cover zero; adaptive $\lambda$
-loses 0.099 ± 0.044. Three move it by more than one standard error, adaptive $\lambda$, its floored
-version and the floor, so the prediction that none would missed (A.5).
+loses 0.099 ± 0.044. Three move it by more than one standard error (adaptive $\lambda$, its floored
+version and the floor): the prediction that none would do so missed (A.5).
 
-Rerun on 100 prompts per machine, the floor with $\lambda = 2$ lands on the
-best image that best-of-4 draws in the same process, +0.009 ± 0.012 on the T4 and +0.000 ±
-0.018 on the A2, where FK reads
-+0.021 ± 0.038 and +0.043 ± 0.038. At that n neither FK's edge nor the price of lineages on the best
-image is resolved; against FK it reads -0.012 [-0.082, +0.060], shallower than the band [-0.14, -0.02] written before
-the run (missed). On the mean of the four the price is clear: -0.250 ± 0.045 for the floor with
-$\lambda = 2$ against FK (T4, n = 100, a screen).
+Rerun on 100 prompts on the T4, the floor with $\lambda = 2$ lands on the best image that best-of-4
+draws in the same process, +0.009 ± 0.012, where FK reads +0.021 ± 0.038 (the A2 rerun in A.2). At
+that n neither FK's edge nor the price of lineages on the best image is resolved: floor + λ = 2 reads
+-0.012 [-0.082, +0.060] against FK, shallower than the band [-0.14, -0.02] written before the run (a
+test, missed). On the mean of the four the price is clear: -0.250 ± 0.045 against FK (a screen).
 
 In the rerun on the T4 the free and FK
 runs of a prompt share a process, so slot $j$ of the free run shows what root $j$ becomes without
@@ -217,7 +217,7 @@ outcomes (n = 100):
 
 | | ImageReward |
 |---|---|
-| the best of the four roots (best-of-4 rerun beside FK; 0.770 in section 3's run) | 0.779 |
+| the best of the four roots, as best-of-4 returns it in this process (A.2) | 0.779 |
 | a root drawn at random | 0.233 |
 | the root FK keeps | 0.466 |
 | FK's best image, grown from that root | 0.799 |
@@ -235,20 +235,21 @@ which the text does not state, and the pipeline's VAE for the guide and indices 
 the text leaves room. A fix of June 2025, after the paper, changed its MAX potential (A.4). Moved
 into this repository's filter, the floor alone reads -0.091 ± 0.055 on the best image (a screen on 40
 prompts, A2, whose interval covers zero). The multinomial, the statistic form, the VAE and the indices
-each stay within one standard error, and all four with the floor read -0.040 ± 0.043 against FK (a
-test, held).
+each stay within one standard error (the statistic form's predicted -0.09 missed, A.5), and all
+four with the floor read -0.040 ± 0.043 against FK (a test, held).
 
 | seed 2024, same noises, n = 100 (A.4) | code | ImageReward | against best-of-4 | against FK |
 |---|---|---|---|---|
 | best-of-4, section 3's run | `smc/` | 0.770 | | |
 | FK | `smc/` | 0.799 | +0.030 ± 0.037 | |
-| FK with the released code's choices, final resampling aside | `smc/` | 0.759 | -0.011 ± 0.041 | -0.040 ± 0.043 |
+| FK with the released code's four choices, not its final resampling | `smc/` | 0.759 | -0.011 ± 0.041 | -0.040 ± 0.043 |
 | released code | theirs | 0.770 | 0.000 ± 0.041 | -0.030 ± 0.044 |
+| released code, seeded through a generator | theirs | 0.675 | -0.095 ± 0.046 | -0.125 ± 0.052 |
 | released code before its fix | theirs | 0.846 | +0.077 ± 0.039 | +0.047 ± 0.039 |
 
 Without its filter the released code returns best-of-4's four rewards to the fourth decimal (5
 prompts), and its filter lands +0.011 ± 0.009 from this repository's with the same choices (n = 100;
-the test on the 60 later prompts held, A.5): the two codes agree once their choices agree. Each released-code row is one run, and
+the test on the 60 later prompts held, A.5). Each released-code row is one run, and
 its ± leaves out the spread between runs: on the first 40 prompts four such runs, at two seeds and
 two seedings, spread by 0.19 where the spread within a prompt predicts 0.07 (A.4). At its launcher's
 seed, 42, which starts from other noises, the released code reads 0.554 and missed both predictions
@@ -266,8 +267,8 @@ potential produced Table 1 (A.4); their answer could close part of the gap.
 
 On CIFAR-10 (A.6), with a cat classifier as reward, a second classifier counts 11 cats in 48
 free finals and 37 at $\lambda = 4$ (three seeds pooled), as the minimum ESS falls from 16 to 1.05. On CelebA-HQ 256, with a glasses classifier as
-reward, the judge sees glasses on 2 of 48 free faces, 21 at $\lambda = 1$ and none
-at $\lambda = 2$, where one seed returns sixteen copies of one face. On SD the judge, HPS at the image
+reward, the judge sees glasses on 2 of 48 free faces, 21 at $\lambda = 1$ (0 to 14 per seed) and
+none at $\lambda = 2$, where one seed returns sixteen copies of one face (screens, A.6). On SD the judge, HPS at the image
 ImageReward selects, moves by -0.003 ± 0.002 between FK and best-of-4 (n = 100, A2, a test).
 
 ![F8. Minimum ESS over a run divided by k, against λ (symmetric-log axis): CIFAR-10 and CelebA-HQ 256 (k = 16, standard errors over three seeds) and SD v1.5 (k = 4, the 17 prompts its three runs share, A2). The dashed line, 1/k, is one particle carrying all the weight: CIFAR and CelebA reach it, SD ends at an ESS of 1.2 of 4.](../figures/f8_three_scales.png)
@@ -292,7 +293,7 @@ Nothing here covers $k = 16$ on SD, or a smaller $\lambda$ with more particles.
 The mathematics is tested as properties: along a surviving lineage the potentials multiply to
 $e^{\lambda r(x_0)}$, and at $\lambda = 0$ the system is the free model. The resamplers are tested
 against the `particles` library as an oracle. The collapse lab replays without a GPU from the
-recorded runs, and every number of the main text is printed by a script that
+recorded runs, and every number measured here is printed by a script that
 `scripts/post_numbers.py` runs, or stands in a dated block of `docs/results.md`. The later run records
 name the process and the GPU they ran on. The repository holds the
 dated predictions (A.5) and a log of every bug that cost more than twenty minutes.
@@ -396,17 +397,21 @@ accumulated weights are peaked and one pass takes almost everything.
 session-A records of FK, the free sampler and floor + λ = 2; FK's six were restored from the reference
 run without their weights, and the other two arms lost them.
 
-**Section 3's tail.** Its worst prompt over three seeds is at -1.30 against best-of-4. The mean of the
-four for its three rows (0.237, 0.207, 0.687) is printed by `scripts/make_table_sd.py`.
+**Section 3's tail.** Its worst prompt over three seeds is at -1.30 against best-of-4. Per seed, FK
+gains +0.030 ± 0.037, +0.089 ± 0.034 and +0.068 ± 0.050 over best-of-4. The mean of the four for its
+three rows (0.237, 0.207, 0.687) is printed by `scripts/make_table_sd.py`.
 
 Sessions C and D, one process each, 100 prompts:
 
 | | session C, T4 | session D, A2 |
 |---|---|---|
+| `ctl` after the first resampling: roots, single-root | 1.80, 46 % | 1.68, 53 % |
 | `ctl`: roots, single-root, `div_pix` | 1.07, 93 %, 0.109 | 1.04, 96 %, 0.094 |
 | `floor2`: roots, single-root, `div_pix` | 3.03, 4 %, 0.300 | 2.96, 4 %, 0.293 |
 | `floor2` − `ctl`, best of 4 | -0.012 [-0.082, +0.060] | -0.043 ± 0.037 |
 | `floor2` − `ctl`, mean of 4 | -0.250 ± 0.045 | -0.261 ± 0.043 |
+| `floor2` and `ctl` − best-of-4 of the same process, best of 4 | +0.009 ± 0.012, +0.021 ± 0.038 | +0.000 ± 0.018, +0.043 ± 0.038 |
+| best-of-4 of the process − section 3's best-of-4 (0.770) | +0.009 ± 0.006 (0.779) | |
 | `floor2` never resamples, the free sampler's four images | 17 prompts | 20 prompts |
 | `lam0`: roots, `div_pix` | 4, 0.355 | 4, 0.354 |
 
@@ -417,9 +422,10 @@ prompts had been read: a prompt is eligible when it names something a reader can
 named person, artist, brand or franchise, and no human portrait as its main subject
 (`data/visual_pool.json`: 46 eligible in six categories, object, animal, scene, food, vehicle, figure;
 54 excluded with a reason code). A rule fixed before session D ran (`docs/visual_selection.md`) keeps
-the eight eligible prompts where FK beats best-of-4, ranked by FK's margin over the free sample with at
-most two per category, plus the prompt closest to the median and a typical loss; F1 shows the best
-gains of three categories. The rule reads session D, the one session that saved every image
+eight eligible prompts where FK beats best-of-4, the first by FK's margin over the free sample with at
+most two per category, plus the prompt closest to the median and a typical loss. F1 shows the best
+gains of three categories: figure and animal, as the rule picks them, and scene, which I chose by eye
+on 26/09 after seeing the 46 candidates, in place of the rule's food (kept as `F1_first_rule`). The rule reads session D, the one session that saved every image
 (`data/visual_selection.json`, 46 complete eligible prompts of 46). Five of the eight gains differ
 from the selection the same rule returned on session C, on the other machine
 (`data/visual_selection_pre_amendment.json`), as predicted.
@@ -464,7 +470,7 @@ floor + λ = 2.
 | max statistic | not floored | floored at 0, carried through resampling | no floor |
 | terminal step | closes the product on $r(x_0)$ | closes it on the floored running maximum, then resamples if ESS < k/2 | closes it on $r(x_0)$, never resampled |
 | resampler | multinomial at every step (Algorithm 1) | multinomial at every scheduled step | systematic comb, only if ESS < k |
-| HPS in the table | "the highest reward particle"; the appendix's best-of-4 rows carry the best HPS of the $k$ | the best of the $k$ images (`fks_utils.do_eval`) | both, section 3 and section 8 |
+| HPS in the table | "the highest reward particle"; the appendix's best-of-4 rows carry the best HPS of the $k$ | the best of the $k$ images (`fks_utils.do_eval`) | the best of the $k$ (section 3); at the image ImageReward picks, best-of-4 0.258 and FK 0.259 against the paper's 0.265 and 0.263 (seed spread 0.001) |
 | prompts | ImageReward benchmark | `benchmark_ir.json`, 100 | byte-identical ids, order, text |
 | seeds | not stated | `manual_seed` once per pass, 42, 43, 44 | one generator per prompt |
 
@@ -526,10 +532,10 @@ committed with the first run of each arm quoted), and `collapse_lab/ASSESSMENT.m
 first screens of `adapt`, `floor`, `fadapt`, `floor2`, `lam2` and `lam0` already on disk). Outcomes
 are read against the reference of the same machine. Six lines, grouped last as checks and not counted,
 restate a quantity that records on disk already fixed when the line was written: the rewards at
-t = 80, which every arm shares on one machine, or FK's reference run. Of the other 48, 18 held (one of
-them in part unmeasured), 20 missed and 5 held in part; a two-branch prediction came out on the side of
-chance, the two gap tests left the gap open, `late` stayed unsettled, and the headline had no
-tolerance.
+t = 80, which every arm shares on one machine, or FK's reference run. Of the other 48, 17 held (one of
+them in part unmeasured), 21 missed and 5 held in part; a two-branch prediction came out on the side of
+chance, the two gap tests left the gap open, `late`'s gain over FK stayed unsettled, and the headline
+had no tolerance.
 
 **The reproduction and the judge**
 
@@ -555,7 +561,7 @@ tolerance.
 | 22/09 | `floor2` at 40 prompts: under 10 % single-root, 2.6 to 2.9 roots, best image −0.10 ± 0.06 from FK | 6 %; 2.94; −0.036 ± 0.058 (n = 34) | in part |
 | 22/09 | `lam2` at 40 prompts: 30 to 45 % single-root, 1.7 to 2.0 roots | 35 %, 1.82 | held |
 | 22/09 | `late` 1.4 to 1.8 roots, 40 to 70 % single-root | 1.00 at 20 prompts, 1.16 and 84 % at 100 | missed |
-| 22/09 | `late`'s best image within one standard error of FK | +0.041 ± 0.037 (n = 100) | held |
+| 22/09 | `late`'s best image within one standard error of FK | +0.041 ± 0.037 (n = 100), 1.1 standard errors | missed |
 | 22/09 | no variant at λ = 10 under 25 % single-root | lowest 30 % (`fadapt`) | held |
 | 22/09 | `stat0` − reference −0.09 ± 0.05 | −0.013 ± 0.054 | missed |
 | 22/09 | `multi` − reference −0.02 ± 0.04 | −0.024 ± 0.041 | held |
