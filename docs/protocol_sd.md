@@ -693,3 +693,39 @@ Paired by x_T with best-of-4 (`sd_baseline.json`, seed 2024) and with session E'
 - Prediction: pre-fix minus post-fix within +/- 0.10 on the best image (the two weigh the same first
   step, floor included, and differ in which reward they carry after it); pre-fix on one root in 80 %
   of runs or more.
+
+## Pre-registration of session G (26/09, 09h20 UTC, before any run of it)
+
+The rows of section 7 that set the distance to the paper rest on one seed: the released code minus
+best-of-4 at seed 2024 reads -0.000 +/- 0.041 after its fix of the MAX potential and +0.077 +/- 0.039
+before it (sessions E and F, the T4), the +/- being the standard error over the 100 prompts of one pass.
+At the author's request (26/09), session G adds seeds 2025 and 2026, the two other seeds of
+`sd_baseline.json`, on the pod's NVIDIA A2 (`collapse_lab/nuitG.sh`). Per seed, in one block:
+best-of-4 (`run_sd_baseline.py` with the flags of `sd_baseline.json`, the device now recorded), the
+released code (`9413005`), then its commit before the fix (`6726324`), paper configuration, global
+seed, 100 prompts. New files only, `results/sd_seeds_bon4.json` and `results/sd_seeds_authors.json`;
+the frozen records are untouched and `docs/data_freeze.md` gets a dated amendment after the runs.
+
+Pairing. The free path does not reproduce across GPU models (session D: `lam0`, which never
+resamples, correlates at 0.62 between the A2 and the T4), so the T4's best-of-4 at 2025 and 2026 cannot
+pair by x_T with released-code runs on the A2. Best-of-4 is rerun on the A2 and each seed pairs inside
+one machine. The three-seed reading averages each prompt's paired difference over the seeds (2024 from
+the T4, 2025 and 2026 from the A2), then takes the standard error over the 100 prompts, the estimator
+`make_table_sd.py` uses for FK minus best-of-4 (+0.062 +/- 0.026 on three seeds). The readout is
+`collapse_lab/z_sessionG.py`.
+
+Predictions:
+- cost: the released code at 80 to 100 s per run (60 s on the T4, and `smc/` runs are 1.4 to 1.5
+  times slower on the A2), best-of-4 at 75 to 90 s of sampling (54.6 s on the T4); about 16 h in all;
+- machine: best-of-4 on the A2 against the T4's at the same x_T, `ir_max` correlated between 0.4 and
+  0.8 over the 200 (prompt, seed) pairs, like `lam0` in session D, and the mean paired difference
+  within two standard errors of zero at each seed;
+- per seed, the released code after the fix minus best-of-4 within +/- 0.10 of zero (2024: -0.000),
+  and before the fix minus after it positive at both seeds (2024: +0.077 +/- 0.029);
+- on three seeds, the standard error of the released code minus best-of-4 between 0.022 and 0.032:
+  0.041 / sqrt(3) = 0.024 if the spread from seed to seed within a prompt dominates, more if part of
+  the difference belongs to the prompt (FK minus best-of-4 went from 0.037 on one seed to 0.026 on three).
+
+Decision, the gap test of 22/09 applied to the three-seed differences: the gap is closed if either
+reads +0.12 or more. Prediction: after the fix within +/- 0.06 of zero, before it between 0 and
++0.12, so neither closes it, and the paper's +0.161 more than four standard errors above both.

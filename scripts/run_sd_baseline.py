@@ -226,7 +226,7 @@ def main():
         FK["ir"] = ir
 
     commun = {"model": REPO, "dtype": "fp16", "steps": args.steps, "guidance": args.guidance,
-              "eta": args.eta, "size": args.size, "scheduler": "ddim"}
+              "eta": args.eta, "size": args.size, "scheduler": "ddim", "device": torch.cuda.get_device_name(0)}
     total = len(prompts) * len(args.samplers) * len(args.seeds)
     fait = 0
     for i, (pid, prompt) in enumerate(prompts):
