@@ -694,7 +694,7 @@ Paired by x_T with best-of-4 (`sd_baseline.json`, seed 2024) and with session E'
   step, floor included, and differ in which reward they carry after it); pre-fix on one root in 80 %
   of runs or more.
 
-## Pre-registration of session G (26/09, 09h20 UTC, before any run of it)
+## Pre-registration of session G (26/09, 09h12 UTC, before any run of it)
 
 The rows of section 7 that set the distance to the paper rest on one seed: the released code minus
 best-of-4 at seed 2024 reads -0.000 +/- 0.041 after its fix of the MAX potential and +0.077 +/- 0.039
