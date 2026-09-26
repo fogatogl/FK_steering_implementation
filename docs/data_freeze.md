@@ -60,3 +60,21 @@ After the freeze no arm is added; reruns of incomplete prompts only, as dated am
 | `data/visual_pool.json` | `6aaebfa03b037c3ca674da0f17d5752255e13126e675a9346dbdb19ccea948d2` | 7212 |  |
 | `data/visual_selection.json` | `a57b04645262baf63f0b91027eaacd4157759962f0b58dd7d2703ffc751436ae` | 3362 |  |
 | `data/visual_selection_pre_amendment.json` | `73e32ba4d2b9cb6da2ff483b53d1e64d8a70daa586c09866158b6a952df056f7` | 3191 |  |
+
+## Amendment, 25/09/2026, after the runs of sessions E and F
+
+Three records written after the freeze, each pre-registered in `docs/protocol_sd.md`. Session E
+completes the released code's seed-2024 runs from the first 40 prompts to the 100 (a rerun of
+incomplete prompts, which the freeze allows), and checks the machine on two prompts. Session F adds
+one arm, the released code at its commit before the fix of the MAX potential, which the freeze does not
+allow: it was added because the seventh cold review found the fix, and Table 1 predates it. One frozen
+file changed: `data/visual_selection.json`, rewritten by the F5 amendment of 25/09
+(`docs/visual_selection.md`: F5 moves to `004971-0071`, the first rule's pick kept as `F5_first_rule`);
+its new sha256 is below. The other 54 are unchanged.
+
+| file | sha256 | bytes | runs |
+|---|---|---|---|
+| `results/sd_authors_R0_100.json` | `21e2ba9e4468563e51de3227996fb2902ffb524182237ab287a28bca0ef33c89` | 136040 | 200 |
+| `results/sd_authors_prefix.json` | `62abd4ac736cde8db67e3807ee445bec96edd4c9008764faecad1b912072a67b` | 69533 | 100 |
+| `collapse_lab/out/session_E/t4_check.json` | `69d833a6d4440cdf9d8af4d6315e05eae2836f9e307d42e45c05137442c930b8` | 11933 | 4 |
+| `data/visual_selection.json` | `0511d6e2bcc30173b07bee2900a7060cf8cda57bce2e18d5bbfa6903cf9ef1e8` | 3949 |  |

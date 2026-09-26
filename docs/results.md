@@ -876,3 +876,37 @@ best-of-4's reward; paired by x_T its price on the best reward is 0.01, on the m
 of the four 0.25. Constats 3 and 5 bis hold on the same-session pairing in a weaker
 form: a little information at the first step, a kept root a third of the way from the
 median to the best, 0.31 of root lost and 0.33 returned by the steering.
+
+## 19. Sessions E and F: the machine, the released code on 100 prompts, and before its fix (25/09)
+
+**Files.** `collapse_lab/out/session_E/t4_check.json` (the machine check, `probe.py`, `ctl` and `lam0`
+on two prompts), `results/sd_authors_R0_100.json` (the released code at seed 2024 under both seedings,
+the 80 records of 23/09 copied in and the 120 others run here), `results/sd_authors_prefix.json` (the
+released code at `6726324`, the parent of the fix `699c929`, from a second checkout). Launchers
+`collapse_lab/nuitE.sh`, `nuitF.sh`; readout `collapse_lab/ref/parse_authors.py`; predictions in
+`docs/protocol_sd.md`, "Pre-registration of session E" and "of session F". Records written after the
+freeze of 24/09, which they complete (E) or extend by one arm (F); `docs/data_freeze.md` lists them.
+
+**Tested.** Which GPU the "faster card" was; the released code under the paper's configuration on all
+100 prompts, where the 23/09 runs covered the first 40 (the seventh cold review found that this subset
+reads 0.2 higher than the rest for this repository's filter); and whether the fix of the MAX potential,
+later than Table 1, moves the released code's gain.
+
+**Cost.** About 4 h 30 min of an NVIDIA T4, 56 to 60 s per run.
+
+**Result.** The T4 returns session C's `ctl` and `lam0` on 16 of 16 slots (0.0 difference): the
+faster card was a T4. The released code, global seed, 100 prompts: `ir_max` 0.770, minus best-of-4
+**-0.000 +/- 0.041**, minus `R1` +0.011 +/- 0.009 (+0.021 +/- 0.013 on the 60 new prompts, predicted
+within +/- 0.05: held), fewer than four distinct images in 13 % of runs. Through a generator: 0.675,
+-0.095 +/- 0.046; global seed minus generator +0.229 +/- 0.085 on the first 40 and +0.006 +/- 0.067 on
+the other 60 (the second branch of the prediction: the draw of two streams). Before the fix: 0.846,
+minus best-of-4 **+0.077 +/- 0.039** (60 of 100 won, bootstrap [+0.003, +0.153]), minus the fixed
+version +0.077 +/- 0.029 (predicted within +/- 0.10: held), minus `R1` +0.087 +/- 0.030, minus `fk4`
++0.047 +/- 0.039; fewer than four distinct images in 21 % of runs. The gap rule of 22/09 applied to it
+reads not closed (+0.12 needed).
+
+**What it changed.** On the benchmark and on the noises it shares with best-of-4, the released code as
+it is today gains nothing over best-of-4 and agrees with this repository's filter; its version from
+before the fix gains +0.077, about as much as this repository's FK, and still sits 0.08 under the
+paper's +0.161. The fix accounts for part of the distance between the released code and Table 1, not
+for the gap.
