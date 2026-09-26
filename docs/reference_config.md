@@ -37,7 +37,7 @@ which is `ir_max`. Its k = 1 and BoN rows sit 0.05 and 0.02 under this repo's, i
 | adaptive resampling | appendix C.3 sketches it | off by default; on: resample only if ESS < k/2 (`fkd_class.py:136-146`) | `--fk-threshold`, default 1.0 |
 | prompts | ImageReward benchmark prompts (`experiments_new.tex:104`) | `prompt_files/benchmark_ir.json`, 100 prompts | `data/imagereward-benchmark-prompts.json`: **byte-identical ids, order and text** |
 | seeds | not stated | `torch.manual_seed(seed)` once per pass, seeds 42, 43, 44, no `generator` (`launch_eval_runs.py:50-52, 335`) | `seed_effective = seed * 1000 + i` per prompt, generator passed |
-| what is scored | best particle | `do_eval` on the four final images: the maximum and the mean over the four of each metric, HPS included, independently of ImageReward, averaged over prompts (`fks_utils.py:40-103`; `launch_eval_runs.py:176-215`) | `ir_max`, `ir` per slot, HPS at `ir_max` |
+| what is scored | "the highest reward particle" (`experiments_new.tex:45`); the appendix's base rows at k = 4 carry Table 1's best-of-4 HPS as their maximum over the four (0.256, 0.263, 0.296 for v1.4, v2.1, SDXL; `appendix_experiments.tex:71,77,82`) | `do_eval` on the four final images: the maximum and the mean over the four of each metric, HPS included, independently of ImageReward, averaged over prompts (`fks_utils.py:40-103`; `launch_eval_runs.py:176-215`) | `ir_max`, `ir` per slot, HPS at `ir_max` |
 | time | 8.1 s for FK k = 4 on SD v1.5 (`experiments_new.tex:134`) | not measured on this service | 62.5 s per run on the faster card (model not recorded; about 88 s on the A2) |
 
 ## What this settles before any run
@@ -55,6 +55,14 @@ which is `ir_max`. Its k = 1 and BoN rows sit 0.05 and 0.02 under this repo's, i
 - The appendix diversity tables say "Here we use the difference potential"
   (`appendix_experiments.tex:21`) yet their 20-80-20, lambda 10 row for SD v1.4 (0.927) is
   Table 1's max-potential number. Reported as is.
+- **Issue #14 of the released repository**
+  (https://github.com/zacharyhorvitz/Fk-Diffusion-Steering/issues/14, opened 18/12/2025, read
+  through the GitHub API on 25/09 and 26/09/2026): SD v1.5, FK k = 4, `max`, lambda 10, schedule
+  `[0, 20, 40, 60, 80]` with `resample_t_start` 0, seeds 42 to 44 and the GenEval prompt file
+  (`geneval_metadata.jsonl`, not `benchmark_ir.json`) give a max reward of 0.61 to 0.64 against the
+  paper's 0.898. The one reply from the authors' side (a collaborator of the repository,
+  22/12/2025): "can you change the resample t start to 20. we start at 20." `launch.sh` and the
+  runs of the post's section 7 start at 20.
 
 ## What the reference night measures
 

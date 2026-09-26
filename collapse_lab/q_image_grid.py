@@ -1,6 +1,7 @@
-"""F5: on one prompt, the four FK images at the paper's setting share one x_T, the free sampler's and floor + lambda = 2's do not.
+"""F5: on one prompt, the four FK images at the paper's setting share one x_T, the free sampler's do not.
 
-One row per arm (free sampler, FK paper setting, floor + lambda = 2), the four final images
+One row per arm (free sampler, FK paper setting; floor + lambda = 2 dropped from the figure on
+26/09 at the author's request, it stays in the text and in F7), the four final images
 of the slots, a 6 px frame in the colour of the image's root x_T (figstyle.ROOT_COLORS by
 root_slots, the F4 tree's colours), the arm's label as a left column; nothing else in the image.
 
@@ -34,7 +35,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(LAB))
 from commun import bon4
 
-ARMS = ["lam0", "ctl", "floor2"]
+ARMS = ["lam0", "ctl"]
 TOL = 5e-4
 FRAME_PX = 6
 CELL_PX = 256

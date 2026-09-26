@@ -109,6 +109,29 @@ rises most above `lam0`'s. It returns `004971-0071` ("a sports car, motion blur"
 The first rule's choice stays in `data/visual_selection.json` as `F5_first_rule`. F1, W1 and W2
 are unchanged. The post says, in A.3, that F5 was chosen after the data.
 
+## Amendment, 26/09/2026 (F1 only, chosen by the author after the images were seen)
+
+The author looked at the 46 complete eligible prompts drawn as F1 rows (free sample, best-of-4, FK,
+from the same four noises) and asked for the third row to show `007187-0044` ("an underwater
+rollercoaster, cinematic, dramatic, -") in place of `007171-0104` (the scampi). Both are among the
+eight gains. F1 stays the best gain of each of three categories; what changes is the categories,
+now figure, animal and scene (`F1_CATS` in `scripts/select_visual_prompts.py`) where the rule took
+the first three in the order of the gains (figure, animal, food). The rule's choice stays in
+`data/visual_selection.json` as `F1_first_rule`. F5, W1 and W2 are unchanged. The post says, in F1's
+caption and in A.3, that one category was chosen by eye.
+
+## Amendment, 26/09/2026 (F5 and F4, chosen by the author after the images were seen)
+
+F5 and F4 now show the free sampler against FK only: on both earlier picks floor + lambda = 2 stayed
+close to the free sampler, and the author wants the two figures to show the collapse; floor + lambda =
+2 stays in the text and in F7. The author looked at the 43 complete eligible prompts where `ctl` ends
+on one root, drawn as two-row grids (`lam0`, `ctl`), and chose `007171-0040` ("A foggy forest with
+cherry blossom leaves on the ground, liminal, quiet") for images that follow the prompt (`F5_CHOICE`
+in `scripts/select_visual_prompts.py`). On it `ctl` keeps the best of the four roots from the first
+step on, and its best image reads 0.09 under best-of-4 (fk - free +0.23). The second rule's choice
+stays as `F5_second_rule` (`004971-0071`), the first rule's as `F5_first_rule`. F1, W1 and W2 are
+unchanged. The post says, in F5's caption and in A.3, that the prompt was chosen by eye.
+
 ## Running it
 
     python scripts/select_visual_prompts.py collapse_lab/out/session_D/probe_D.json
