@@ -1,4 +1,4 @@
-"""Readout of session G: the released code against best-of-4 on seeds 2024, 2025 and 2026.
+"""Readout of session G: the released code against best-of-4 and FK on seeds 2024, 2025 and 2026.
 
 Seed 2024 comes from the T4 (sd_baseline.json, sessions E and F), seeds 2025 and 2026 from the A2
 (sd_seeds_bon4.json, sd_seeds_authors.json). Each seed pairs by x_T inside one machine; the three-seed
@@ -28,16 +28,17 @@ def se(x):
 arms = {2024: {"bon4": load("sd_baseline.json", "bon4", 2024), "fk4": load("sd_baseline.json", "fk4", 2024),
                "post": load("sd_authors_R0_100.json", "authors_paper", 2024),
                "pre": load("sd_authors_prefix.json", "authors_paper_prefix", 2024)}}
+arms[2024].update(bon4_T4=arms[2024]["bon4"], fk4_T4=arms[2024]["fk4"])
 for s in (2025, 2026):
-    arms[s] = {"bon4": load("sd_seeds_bon4.json", "bon4", s), "fk4": load("sd_baseline.json", "fk4", s),
+    arms[s] = {"bon4": load("sd_seeds_bon4.json", "bon4", s), "fk4": load("sd_seeds_fk4.json", "fk4", s),
                "post": load("sd_seeds_authors.json", "authors_paper", s),
                "pre": load("sd_seeds_authors.json", "authors_paper_prefix", s),
-               "bon4_T4": load("sd_baseline.json", "bon4", s)}
+               "bon4_T4": load("sd_baseline.json", "bon4", s), "fk4_T4": load("sd_baseline.json", "fk4", s)}
 
 print(__doc__.splitlines()[0], "\n")
 for s, a in arms.items():
     for k, d in a.items():
-        if d:
+        if d and not (s == 2024 and k.endswith("_T4")):
             v = list(d.values())
             print(f"seed {s} {k:8s} {len(d):3d} prompts, ir_max {np.mean([r['ir_max'] for r in v]):.3f}, "
                   f"{np.median([r['seconds'] for r in v]):.1f} s/run, devices {sorted({r.get('device', 'not recorded') for r in v})}"
@@ -60,12 +61,12 @@ if len(xa) > 1:
 print("\nPer seed, paired by x_T inside one machine")
 diffs = {}
 for nom, x, y in (("post - bon4", "post", "bon4"), ("pre - bon4", "pre", "bon4"), ("pre - post", "pre", "post"),
-                  ("fk4 - bon4 (T4)", "fk4", "bon4")):
+                  ("post - fk4", "post", "fk4"), ("pre - fk4", "pre", "fk4"), ("fk4 - bon4", "fk4", "bon4"),
+                  ("fk4 - bon4 T4", "fk4_T4", "bon4_T4")):
     for s, a in arms.items():
-        ref = a["bon4_T4"] if nom.startswith("fk4") and s != 2024 else a[y]
-        ps = sorted(set(a[x]) & set(ref))
+        ps = sorted(set(a[x]) & set(a[y]))
         if len(ps) > 1:
-            diffs.setdefault(nom, {})[s] = {p: a[x][p]["ir_max"] - ref[p]["ir_max"] for p in ps}
+            diffs.setdefault(nom, {})[s] = {p: a[x][p]["ir_max"] - a[y][p]["ir_max"] for p in ps}
             print(f"   seed {s} {nom:16s} {se(list(diffs[nom][s].values()))}")
 
 print("\nOver the seeds, each prompt averaged first (seeds complete at 100 prompts only)")
@@ -78,10 +79,12 @@ for nom, per_seed in diffs.items():
     x = np.array([np.mean([per_seed[s][p] for s in seeds]) for p in ps])
     m, e = x.mean(), x.std(ddof=1) / len(x) ** .5
     means = [np.mean(list(per_seed[s].values())) for s in seeds]
-    print(f"   {nom:16s} seeds {seeds}: {se(x)}; seed means {', '.join(f'{v:+.3f}' for v in means)}"
+    one = np.mean([np.std(list(per_seed[s].values()), ddof=1) / 10 for s in seeds])
+    print(f"   {nom:16s} seeds {seeds}: {se(x)}; seed means {', '.join(f'{v:+.3f}' for v in means)}, "
+          f"their spread {np.std(means, ddof=1):.3f} against {one:.3f} for one seed's standard error"
           + (f"; the paper's +{PAPER} is {(PAPER - m) / e:.1f} standard errors above; gap rule (+0.12): "
              f"{'CLOSED' if m >= 0.12 else 'not closed'}" if nom in ("post - bon4", "pre - bon4") else ""))
-for k in ("bon4", "post", "pre"):
+for k in ("bon4", "fk4", "post", "pre"):
     seeds = [s for s in arms if len(arms[s][k]) == 100]
     if len(seeds) > 1:
         print(f"   {k}: ir_max {np.mean([np.mean([r['ir_max'] for r in arms[s][k].values()]) for s in seeds]):.3f} over seeds {seeds}")
