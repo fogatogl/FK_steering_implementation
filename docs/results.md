@@ -745,7 +745,9 @@ three points except `R1` (48 % predicted, 81 % observed) and `thr05` (54 against
 the arms with spread. Under flat weights the comb is the identity and the multinomial
 is not: four flat multinomial passes leave 1.58 roots of 4. The pre-registered
 prediction for `thr05` (1.84 roots, 61 % single-root, 1.12 resamplings) came out
-2.00, 62 %, 0.97.
+2.00, 62 %, 0.97. Amended 26/09 (ninth cold review): the post quotes the later readout of
+`n_coalescence.txt`, after sessions C and D added arms: eighteen steered arms within 0.09, fourteen
+within 0.05. The fifteen-arm figures above are left as first read.
 
 **Result, the reference.** The paper's stated SD configuration (max potential,
 schedule [0, 20, 40, 60, 80], lambda 10, k 4, DDIM eta 1, 100 steps, guidance 7.5,
@@ -766,6 +768,11 @@ pipeline VAE for the guide's decode. On the 100 prompts:
 | `R0g` | released code | generator, seed 42 | 40 | 0.807 | -0.039 +/- 0.073 |
 | `R0` at seed 2024 | released code | its own path, seed 2024 (same x_T as ours) | 40 | 0.949 | **+0.103 +/- 0.056** |
 | the four runs pooled | released code | | 220 | 0.702 | **-0.110 +/- 0.036** |
+
+Amended 26/09 (ninth cold review): the post quotes `R1` at 0.759, the value `parse_authors.txt`
+prints over the 100 prompts; the 0.756 of this table is left as first read, its difference with
+0.759 not traced here. The seed-2024 runs of the released code were completed to 100 prompts in
+block 19.
 
 On the same 40 prompts the four runs of their filter give -0.35, -0.04, -0.13 and
 +0.10 against `bon4` (standard errors 0.06 to 0.09); two of them share x_T and the
