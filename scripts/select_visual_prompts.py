@@ -18,8 +18,10 @@ At seed 2024, free = lam0.ir[0], bo4 = max(lam0.ir), fk = ctl.ir_max:
     gains   8 prompts with fk > bo4, highest fk - free first, at most 2 per category
     median  1 prompt whose fk - bo4 is closest to the median over the complete pool
     loss    1 prompt: among fk < bo4, closest to the median of that subset
-    F1      the three best gains from three different categories
-    F5      among the ten, ctl ends on 1 root and floor2 on >= 3; largest fk - free (kept as
+    F1      the three best gains from three different categories (kept as F1_first_rule).
+            Amendment of 26/09, after the images were seen: the author chose the categories
+            figure, animal and scene; F1 is the best gain of each
+    F5     among the ten, ctl ends on 1 root and floor2 on >= 3; largest fk - free (kept as
             F5_first_rule). Amendment of 25/09, after the images were seen: among the complete
             pool, ctl on 1 root and floor2 on 4, the largest rise of floor2's mean ir over lam0's
     W1      the ten
@@ -37,6 +39,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SEED = 2024
 CAP = 2
+F1_CATS = ("figure", "animal", "scene")   # amendment of 26/09, chosen by eye
 ARMS = ("ctl", "lam0", "floor2")
 # the names probe.py writes (lam_max is None by design outside the adaptive arms)
 REQUIRED = ("ir", "ir_max", "n_lineages", "lineages_trace", "ancestors_at_schedule",
@@ -139,6 +142,7 @@ def main():
             seen.add(r["cat"])
         if len(f1) == 3:
             break
+    f1_first, f1 = f1, [next(r["id"] for r in gains if r["cat"] == c) for c in F1_CATS]
     f5c = [r for r in ten if r["roots_ctl"] == 1 and r["roots_floor2"] >= 3]
     f5_first = (max(f5c, key=lambda r: (r["g_free"], r["id"])) if f5c
                 else max(ten, key=lambda r: (r["roots_floor2"], r["id"])))["id"]
@@ -155,7 +159,7 @@ def main():
     out = dict(rule="docs/visual_selection.md", source=str(src.relative_to(ROOT)), sessions=sessions,
                seed=SEED, pool_complete=len(rows), pool_median_g_bo4=round(med, 4),
                gains=[r["id"] for r in gains], median=median["id"], loss=loss["id"],
-               worst_loss=worst["id"], F1=f1, F5=f5, F5_first_rule=f5_first, W1=[r["id"] for r in ten], W2=w2,
+               worst_loss=worst["id"], F1=f1, F1_first_rule=f1_first, F5=f5, F5_first_rule=f5_first, W1=[r["id"] for r in ten], W2=w2,
                hand_picked=None if hp in {r["id"] for r in ten} else hp,
                excluded_incomplete=incomplete,
                rows={r["id"]: {k: (round(v, 4) if isinstance(v, float) else v)
@@ -169,7 +173,7 @@ def main():
         print(f"  {role:6s} {r['id']}  fk-free {r['g_free']:+.2f}  fk-bo4 {r['g_bo4']:+.2f}  "
               f"roots ctl/floor2 {r['roots_ctl']}/{r['roots_floor2']}  {text[r['id']][:55]}")
     print(f"pool median fk - bo4 over the {len(rows)} complete eligible prompts: {med:+.3f}")
-    print(f"F1 {f1}  F5 {f5} (floor2 mean ir {f5_row['rise_floor2']:+.2f} over lam0's; first rule: {f5_first})")
+    print(f"F1 {f1} (first rule: {f1_first})  F5 {f5} (floor2 mean ir {f5_row['rise_floor2']:+.2f} over lam0's; first rule: {f5_first})")
     print(f"W2 {w2}")
     if out["hand_picked"]:
         print(f"{hp} not selected by the rule: appendix only, labelled hand-picked")

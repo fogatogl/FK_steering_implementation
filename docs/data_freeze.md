@@ -78,3 +78,14 @@ its new sha256 is below. The other 54 are unchanged.
 | `results/sd_authors_prefix.json` | `62abd4ac736cde8db67e3807ee445bec96edd4c9008764faecad1b912072a67b` | 69533 | 100 |
 | `collapse_lab/out/session_E/t4_check.json` | `69d833a6d4440cdf9d8af4d6315e05eae2836f9e307d42e45c05137442c930b8` | 11933 | 4 |
 | `data/visual_selection.json` | `0511d6e2bcc30173b07bee2900a7060cf8cda57bce2e18d5bbfa6903cf9ef1e8` | 3949 |  |
+
+## Amendment, 26/09/2026, F1's third row chosen by the author
+
+`data/visual_selection.json` rewritten by `scripts/select_visual_prompts.py` after the F1 amendment of
+26/09 (`docs/visual_selection.md`): F1's third prompt moves from `007171-0104` to `007187-0044`, chosen
+by eye among the 46 candidates, and the rule's pick is kept as `F1_first_rule`. No run record changed;
+the other 57 frozen files are unchanged.
+
+| file | sha256 | bytes | runs |
+|---|---|---|---|
+| `data/visual_selection.json` | `2d0e9b7dedc4a4b8395fba1a56d9b23c06fa86f5694a9b020aa084c06648806a` | 4031 |  |
