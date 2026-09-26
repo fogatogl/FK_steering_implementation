@@ -50,7 +50,7 @@ scripts/        the SD runs and their launchers, the figures, the post's numbers
 collapse_lab/   the study of the collapse: the probe, its readouts, the lineage replay, the
                 driver of the released code
 results/        one JSON record per run; post_numbers/ holds what each analysis script prints
-figures/        the post's eight figures, and those of the CIFAR-10 and CelebA-HQ stages
+figures/        the post's eight figures (f1 to f8), and the earlier ones the run log cites
 docs/           the post, the log of every run (results.md), the predictions written before
                 the runs (protocol_sd.md), the design decisions, the reproduction commands
 experiments/, notebooks/   the CIFAR-10 DDPM and the classifiers of the first stages

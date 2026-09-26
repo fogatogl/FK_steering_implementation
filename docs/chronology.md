@@ -7,8 +7,8 @@ The thread that joins the runs of `docs/results.md` and the entries of
 `docs/decisions.md`. Each stage says what was put in place, why and what problem
 it solved, what went wrong, and which question came out of it and pushed the
 project to the next stage. Dates are 2026. Sources: the git log, the two
-planning documents of 16/09 (`.claude/CONTEXTE_projet.md`,
-`.claude/plan_code_fk_pgdlm.md`), `LEARNING.md`, and the run files.
+planning documents of 16/09 (private notes, not in the repository), `LEARNING.md`,
+and the run files.
 
 ## The frame, before any SMC code (August to 16/09)
 
