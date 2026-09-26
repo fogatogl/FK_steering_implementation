@@ -89,3 +89,14 @@ the other 57 frozen files are unchanged.
 | file | sha256 | bytes | runs |
 |---|---|---|---|
 | `data/visual_selection.json` | `2d0e9b7dedc4a4b8395fba1a56d9b23c06fa86f5694a9b020aa084c06648806a` | 4031 |  |
+
+## Amendment, 26/09/2026, F5 and F4 chosen by the author
+
+`data/visual_selection.json` rewritten by `scripts/select_visual_prompts.py` after the F5 amendment of
+26/09 (`docs/visual_selection.md`): F5, which F4 follows, moves from `004971-0071` to `007171-0040`,
+chosen by eye among the 43 eligible prompts where FK ends on one root; the earlier picks are kept as
+`F5_second_rule` and `F5_first_rule`. No run record changed; the other 57 frozen files are unchanged.
+
+| file | sha256 | bytes | runs |
+|---|---|---|---|
+| `data/visual_selection.json` | `382e61fc63b38d9a5a6d0be5d783fd3dd52e10e30975238713ee4161288f63ba` | 4303 |  |

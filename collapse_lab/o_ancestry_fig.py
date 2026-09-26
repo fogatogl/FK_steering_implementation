@@ -1,4 +1,7 @@
-"""F4: at the paper's setting the four final images descend from one x_T, with the floor and lambda = 2 they keep their own.
+"""F4: at the paper's setting the four final images descend from one x_T; the free sampler's keep their own.
+
+Since 26/09 the main figure draws the free sampler against FK (the author's choice: F4 and F5 show
+the collapse, floor + lambda = 2 stays in the text and in F7).
 
 One panel per arm, same prompt: levels from top to bottom are x_T then each scheduled step;
 an edge joins slot j at step m to its parent anc[m][j] at the previous step, its width the
@@ -12,7 +15,7 @@ images F5 shows), then collapse_lab/out/probe_C.json, then collapse_lab/out/prob
 and for the `_b1` replays.
 The default prompt is data/visual_selection.json["F5"].
 
-    python collapse_lab/o_ancestry_fig.py                 # ctl, floor2      -> figures/f4_ancestry
+    python collapse_lab/o_ancestry_fig.py                 # lam0, ctl        -> figures/f4_ancestry
     python collapse_lab/o_ancestry_fig.py --appendix      # lam0 ctl floor2 R1 -> figures/f4_ancestry_appendix
     python collapse_lab/o_ancestry_fig.py --pid <id> --arms lam0 ctl --out <stem>
 """
@@ -31,7 +34,7 @@ ROOT = LAB.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 import figstyle as fs
 
-MAIN_ARMS = ["ctl", "floor2"]
+MAIN_ARMS = ["lam0", "ctl"]
 APPENDIX_ARMS = ["lam0", "ctl", "floor2", "R1"]
 # the session the selection was ranked on comes first, so F4 draws the run whose images F5 frames
 _sel = json.loads((ROOT / "data" / "visual_selection.json").read_text())

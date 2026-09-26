@@ -10,7 +10,7 @@
   loss   009606-0136  fk-free +0.28  fk-bo4 -0.18  roots ctl/floor2 1/1  logo for a coffee chain
   worst  002870-0080  fk-free -0.68  fk-bo4 -0.81  roots ctl/floor2 1/3  a modern style living room in a big mansion next to a g
 pool median fk - bo4 over the 46 complete eligible prompts: -0.024
-F1 ['001227-0027', '010525-0074', '007187-0044'] (first rule: ['001227-0027', '010525-0074', '007171-0104'])  F5 004971-0071 (floor2 mean ir +0.43 over lam0's; first rule: 010525-0074)
+F1 ['001227-0027', '010525-0074', '007187-0044'] (first rule: ['001227-0027', '010525-0074', '007171-0104'])  F5 007171-0040 (chosen by eye, fk - free +0.23; second rule: 004971-0071, floor2 mean ir +0.43 over lam0's; first rule: 010525-0074)
 W2 ['007204-0161', '007178-0111', '011623-0101', '007187-0044', '007749-0112', '005695-0057', '000606-0024', '007654-0033', '001161-0086', '000324-0042']
 010856-0009 not selected by the rule: appendix only, labelled hand-picked
 46 complete eligible prompts, 0 incomplete and skipped, session(s) ['2026-09-23T18:47:29+00:00/vscode-pytorch-gpu-916673-0/12151']; selection written to data/visual_selection.json.
