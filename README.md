@@ -36,9 +36,9 @@ evaluations:
 - **Keeping the lineages changes the target.** Of eight corrections, only a floor at 0 with λ = 2
   keeps three roots of four; its best image stays at best-of-4's level and the mean of its four
   images costs 0.250 ± 0.045 against FK (section 6).
-- **The released code does not close the gap.** Run under the paper's configuration, its four runs
-  on 40 prompts span -0.35 to +0.10 against best-of-4, two seedings of one seed disagreeing by more
-  than their noise (section 7).
+- **The released code does not close the gap.** Under the paper's configuration, on the same 100
+  prompts and noises, it gains -0.000 ± 0.041 over best-of-4, and +0.077 ± 0.039 at its commit from
+  before a fix of the MAX potential, both under the paper's +0.161 (section 7).
 
 ## Repository
 

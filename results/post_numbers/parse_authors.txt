@@ -74,3 +74,23 @@ The common prompts are benchmark positions 0 to 39
    on these 40: bon4 0.846, fk4 0.921, R1 0.954; fk4 - bon4 +0.075 +/- 0.050 (n=40), R1 - bon4 +0.108 +/- 0.057 (n=40)
    on the other 60: bon4 0.719, fk4 0.718, R1 0.629; fk4 - bon4 -0.001 +/- 0.052 (n=60), R1 - bon4 -0.090 +/- 0.055 (n=60)
    on all 100: bon4 0.770, fk4 0.799, R1 0.759; fk4 - bon4 +0.030 +/- 0.037 (n=100), R1 - bon4 -0.011 +/- 0.041 (n=100)
+
+Session E, global seed: 100 prompts (60 beyond the first 40), ir_max 0.770, fewer than 4 distinct images in 13% of runs, devices ['Tesla T4', 'not recorded']
+   all: - bon4 -0.000 +/- 0.041 (n=100), - R1 +0.011 +/- 0.009 (n=100), - fk4 -0.030 +/- 0.044 (n=100)
+   first 40: - bon4 +0.103 +/- 0.056 (n=40), - R1 -0.004 +/- 0.012 (n=40), - fk4 +0.028 +/- 0.079 (n=40)
+   other 60: - bon4 -0.069 +/- 0.055 (n=60), - R1 +0.021 +/- 0.013 (n=60), - fk4 -0.068 +/- 0.051 (n=60)
+
+Session E, generator: 100 prompts (60 beyond the first 40), ir_max 0.675, fewer than 4 distinct images in 9% of runs, devices ['Tesla T4', 'not recorded']
+   all: - bon4 -0.095 +/- 0.046 (n=100), - R1 -0.084 +/- 0.054 (n=100), - fk4 -0.125 +/- 0.052 (n=100)
+   first 40: - bon4 -0.126 +/- 0.070 (n=40), - R1 -0.233 +/- 0.085 (n=40), - fk4 -0.201 +/- 0.083 (n=40)
+   other 60: - bon4 -0.075 +/- 0.062 (n=60), - R1 +0.015 +/- 0.067 (n=60), - fk4 -0.074 +/- 0.067 (n=60)
+
+Session F, before the fix, global seed: 100 prompts (60 beyond the first 40), ir_max 0.846, fewer than 4 distinct images in 21% of runs, devices ['Tesla T4']
+   all: - bon4 +0.077 +/- 0.039 (n=100), - R1 +0.087 +/- 0.030 (n=100), - fk4 +0.047 +/- 0.039 (n=100)
+   first 40: - bon4 +0.150 +/- 0.053 (n=40), - R1 +0.043 +/- 0.033 (n=40), - fk4 +0.075 +/- 0.069 (n=40)
+   other 60: - bon4 +0.027 +/- 0.055 (n=60), - R1 +0.117 +/- 0.044 (n=60), - fk4 +0.028 +/- 0.048 (n=60)
+   before the fix - after it (global seed, same x_T): +0.077 +/- 0.029 (n=100)
+   rule of 22/09 applied: not closed (threshold +0.12)
+   global seed - generator, seed 2024, all: +0.095 +/- 0.054 (n=100)
+   global seed - generator, seed 2024, first 40: +0.229 +/- 0.085 (n=40)
+   global seed - generator, seed 2024, other 60: +0.006 +/- 0.067 (n=60)

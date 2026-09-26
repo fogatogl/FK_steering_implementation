@@ -1,6 +1,6 @@
 # Four particles, one image: reproducing FK Steering on Stable Diffusion, and what its gain over best-of-N buys
 
-*Draft, pass 19 (25/09). Every number of the main text is printed by a script that
+*Draft, pass 20 (25/09). Every number of the main text is printed by a script that
 `scripts/post_numbers.py` runs, or stands in a dated block of `docs/results.md`.
 Citations are `[@key]` and resolve in `docs/post/four-particles-one-image.bib`.*
 
@@ -20,9 +20,9 @@ paper's values. At the
 paper's setting the four images of a run descend from one initial noise in 93 to 96 runs of 100:
 resampling weighs rewards read on a blurred image, and each pass removes lineages. Keeping three of
 four, with λ = 2 and a floor on the reward, returns the best image to best-of-4's level and costs
-0.250 ± 0.045 against FK on the mean of the four (n = 100). The test I fixed for closing the gap,
-this repository's filter with the released code's choices beating best-of-4 by +0.12, reads -0.011 ±
-0.041 on the 100 prompts; four runs of the released code on the first 40 span -0.35 to +0.10.
+0.250 ± 0.045 against FK on the mean of the four (n = 100). The released code under the paper's
+configuration reads -0.000 ± 0.041 against best-of-4 on the same noises (n = 100), and +0.077 ± 0.039
+in its version from before a fix of its MAX potential, both under the paper's +0.161.
 
 ## 1. What inference-time steering does to an image
 
@@ -223,36 +223,37 @@ the floor, the VAE and the indices each stay within one standard error, and all 
 0.043 against FK (n = 100); the final resampling was not moved in.
 
 This repository's launch script resets the global seed per prompt, where the released launcher seeds
-once per pass; under "generator" the initial and DDIM noises come from a generator passed to
-the pipeline. The released code ran on the benchmark's first 40 prompts, where best-of-4 reads 0.846
-against 0.770 on all 100, so every row below is read on those 40.
+once per pass; under "generator" the initial and DDIM noises come from a generator passed to the
+pipeline. At seed 2024 both start from best-of-4's noises; the seed-42 runs start from others and are
+paired by prompt only.
 
 | row | code | n | ImageReward | against best-of-4 |
 |---|---|---|---|---|
 | paper, Table 1 | | | 0.898 | +0.161 |
-| best-of-4, seed 2024 | `smc/` | 40 | 0.846 | |
-| FK, seed 2024 | `smc/` | 40 | 0.921 | +0.075 ± 0.050 |
-| FK with the released code's choices, final resampling aside | `smc/` | 40 | 0.954 | +0.108 ± 0.057 |
-| released code, seed 2024, global seed | theirs | 40 | 0.949 | +0.103 ± 0.056 |
-| released code, seed 2024, generator | theirs | 40 | 0.720 | -0.126 ± 0.070 |
+| best-of-4, seed 2024 | `smc/` | 100 | 0.770 | |
+| FK, seed 2024 | `smc/` | 100 | 0.799 | +0.030 ± 0.037 |
+| FK with the released code's choices, final resampling aside | `smc/` | 100 | 0.759 | -0.011 ± 0.041 |
+| released code, seed 2024, global seed | theirs | 100 | 0.770 | -0.000 ± 0.041 |
+| released code, seed 2024, generator | theirs | 100 | 0.675 | -0.095 ± 0.046 |
+| released code, seed 42, global seed | theirs | 100 | 0.554 | -0.216 ± 0.061 |
 | released code, seed 42, generator | theirs | 40 | 0.807 | -0.039 ± 0.073 |
-| released code, seed 42, global seed | theirs | 40 | 0.497 | -0.349 ± 0.091 (-0.216 ± 0.061 on all 100) |
+| released code before the fix, seed 2024, global seed | theirs | 100 | 0.846 | +0.077 ± 0.039 |
 
-The seed-2024 runs start from best-of-4's noises; the seed-42 runs start from others and are
-paired by prompt only. Without its filter the released code returns best-of-4's four rewards to the
-fourth decimal (5 prompts), and its seed-2024 run under the global seed lands -0.004 ± 0.012 from this
-repository's filter with the same choices. The two runs of one seed share their initial noises and
-the DDIM noise up to the first resampling, after which each global-seed draw shifts the later noise.
-Global seed minus generator, they differ by -0.310 ± 0.077 at seed 42 and +0.229 ± 0.085 at seed 2024: the four means spread by 0.19
-where the spread within a prompt predicts 0.07. I have not found why, in the released code or in the launch
-script.
+Without its filter the released code returns best-of-4's four rewards to the fourth decimal (5
+prompts), and under the global seed its filter lands +0.011 ± 0.009 from this repository's with the
+same choices (n = 100). The two seedings of one seed share the noise up to the first resampling, after
+which each global-seed draw shifts the later noise. Global seed minus generator, they differ at seed
+2024 by +0.229 ± 0.085 on the first 40 prompts and +0.006 ± 0.067 on the other 60, so the first gap
+was the draw of two streams; at seed 42, on the first 40 only, by -0.310 ± 0.077.
 
 Before these runs I fixed the test that would close the gap: this repository's filter with the released
-code's choices beating best-of-4 by +0.12 or more on the 100 prompts. It reads -0.011 ± 0.041, so the
-gap stays open. The same filter reads +0.108 ± 0.057 on the first 40 and -0.090 ± 0.055 on the other 60:
-the prompt set moves it more than the change of code does. I have not yet asked
-the authors for the command and seeds behind Table 1, whether the floor was active, which VAE decoded
-the guide, or which potential produced Table 1 (A.4); their answer could close part of the gap.
+code's choices beating best-of-4 by +0.12 or more on the 100 prompts. It reads -0.011 ± 0.041, and the
+released code -0.000 ± 0.041, so the gap stays open. The released code as it
+stood before its fix of the MAX potential gains +0.077 ± 0.039 (60 prompts of 100 won), +0.077 ±
+0.029 above the fixed version on the same noises: the fix accounts for part of the distance to the
+paper, and the rule still reads open. I have not yet asked the authors for
+the command and seeds behind Table 1, whether the floor was active, which VAE decoded the guide, or which
+potential produced Table 1 (A.4); their answer could close part of the gap.
 
 ## 8. The same shape at three scales, and the judge
 
@@ -353,7 +354,8 @@ runs the variants with every weight recorded.
 | the other probe arms | T4 | `late`, `stat0`, `multi`, `vae`, `idx`, `R1`, `thr05`, `rise`, the other halves | 20 to 100 | `collapse_lab/out/probe.json` |
 | session C | T4 | `ctl`, `lam0`, `floor2` in one process | 100 | `collapse_lab/out/probe_C.json` |
 | session D | A2 | the same three, every image and Tweedie estimate saved | 100 | `collapse_lab/out/session_D/probe_D.json` |
-| session E | T4 | `ctl` and `lam0` on two prompts, the machine check | 2 | `collapse_lab/out/session_E/t4_check.json` |
+| session E | T4 | `ctl` and `lam0` on two prompts, the machine check; the released code at seed 2024 completed to the 100 prompts, both seedings | 2, 100 | `collapse_lab/out/session_E/t4_check.json`, `results/sd_authors_R0_100.json` |
+| session F | T4 | the released code at its commit before the fix of the MAX potential, seed 2024, global seed | 100 | `results/sd_authors_prefix.json` |
 
 Each variant is paired by prompt, seed 2024, with FK at the paper's setting run on the same machine:
 session C on the T4 (equal to the FK row of section 3 at that seed to 5e-5), session A on the A2
@@ -465,8 +467,10 @@ floor + λ = 2.
 
 **The runs of section 7.** They pass the paper's configuration to the released code (SD v1.5, λ = 10,
 k = 4, MAX, 20-80-20) through this repository's launch script, `collapse_lab/ref/run_authors.py`,
-which reseeds per prompt and replaces the unused LLM grader with a stub. They cover the benchmark's
-first 40 prompts, except the seed-42 run under the global seed, which covers the 100. Sources cell by
+which reseeds per prompt and replaces the unused LLM grader with a stub. They cover the 100 prompts,
+except the seed-42 run through a generator, which covers the first 40. An issue on the released
+repository (#14, December 2025) reports the same shortfall on SD v1.5; the author's one reply there sets
+the first resampling at step 20, as `launch.sh` and these runs do. Sources cell by
 cell, with file and line numbers of the paper source and the released repository:
 `docs/reference_config.md`.
 
@@ -478,7 +482,10 @@ bug", June 2025) changes the MAX potential of `fkd_class.py`. Before it, the wei
 $\exp(\lambda \max(r_t, r_{\text{prev}}))$ with $r_{\text{prev}}$ the raw reward of the previous
 scheduled step, and the last step closes the product on $r(x_0)$; after it, the carried reward is the
 floored running maximum, last step included. The version run in section 7 (`9413005`) is after the
-fix, and Table 1 predates it (arXiv v1, January 2025).
+fix, and Table 1 predates it (arXiv v1, January 2025). Run at the fix's parent `6726324` (session F,
+seed 2024, global seed, 100 prompts), the code gains +0.077 ± 0.039 over best-of-4 and +0.077 ± 0.029
+over the fixed version on the same noises; it returns fewer than four distinct images in 21 % of runs,
+against 13 % after the fix.
 
 **The potential of Table 1.** The paper's text gives MAX for Table 1. Its appendix table of ImageReward
 and HPS by $\lambda$ and schedule follows the sentence "Here we use the difference potential"; its FK
@@ -493,8 +500,9 @@ Every prediction with a number, each written before the run it predicts: the dat
 `docs/protocol_sd.md`, sections 7 and 12 of `collapse_lab/FINDINGS.md` (section 12 was first
 committed with the first run of each arm quoted), and `collapse_lab/ASSESSMENT.md` (written with the
 first screens of `adapt`, `floor`, `fadapt`, `floor2`, `lam2` and `lam0` already on disk). Outcomes
-are read against the reference of the same machine. Of the 49, 21 held, 19 missed and 6 held in part; the
-gap test left the gap open, `late` stayed unsettled, and the headline had no tolerance.
+are read against the reference of the same machine. Of the 53, 23 held (one of them in part unmeasured), 19 missed and 6
+held in part; a two-branch prediction came out on the side of chance, the two gap tests left the gap
+open, `late` stayed unsettled, and the headline had no tolerance.
 
 **The reproduction and the judge**
 
@@ -559,6 +567,10 @@ gap test left the gap open, `late` stayed unsettled, and the headline had no tol
 | 22/09 | released code through a generator − `R1` within ± 0.05 | −0.147 | missed |
 | 23/09 | released code at seed 2024 through a generator: − best-of-4 within ± 0.06, − `R1` within ± 0.08 | −0.126 and −0.233 | missed |
 | 23/09 | released code at seed 2024 under its own seeding in [0.55, 0.75] | 0.949 | missed |
+| 25/09 | session E, global seed: − `R1` within ± 0.05 on the 60 new prompts; − best-of-4 on the 100 within 0.05 of `R1`'s −0.011 | +0.021 ± 0.013; −0.000 ± 0.041 | held |
+| 25/09 | session E, generator − global seed on the 60 new prompts: under −0.1 if the first 40's gap belongs to the seeding, within ± 0.1 if it is the draw of two streams | −0.006 ± 0.067 | two streams |
+| 25/09 | session F, the rule: the released code before its fix − best-of-4 ≥ +0.12 on the 100 prompts closes the gap | +0.077 ± 0.039 | not closed |
+| 25/09 | session F: before − after the fix within ± 0.10 on the best image; one root in 80 % of runs or more | +0.077 ± 0.029; the released code records no ancestry | held, in part unmeasured |
 
 **The machines**
 
