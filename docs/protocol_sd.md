@@ -729,3 +729,15 @@ Predictions:
 Decision, the gap test of 22/09 applied to the three-seed differences: the gap is closed if either
 reads +0.12 or more. Prediction: after the fix within +/- 0.06 of zero, before it between 0 and
 +0.12, so neither closes it, and the paper's +0.161 more than four standard errors above both.
+
+*Amendment, 26/09, 10h39 UTC, before any run of it.* Section 7's table also reads the released code
+against FK, and FK at 2025 and 2026 exists on the T4 only, which cannot pair with the A2's runs (the
+A2's best-of-4 at seed 2025 differs from the T4's on every slot of its first two prompts, so the
+initial noises differ between the two machines). After session G's queue, `collapse_lab/nuitG_fk.sh`
+runs FK (`run_sd_baseline.py --samplers fk4`, the flags of `sd_baseline.json`) at seed 2025, then
+2026, on the A2, into `results/sd_seeds_fk4.json`: about 5.5 h more, 21 h in all. `R1` stays at one
+seed; it lands +0.011 +/- 0.009 from the released code, which carries its test on three seeds.
+Predictions: FK minus best-of-4 on the A2 between -0.05 and +0.15 at each seed (T4: +0.030, +0.089,
++0.068; session D's `ctl` minus best-of-4 on the A2: +0.043); on three seeds, the released code after
+the fix minus FK within +/- 0.06 of zero (2024: -0.030 +/- 0.044), before the fix minus FK positive
+(2024: +0.047 +/- 0.039), and FK minus best-of-4 with this machine mix within 0.03 of the T4's +0.062.
