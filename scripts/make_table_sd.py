@@ -110,12 +110,17 @@ def main():
     by = {x: {} for x in xs}
     for r in runs:
         by[r["sampler"]].setdefault(r["prompt_id"], {})[r["seed"]] = r["ir_max"]
+    # measured (a mean over the seeds) minus paper, in units of its own standard deviation: the
+    # paper's value counts as one seed, or as a mean over as many seeds as ours
+    n_s = len(seeds)
     for i in order:
         ref = paper.get(xs[i])
         s1 = pooled([list(d.values()) for d in by[xs[i]].values()])
         if ref:
-            print(f"{xs[i]}: pooled seed spread of a one-seed mean {s1:.3f}; measured - paper "
-                  f"{ir[i] - ref[0]:+.3f}, {(ir[i] - ref[0]) / s1:+.1f} of it")
+            d = ir[i] - ref[0]
+            print(f"{xs[i]}: pooled seed spread of a one-seed mean {s1:.3f}; measured - paper {d:+.3f}, "
+                  f"{d / (s1 * (1 / n_s + 1) ** .5):+.1f} of its standard deviation if Table 1 is one seed, "
+                  f"{d / (s1 * (2 / n_s) ** .5):+.1f} if it averages {n_s}")
     if "fk4" in by and "bon4" in by and "fk4" in paper and "bon4" in paper:
         g = [[by["fk4"][q][s] - by["bon4"][q][s] for s in by["fk4"][q] if s in by["bon4"][q]]
              for q in by["fk4"] if q in by["bon4"]]
@@ -123,7 +128,7 @@ def main():
         s3 = s1 / n_seeds ** .5
         gap = paper["fk4"][0] - paper["bon4"][0] - float(np.mean([np.mean(x) for x in g]))
         print(f"fk4 - bon4: pooled seed spread {s1:.3f} for one seed, {s3:.3f} for a {n_seeds}-seed mean; "
-              f"the gap to the paper, {gap:.3f}, is {gap / np.hypot(s3, s1):.1f} spreads if Table 1 is one seed, "
+              f"the gap to the paper, {gap:.3f}, is {gap / np.hypot(s3, s1):.1f} of its standard deviation if Table 1 is one seed, "
               f"{gap / np.hypot(s3, s3):.1f} if it averages {n_seeds}")
     for sd in sorted({r["seed"] for r in runs}):
         f = {r["prompt_id"]: r["ir_max"] for r in runs if r["sampler"] == "fk4" and r["seed"] == sd}
