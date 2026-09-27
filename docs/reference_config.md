@@ -13,7 +13,7 @@ were rechecked at 9413005 on 25/09.
 | | k = 1 | BoN(k = 4) | FK(lambda = 10, k = 4) | FK - BoN |
 |---|---|---|---|---|
 | paper, SD v1.5, IR of the best particle (`experiments_new.tex:82-85`) | 0.187 | 0.737 | 0.898 | **+0.161** |
-| this repo, 100 prompts x 3 seeds (`results/sd_baseline.json`) | 0.237 | 0.758 | 0.820 | +0.062 +/- 0.024 |
+| this repo, 100 prompts x 3 seeds (`results/sd_baseline.json`) | 0.237 | 0.758 | 0.820 | +0.062 +/- 0.026 |
 | this repo, per seed 2024 / 2025 / 2026 | | | | +0.030 +/- 0.037, +0.089 +/- 0.034, +0.068 +/- 0.050 |
 | this repo, current code, seed 2024 (`results/sd_ref_fields100.json`) | | 0.770 | 0.826 | +0.056 +/- 0.052 |
 
