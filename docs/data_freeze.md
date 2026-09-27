@@ -100,3 +100,17 @@ chosen by eye among the 43 eligible prompts where FK ends on one root; the earli
 | file | sha256 | bytes | runs |
 |---|---|---|---|
 | `data/visual_selection.json` | `382e61fc63b38d9a5a6d0be5d783fd3dd52e10e30975238713ee4161288f63ba` | 4303 |  |
+
+## Amendment, 27/09/2026, after the runs of session G
+
+Three records written after the freeze, pre-registered in `docs/protocol_sd.md` ("Pre-registration of
+session G" and its amendment). They add seeds 2025 and 2026 to four arms already frozen at seed 2024
+(best-of-4, FK, the released code and its version from before the fix), which the freeze does not
+allow: the author asked on 26/09 for the released-code rows of section 7 on more than one seed. They
+ran on the NVIDIA A2; the frozen seed-2024 records are unchanged, and so are the other 58 frozen files.
+
+| file | sha256 | bytes | runs |
+|---|---|---|---|
+| `results/sd_seeds_bon4.json` | `4a6437146496aa61362026fec1936af0a5a4325586c3ef999bb756d5682c7573` | 187863 | 200 |
+| `results/sd_seeds_authors.json` | `3f23096732c99da000bf837033120329c79fb447f12e4633627d83eb8939c0bf` | 277311 | 400 |
+| `results/sd_seeds_fk4.json` | `4f112ec9a3e8e449344269a18480ef5ee6874cd0c6d6044f147bd2e33ddc9cc2` | 451741 | 200 |

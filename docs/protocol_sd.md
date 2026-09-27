@@ -741,3 +741,24 @@ Predictions: FK minus best-of-4 on the A2 between -0.05 and +0.15 at each seed (
 +0.068; session D's `ctl` minus best-of-4 on the A2: +0.043); on three seeds, the released code after
 the fix minus FK within +/- 0.06 of zero (2024: -0.030 +/- 0.044), before the fix minus FK positive
 (2024: +0.047 +/- 0.039), and FK minus best-of-4 with this machine mix within 0.03 of the T4's +0.062.
+
+*Outcome of session G, 27/09 04h50 UTC (`collapse_lab/z_sessionG.py`).* 800 of 800 runs on the NVIDIA
+A2, 09:13 to 23:47 for the queue and 23:47 to 04:47 for FK (predicted about 16 h and 5.5 h: held).
+The released code 88.1 to 88.5 s per run, best-of-4 79.3 to 79.4 s, FK 88.7 to 88.8 s (held). The
+`fkd_commit` of each released-code record names its checkout, 9413005 or 6726324. Machine: the A2's
+best-of-4 agrees with the T4's at the same seed on none of the 200 prompts (one slot of 800 within
+1e-3 at its position), `ir_max`
+correlated at 0.79 (predicted 0.4 to 0.8: held), A2 minus T4 +0.050 +/- 0.042 at 2025 and -0.014 +/-
+0.056 at 2026 (within two standard errors: held); whether the noise draw or the trajectory differs
+was not checked. Per seed, after the fix minus best-of-4: -0.000, +0.010, -0.018 (held); before minus
+after: +0.077, +0.088, +0.067 (held); FK minus best-of-4 on the A2: +0.119 +/- 0.039 and +0.092 +/-
+0.034 (held). On three seeds, each prompt averaged first, n = 100: after the fix minus best-of-4
+-0.003 +/- 0.025, 60 won (standard error predicted 0.022 to 0.032: held; within +/- 0.06: held);
+before the fix minus best-of-4 +0.074 +/- 0.023, 66 won (between 0 and +0.12: held); the gap rule
+reads not closed for both (held); the paper's +0.161 is 6.5 standard errors above the first (held)
+and 3.8 above the second (predicted more than four: **missed**). After the fix minus FK -0.083 +/-
+0.026, 40 won (predicted within +/- 0.06 of zero: **missed**); before the fix minus FK -0.006 +/-
+0.020 (predicted positive: **missed**); FK minus best-of-4 +0.080 +/- 0.023, 71 won, 0.018 from the
+T4's +0.062 (held). The seed means of each difference spread by 0.011 to 0.047, against 0.030 to 0.043
+for one seed's standard error. Seed 2024 ran on the T4 and the other two on the A2, so seed and machine
+are not separated.
