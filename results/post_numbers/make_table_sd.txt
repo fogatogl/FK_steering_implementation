@@ -14,6 +14,7 @@ k1: pooled seed spread of a one-seed mean 0.063; measured - paper +0.050, +0.7 o
 bon4: pooled seed spread of a one-seed mean 0.034; measured - paper +0.021, +0.5 of its standard deviation if Table 1 is one seed, +0.7 if it averages 3
 fk4: pooled seed spread of a one-seed mean 0.040; measured - paper -0.078, -1.7 of its standard deviation if Table 1 is one seed, -2.4 if it averages 3
 fk4 - bon4: pooled seed spread 0.039 for one seed, 0.022 for a 3-seed mean; the gap to the paper, 0.099, is 2.2 of its standard deviation if Table 1 is one seed, 3.1 if it averages 3
+fk4 - bon4: the unit, the standard deviation of our 3-seed mean minus the paper's value, 0.045 if Table 1 is one seed, 0.031 if it averages 3
 fk4 - bon4, the paper's rows unpaired: one-seed spread 0.053; the gap is 1.7 of its standard deviation if Table 1 is one seed, 2.6 if it averages 3
 fk4 - bon4 at seed 2024: +0.030 +/- 0.037 (100 prompts)
 fk4 - bon4 at seed 2025: +0.089 +/- 0.034 (100 prompts)

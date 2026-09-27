@@ -132,6 +132,8 @@ def main():
         print(f"fk4 - bon4: pooled seed spread {s1:.3f} for one seed, {s3:.3f} for a {n_seeds}-seed mean; "
               f"the gap to the paper, {gap:.3f}, is {gap / np.hypot(s3, s1):.1f} of its standard deviation if Table 1 is one seed, "
               f"{gap / np.hypot(s3, s3):.1f} if it averages {n_seeds}")
+        print(f"fk4 - bon4: the unit, the standard deviation of our {n_seeds}-seed mean minus the paper's value, "
+              f"{np.hypot(s3, s1):.3f} if Table 1 is one seed, {np.hypot(s3, s3):.3f} if it averages {n_seeds}")
         # the above takes the paper's two rows as sharing their noises, as ours do; if they did not,
         # the paper's gain spreads as the difference of two independent rows
         u1 = np.hypot(pooled([list(d.values()) for d in by["fk4"].values()]),
