@@ -960,9 +960,9 @@ from before the fix minus FK (predicted positive), and the paper more than four 
 the version from before the fix.
 
 **What it changed.** Against best-of-4 the three seeds confirm the seed-2024 rows and cut their
-standard error from about 0.04 to 0.023 to 0.025; the three global-seed runs of the released code do
-not reproduce the 0.19 spread of block 19's four runs, which mixed two seedings and the launcher's
-seed 42 on the first 40 prompts. Against FK the reading changes: the released code, level with FK at
+standard error from about 0.04 to 0.023 and 0.025, with the spread between runs now inside it. Block
+19's 0.19 spread of four run means on the first 40 prompts, across two seedings and the launcher's seed
+42, is a different statistic and is not rechecked here. Against FK the reading changes: the released code, level with FK at
 seed 2024 (-0.030 +/- 0.044), sits 0.083 +/- 0.026 under it on three seeds, and its version from before
 the fix, +0.047 at seed 2024, is level with FK (-0.006 +/- 0.020). Seed and machine are not separated:
 seed 2024 is the only T4 seed, and the two A2 seeds carry the larger FK gains (+0.119 and +0.092 against
