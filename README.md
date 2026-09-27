@@ -7,7 +7,8 @@ a particle filter that steers a diffusion model toward a reward at inference tim
 Stable Diffusion v1.5 experiment. The filter is plain PyTorch in `smc/`; every number and figure is
 rebuilt from the run records committed in `results/` and `collapse_lab/out/`.
 
-The write-up is the blog post [`docs/paper.md`](docs/paper.md).
+The write-up is the blog post [`docs/paper.md`](docs/paper.md); its appendix A.7 gives, section by
+section, the detail behind the numbers of the main text.
 
 ![Four finals of one prompt under the free sampler and FK](figures/f5_root_grid.png)
 
@@ -30,7 +31,8 @@ evaluations:
 - **Best-of-4 reproduces, FK's gain over it is smaller:** +0.062 ± 0.026 on 100 prompts paired on
   their initial noises, against +0.161 in the paper (post, section 3).
 - **The four particles become one.** In 93 to 96 runs of 100 the four final images descend from a
-  single initial noise: the first resampling weighs rewards read on a blurred estimate of the image.
+  single initial noise. The first resampling, made on a blurred estimate of the image, already leaves
+  one in about half the runs, and the later ones finish the job.
   Replaying the recorded weights through the resampler recovers the number of surviving lineages
   within 0.09 on the eighteen steered arms recorded (sections 4 and 5).
 - **Keeping the lineages changes the target.** Of eight corrections, only a floor at 0 with λ = 2
@@ -38,8 +40,7 @@ evaluations:
   images costs 0.250 ± 0.045 against FK (section 6).
 - **The released code does not close the gap.** Under the paper's configuration, on the same 100
   prompts and noises, it gains -0.003 ± 0.025 over best-of-4 on three seeds, and +0.074 ± 0.023 at
-  its commit from before a fix of the MAX potential, both under the paper's +0.161 (section 7 at seed
-  2024; the three seeds in `docs/results.md`, block 20).
+  its commit from before a fix of the MAX potential, both under the paper's +0.161 (section 7).
 
 ## Repository
 
@@ -95,7 +96,7 @@ I wrote the filter and its model wrappers (`smc/`), the tests of its mathematica
 CIFAR-10 DDPM and its training (`notebooks/demo_DDPM.ipynb`), the classifiers used as rewards and
 judges (`smc/classifier.py`, `experiments/train_classifier.py`), and the analysis of the collapse.
 An AI assistant (Claude, Anthropic) wrote the launch scripts, the figure scripts and the
-documentation.
+documentation, and drafted the post, which I reread and corrected.
 
 ## Citation
 

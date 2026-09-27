@@ -131,7 +131,7 @@ def check(path, appendix_marker):
     print(f"{path}: {main_words} words in the main text, {appendix_words} in the appendix")
     print("\n".join(lines))
     if main_words > 3500:
-        warnings.append(f"WARNING length: {main_words} words in the main text, plan says 3 500")
+        warnings.append(f"WARNING length: {main_words} words in the main text, above the 3,500 the call recommends")
     for w in warnings:
         print("WARNING " + w if not w.startswith("WARNING") else w)
     for b in blocking:
