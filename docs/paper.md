@@ -15,13 +15,13 @@ and figure scripts and the documentation, and drafted this post, which I reread 
 FK Steering generates several images at once and, along the way, copies the promising ones over the
 others. On Stable Diffusion v1.5 it beats the simple alternative, generating four images and keeping
 the best (best-of-4), by less than half of what the paper reports: +0.062 ± 0.026 ImageReward against
-+0.161. Best-of-4 itself matches the paper, so the shortfall is in the steering.
++0.161, two to three units of seed noise under (section 3). Best-of-4 itself matches the paper, so the shortfall is in the steering.
 
 The four images FK returns are nearly always near-copies of one image: in 93 to 96 runs of 100 they
 all descend from the same starting noise. The first copying step, made on a still-blurred preview of
 the image, already leaves a single noise in about half the runs, and the later steps finish the job.
 
-Keeping four different images is possible, at a price. With two changes, a reward floored at 0 and a
+Keeping several different images is possible, at a price. With two changes, a reward floored at 0 and a
 milder tilt toward the reward, three starting noises of four survive: the best image stays at
 best-of-4's level, and the average of the four falls 0.25 below FK's.
 
@@ -40,7 +40,7 @@ generates all four and keeps the one ImageReward scores highest. FK Steering gen
 together and, up to four times on the way, copies the promising ones over the others. F1 shows the
 three side by side.
 
-![F1. A free sample, best-of-4 and the best of FK's four particles, from the same four initial noises, with ImageReward and HPS v2.1 under each image; three prompts where FK beats best-of-4, picked by a rule fixed before the run, one category chosen by eye (A.3); labels reworded.](../figures/f1_hero_grid.png)
+![F1. A free sample, best-of-4 and the best of FK's four particles, from the same four initial noises, with ImageReward and HPS v2.1 (a second preference score, section 3) under each image; three prompts where FK beats best-of-4, picked by a rule fixed before the run, one category chosen by eye (A.3); labels reworded.](../figures/f1_hero_grid.png)
 
 These three prompts are favourable cases, picked among the prompts where FK wins (A.3). Over all the
 eligible prompts of that run, FK's median margin over best-of-4 is slightly negative (A.7).
@@ -76,8 +76,8 @@ can drop some (F2).
 
 The paper's appendix already reports that steering costs diversity: on SD v1.5, in its runs with another
 potential, the CLIP diversity of the four finals falls from 0.312 for the base model to 0.104 at
-$\lambda = 10$ (A.7). This post asks
-why. It counts the lineages behind that diversity, explains how they are lost, measures what keeping
+$\lambda = 10$ (A.7). This post first
+checks whether the published gain reproduces, then asks why diversity is lost. It counts the lineages behind that diversity, explains how they are lost, measures what keeping
 them costs, splits FK's gain, and runs the authors' released code under the paper's configuration.
 
 ## 3. The reproduction
@@ -93,15 +93,16 @@ the two can be compared prompt by prompt. HPS v2.1 [@wu2023hpsv2], a second pref
 nothing here steers toward, is read as a check.
 
 Conventions: ± is a standard error over prompts, and [a, b] a 95 % interval (bootstrap for a
-difference, Wilson for a proportion). A comparison is a *test*
+difference, normal in F7, Wilson for a proportion). A comparison is a *test*
 when a prediction with a tolerance was written before the run, and a *screen* otherwise; A.5 lists
 every prediction, misses included. A.7 gives, section by section, the detail behind the numbers of the
 main text.
 
 These runs used an NVIDIA T4, as their run times show (A.7). The project also ran on an NVIDIA A2, and runs are compared only within
-one machine, because rewards shift slightly between the two (section 10). This is why a few values
+one machine, because the same noise gives a different image on each (section 10). This is why a few values
 appear more than once: best-of-4 reads 0.758 here, 0.770 on section 7's runs, where two seeds were
-rerun on the A2, and 0.779 as the unsteered sampler of section 6's one-seed rerun (A.7).
+rerun on the A2, and 0.779 for the free sampler run inside FK's code in section 6, a different code path that
+reads 0.009 above the best-of-4 script on the same noises (A.2).
 
 | | ImageReward, best of $k$ | HPS v2.1, best of $k$ | ImageReward, mean of $k$ | paper (IR / HPS) |
 |---|---|---|---|---|
@@ -111,16 +112,17 @@ rerun on the A2, and 0.779 as the unsteered sampler of section 6's one-seed reru
 
 Best-of-4 reproduces; FK falls short. The paper does not state its seeds, so the fair yardstick is how
 much a 100-prompt mean moves from one seed to another. From that spread I build a unit: the typical
-distance that seed noise alone puts between our three-seed mean and the paper's value. For FK's gain
-over best-of-4 it is 0.045 ImageReward if Table 1 is one seed, 0.031 if it averages three (A.7). One sample
+distance that seed noise alone puts between our three-seed mean and the paper's value. Each row gets its own
+unit from its own spread; for FK's gain over best-of-4 it is 0.045 ImageReward if Table 1 is one seed,
+0.031 if it averages three (A.7). One sample
 and best-of-4 land within one unit of the paper, FK about two units under. HPS matches the paper within
 0.002 when read, as the released evaluation does, on the best of the four images. Read at the image
 ImageReward picks, as I had pre-registered, it lands several seed spreads under, so on that reading
 HPS does not reproduce (A.7).
 
 The paper's headline is FK against best-of-4. Prompt by prompt, FK gains +0.062 ± 0.026 and wins on 69
-prompts of 100, against the paper's +0.161: 1.7 to 3.1 units under, depending on how many seeds Table 1
-averages and whether its two rows shared their noises (A.7). I set this target without a tolerance,
+prompts of 100, against the paper's +0.161: 2.2 to 3.1 units under, depending on how many seeds Table 1
+averages, or 1.7 to 2.6 if its two rows did not share their noises (A.7). I set this target without a tolerance,
 so it is a screen (F3).
 
 ![F3. ImageReward of the best image (left) and best HPS v2.1 of the k images (right), 100 prompts times three seeds, the paper's value as a dark tick. The error bars are the seed-to-seed spread of a one-seed mean, from which the text's unit is built.](../figures/f3_reproduction.png)
@@ -134,7 +136,7 @@ FK's four finals are almost always one image. Tracing each final back to its sta
 paper's setting ends with a single root in 93 runs of 100 on the T4 and 96 on the A2. With the paper's
 own resampler, a random draw at every step, all 40 runs of 40 do (A.2). The four images are close
 accordingly: their mean pixel distance, `div_pix` (A.1), is on the T4 a third of the free
-sampler's, 0.109 against 0.355 (F4, F5).
+sampler's, 0.109 against 0.355 (F4 and F5 show an A2 run).
 
 ![F4. Ancestry of the particles of F5 (A2): the free sampler (left), FK at the paper's setting (right); rows are scheduled steps, edges ancestor indices weighted by the parent's weight, colour the root, crosses dropped particles. FK keeps one root from the first step on.](../figures/f4_ancestry.png)
 
@@ -170,12 +172,13 @@ on eighteen configurations (F6), and it forecast one variant before the run: 1.8
 
 ## 6. What the target allows, and what diversity costs
 
-### The target itself
+### What the target asks of four particles
 
-Part of the collapse is in the target, not in the algorithm. Reweighting best-of-4's four free draws
-by $e^{10\, r}$, as the target does, already leaves an ESS of 1.23 of 4: at $\lambda = 10$ the target
-itself puts most of its mass on one root of four. A single draw per root is a noisy stand-in for its
-root, and I did not separate the two effects.
+Part of the collapse comes from asking four draws to represent this target. Reweighting best-of-4's
+four free draws by $e^{10\, r}$, as the target does, leaves an ESS of 1.23 of 4: restricted to these
+four roots, the target puts most of its mass on one. An exact sampler of $\pi$ would keep four; and
+each root is read through a single image, so 1.23 may overstate the effect, by an amount I did not
+measure.
 
 ### Keeping the roots, and its price
 
@@ -183,12 +186,12 @@ I tried eight variants meant to keep several roots (A.2, predictions in A.5); F7
 other rows of A.2. Two ideas matter.
 The released code floors the running maximum reward at 0, so a step where all four rewards are negative
 leaves the weights equal. Alone, that makes the first step do nothing in 90 % of runs, but the collapse
-resumes a step later (a test, missed). Lowering $\lambda$ to 2 alone still leaves a third of the runs on
-one root. Together, the floor and $\lambda = 2$ keep 3.03 roots of 4 and leave only 4 % of runs on a
+resumes over the later steps (1.73 roots against 2 to 3 predicted; a test, missed, A.5). Lowering $\lambda$ to 2 alone still leaves a third of the runs on
+one root. Together, in a 100-prompt T4 rerun at seed 2024, the floor and $\lambda = 2$ keep 3.03 roots of 4 and leave only 4 % of runs on a
 single root, which meets the criterion fixed before the run (a test, held, A.5). They get there by
 changing the target, and in 17 of the 100 prompts they never resample at all.
 
-![F7. Paired difference against FK on the same machine, per A.2 row, on the best image's ImageReward (left) and on the mean of the four (right), sorted by roots kept; normal 95 % intervals over 17 to 100 prompts, floor + λ = 2, adaptive λ and no step at t = 80 in colour. Only adaptive λ's left interval excludes zero.](../figures/f7_two_rewards.png)
+![F7. Paired difference against FK on the same machine, per A.2 row, on the best image's ImageReward (left) and on the mean of the four (right), sorted by roots kept; normal 95 % intervals over 17 to 100 prompts, floor + λ = 2 (from its 100-prompt T4 rerun), adaptive λ and no step at t = 80 in colour. Only adaptive λ's left interval excludes zero.](../figures/f7_two_rewards.png)
 
 The price shows on the mean of the four, not on the best image. The mean falls by 0.25 against FK (a
 screen). On the best image, 100 prompts cannot tell the two apart (-0.012, [-0.082, +0.060]), a smaller
@@ -197,7 +200,7 @@ image of the same run.
 
 ### Where FK's gain comes from
 
-If FK mostly returns one image, where does its gain come from? In the T4 run above (one seed), the free sampler
+If FK mostly returns one image, where does its gain come from? In that T4 rerun, the free sampler
 started from the same four noises, so its image $j$ shows what root $j$ becomes without steering. That
 splits FK's result into two moves (seed 2024, n = 100):
 
@@ -225,11 +228,12 @@ of which the paper's text leaves open:
 - it draws at random at every step, as the text does, where this repository uses the comb;
 - it floors the running maximum at 0, which the text does not state;
 - it resamples the final population when ESS $< k/2$, where the paper's appendix C.3 writes "if ESS $< k/2$, then we skip the resampling step";
-- it decodes the guide with the pipeline's own decoder;
+- it decodes the guide with the pipeline's own decoder, where this repository uses `sd-vae-ft-mse`;
 - it sets its first four steps one index later.
 
 Moving these choices, except the final resampling, into this repository's code (`R1`) reproduces the
-released code's result closely, so the two implementations agree (A.4). A fix to the released code in June 2025, after
+released code's result closely at seed 2024, the one seed `R1` ran at, so there the two implementations
+agree (A.4). A fix to the released code in June 2025, after
 the paper, changed its MAX potential (A.4). On the same noises and three seeds, best-of-4 reads 0.770
 and FK 0.850 (each difference a test, A.5):
 
@@ -243,14 +247,14 @@ and FK 0.850 (each difference a test, A.5):
 
 Two of the three seeds here ran on the A2, which is why FK reads +0.080 in this table and +0.062 in
 section 3. Before these runs I fixed the bar that would close the gap: a gain of +0.12 or more over
-best-of-4, about three quarters of the paper's. No version reaches it, and both released versions also miss the predictions I wrote for
-their distance to FK (A.5). I have not yet asked the authors which command, seeds and settings produced
+best-of-4, about three quarters of the paper's. No version reaches it. Both released versions also sit under this repository's FK, by 0.083 and 0.006,
+missing the predictions I wrote for that distance (A.5). I have not yet asked the authors which command, seeds and settings produced
 Table 1 (A.4).
 
 ## 8. The same shape at three scales, and the judge
 
 The weight collapse is not specific to Stable Diffusion. On two smaller image models with a classifier
-as reward (screens, A.6), an independent judge, a second classifier, confirms that steering works:
+as reward (screens, A.6), an independent judge, a second classifier, suggests that steering works:
 more cats on CIFAR-10, more faces with glasses on CelebA-HQ, while the ESS falls toward one particle
 (F8). Pushed further, it breaks: at $\lambda = 2$ on CelebA-HQ one seed returns sixteen copies of one
 face, and the judge sees no glasses at all. On SD the independent judge is HPS, and it sees no gain of
@@ -261,9 +265,9 @@ FK over best-of-4 (a test, held, A.5).
 ## 9. What the gain buys
 
 On the best image FK beats best-of-4 by +0.062, under half the published +0.161, and the released code
-does no better. What FK buys is four near-copies of one good image: their average, 0.687, is far above
+does no better on the same noises (section 7). What FK buys is four near-copies of one good image: their average, 0.687, is far above
 best-of-4's four free draws, 0.207, but below best-of-4's single best image, 0.758. Keeping three roots
-of four costs a quarter of a point of that average, and on the best image an amount that 100 prompts
+of four costs 0.25 ImageReward of that average, and on the best image an amount that 100 prompts
 cannot resolve.
 
 ## 10. Limitations and open questions
@@ -272,9 +276,12 @@ cannot resolve.
   at $t = 80$ and section 7's rows other than `R1` have three seeds (A.2).
 - On part of the prompts the released code's runs vary more than chance allows, and at its launcher's
   own seed, 42, it lands well under best-of-4, for reasons I have not found (A.4).
-- The GPU changed under the project. Within one machine a rerun returns the same numbers; across the
+- The GPU changed under the project. Within one machine a rerun of the same code returns the same numbers; across the
   two machines the images differ, and FK keeps the same roots in only 30 % of prompts. Every comparison
-  here therefore stays within one machine (A.7).
+  in the main text therefore stays within one machine (A.7).
+- The paper's appendix table labelled "difference potential" carries Table 1's FK values to the third
+  decimal on three other models, so Table 1 may not use MAX; on 20 prompts the two potentials barely
+  differ here, which cannot rule out a share of the gap (A.4).
 - Nothing here covers more particles on SD ($k = 16$), or a smaller $\lambda$ with more particles.
 
 ## 11. Reproducibility, and how this was made
@@ -290,6 +297,7 @@ the model wrappers, every test of a mathematical property, and the analysis of t
 assistant (Claude, from Anthropic) wrote the scripts that launch the experiments, the figure scripts
 and the documentation, and drafted this post, which I corrected; the working environment blocked it
 from editing the core.
+
 ## Appendix
 
 ### A.1 Glossary
