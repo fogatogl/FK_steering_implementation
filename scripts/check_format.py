@@ -18,7 +18,10 @@ ROOT = Path(__file__).resolve().parent.parent
 SLUG_TEMPLATE = r"2026-\d\d-\d\d-.+"
 TEMPLATE_DATE = "2026-04-28"
 FORBIDDEN = ["giulio", "fogato", "ensae", "onyxia", "sspcloud", "insee", "gfogato", "fogatogl"]
-MAX_WORDS, MAX_IMG_MB = 3500, 15
+# the call and the submission page (read 27/09/2026): "Recommended 2,500-3,500 words (a 10-15 minute
+# read). Hard limit: 6,000 words", "The word limits apply to the main text only". This post keeps its prose
+# inside the recommended range and its prose plus captions under the hard limit.
+RECOMMENDED_WORDS, MAX_WORDS, MAX_IMG_MB = 3500, 6000, 15
 
 
 def words(text):
@@ -102,8 +105,10 @@ def main():
     main_text = body.split("## Appendix")[0]
     captions = re.findall(r'caption="([^"]*)"', main_text)
     n_prose, n_capt = words(main_text), sum(words(c) for c in captions)
-    check(n_prose + n_capt <= MAX_WORDS, f"{n_prose + n_capt} words in the main text (<= {MAX_WORDS}): "
-          f"{n_prose} of prose and {n_capt} in {len(captions)} captions; appendix {words(body) - n_prose}")
+    check(n_prose <= RECOMMENDED_WORDS and n_prose + n_capt <= MAX_WORDS,
+          f"{n_prose} words of prose in the main text (<= {RECOMMENDED_WORDS}, recommended) and {n_capt} in "
+          f"{len(captions)} captions, {n_prose + n_capt} in all (<= {MAX_WORDS}, hard limit); "
+          f"appendix {words(body) - n_prose}")
     return 0 if all(results) else 1
 
 
