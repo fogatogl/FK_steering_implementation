@@ -4,8 +4,8 @@ Left panel ImageReward of the best image, right panel the best HPS v2.1 of the k
 statistic the released evaluation, fks_utils.do_eval, reports), one bar per sampler (one sample, best-of-4,
 FK at the paper setting) read from results/sd_baseline.json rows k1, bon4, fk4. Each bar is
 the mean over the 100 prompts of the prompt's value averaged over its three seeds first, the
-error bar the standard error over those 100 prompt means (seeds of one prompt are not
-independent draws). The short grey line across each bar is the paper's value from
+error bar the spread of a one-seed, 100-prompt mean from seed to seed (make_table_sd.pooled), the
+unit in which the post compares a row with the paper. The short grey line across each bar is the paper's value from
 results/paper_table1_sd15.json. Both panels start at 0: a zoomed HPS axis would turn a
 0.01 difference, inside the paper's own spread, into a visible effect.
 
@@ -21,6 +21,7 @@ import numpy as np
 
 import figstyle
 from figstyle import ARM_COLOR, ARM_LABEL, GREY_DARK, aggregate, dress, load_runs
+from make_table_sd import pooled
 
 ROOT = Path(__file__).resolve().parent.parent
 SAMPLERS = ["k1", "bon4", "fk4"]
@@ -60,26 +61,35 @@ def main():
     p.add_argument("--out", default=str(ROOT / "figures" / "f3_reproduction"))
     args = p.parse_args()
 
-    runs = per_prompt(load_runs(args.json))
-    xs, ir, ir_sd, cnt = aggregate(runs, "sampler", "ir_max")
-    _, hps, hps_sd, _ = aggregate(runs, "sampler", "hps_max")
+    raw = load_runs(args.json)
+    runs = per_prompt(raw)
+    xs, ir, _, cnt = aggregate(runs, "sampler", "ir_max")
+    _, hps, _, _ = aggregate(runs, "sampler", "hps_max")
     idx = [list(xs).index(s) for s in SAMPLERS]
-    ir, ir_sd, hps, hps_sd, cnt = (v[idx] for v in (ir, ir_sd, hps, hps_sd, cnt))
-    sem = np.sqrt(cnt)
+    ir, hps, cnt = (v[idx] for v in (ir, hps, cnt))
+
+    def spread(s, value):
+        seeds = {}
+        for r in raw:
+            if r["sampler"] == s:
+                seeds.setdefault(r["prompt_id"], []).append(value(r))
+        return pooled(list(seeds.values()))
+    ir_sp = np.array([spread(s, lambda r: r["ir_max"]) for s in SAMPLERS])
+    hps_sp = np.array([spread(s, lambda r: max(r["hps"])) for s in SAMPLERS])
 
     paper = {r["sampler"]: r for r in json.loads(Path(args.paper).read_text())["rows"]}
     paper_ir = [paper[s]["ir_max"] for s in SAMPLERS]
     paper_hps = [paper[s]["hps_at_ir_max"] for s in SAMPLERS]   # the paper's HPS column, whatever the key says
 
     fig, axes = figstyle.figure(3.4, ncols=2)
-    panel(axes[0], ir, ir_sd / sem, paper_ir, "ImageReward, best of the k images")
-    panel(axes[1], hps, hps_sd / sem, paper_hps, "HPS v2.1, best of the k images")
+    panel(axes[0], ir, ir_sp, paper_ir, "ImageReward, best of the k images")
+    panel(axes[1], hps, hps_sp, paper_hps, "HPS v2.1, best of the k images")
 
     Path(args.out).parent.mkdir(exist_ok=True)
     png, svg = figstyle.save(fig, args.out)
     for i, s in enumerate(SAMPLERS):
-        print(f"{s:5s} IR={ir[i]:+.4f} +/- {ir_sd[i] / sem[i]:.4f} (paper {paper_ir[i]:.3f})  "
-              f"HPS={hps[i]:.4f} +/- {hps_sd[i] / sem[i]:.4f} (paper {paper_hps[i]:.3f})  "
+        print(f"{s:5s} IR={ir[i]:+.4f}, one-seed spread {ir_sp[i]:.4f} (paper {paper_ir[i]:.3f})  "
+              f"HPS={hps[i]:.4f}, one-seed spread {hps_sp[i]:.4f} (paper {paper_hps[i]:.3f})  "
               f"({cnt[i]} prompts)")
     print(png, svg)
 

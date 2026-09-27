@@ -10,7 +10,8 @@ the mean roots per arm, plus bon4 - ctl as a reference row.
 
 Data: collapse_lab/out/probe.json (fifteen arms, seed 2024, each paired by prompt to the ctl
 run of its own machine group: session C for the fast card, session A then D for the A2,
-finding 19) and
+finding 19), except the two arms with a 100-prompt run, drawn from it: floor2 from session C
+(collapse_lab/out/probe_C.json, T4) and late from results/sd_s60_full.json at seed 2024 (A2); and
 results/sd_baseline.json (bon4, console row only). Nothing hard-coded: everything comes from
 the JSON files.
 Output: figures/f7_two_rewards.png and .svg.
@@ -36,6 +37,10 @@ runs = json.loads((LAB / "out" / "probe.json").read_text())["runs"]
 par = {}
 for r in runs:
     par.setdefault(r["arm"], {})[r["prompt_id"]] = r
+par["floor2"] = {r["prompt_id"]: r for r in json.loads((LAB / "out" / "probe_C.json").read_text())["runs"]
+                 if r["arm"] == "floor2"}
+par["late"] = {r["prompt_id"]: r for r in json.loads((ROOT / "results" / "sd_s60_full.json").read_text())["runs"]
+               if r["seed"] == 2024}
 bon = bon4()
 ctl = par["ctl"]
 ORDRE = [a for a in ("late", "adapt", "floor", "lam2", "fadapt", "floor2", "thr05", "rise", "stat0", "multi", "vae", "idx", "R1", "lam0") if a in par]

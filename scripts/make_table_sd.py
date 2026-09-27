@@ -26,6 +26,13 @@ def paper_rows(path):
     return {r["sampler"]: (r["ir_max"], r["hps_at_ir_max"]) for r in d["rows"]}
 
 
+def pooled(groups):
+    """The spread of a one-seed, 100-prompt mean, read from the spread across seeds within each prompt
+    pooled over the prompts (about 200 degrees of freedom, where the three seed means give 2)."""
+    v = [np.var(g, ddof=1) for g in groups if len(g) > 1]
+    return float(np.sqrt(np.mean(v) / len(v)))
+
+
 def sigma_seeds(runs, key):
     """Sigma of the prompt mean from one seed to the next; None with a single seed."""
     seeds = sorted({r["seed"] for r in runs})
@@ -102,11 +109,6 @@ def main():
         print(f"fk4 - bon4 paired: {d.mean():+.4f} +/- {d.std(ddof=1) / len(d) ** .5:.4f}, {int((d > 0).sum())}/{len(d)} won, "
               f"bootstrap 95 % [{np.percentile(b, 2.5):+.3f}, {np.percentile(b, 97.5):+.3f}], worst prompt {worst} "
               f"{per['fk4'][worst] - per['bon4'][worst]:+.2f}")
-    # the spread of a one-seed, 100-prompt mean, read from the spread across seeds within each prompt
-    # pooled over the prompts (about 200 degrees of freedom, where the three seed means give 2)
-    def pooled(groups):
-        v = [np.var(g, ddof=1) for g in groups if len(g) > 1]
-        return float(np.sqrt(np.mean(v) / len(v)))
     by = {x: {} for x in xs}
     for r in runs:
         by[r["sampler"]].setdefault(r["prompt_id"], {})[r["seed"]] = r["ir_max"]
