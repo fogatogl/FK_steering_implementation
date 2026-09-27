@@ -27,18 +27,11 @@ MARQUEUR=/home/onyxia/work/ddpm/CHAINE_EN_VOL
 echo "=== chaîne démarrée $(date -u +%F_%T) UTC"
 date -u +%F_%T > "$MARQUEUR"
 
-# Pousseur S3 : results/ fait 2,6 Mo, le mirror prend une seconde.
-( while true; do sleep 600; bash scripts/sync_s3.sh results >/dev/null 2>&1; done ) &
-POUSSEUR=$!
-trap 'kill $POUSSEUR 2>/dev/null' EXIT
-
 bash scripts/run_sd_night1.sh
 echo "=== nuit 1 rendue $(date -u +%F_%T) UTC"
-bash scripts/sync_s3.sh results
 
 bash scripts/run_sd_night2.sh
 echo "=== nuit 2 rendue $(date -u +%F_%T) UTC"
-bash scripts/sync_s3.sh results
 
 rm -f "$MARQUEUR"
 echo "=== chaîne terminée $(date -u +%F_%T) UTC"

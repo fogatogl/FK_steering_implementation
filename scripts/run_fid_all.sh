@@ -18,7 +18,5 @@ mkdir -p "$(dirname "$LOG")"
   python scripts/run_fid.py fid --gen gen_base           --ref ref_class3
   python scripts/run_fid.py fid --gen gen_ft_class3      --ref ref_class3
   python scripts/run_fid.py fid --gen gen_base           --ref ref_test
-  echo "=== $(date) FID done, S3 push"
-  scripts/sync_s3.sh push || echo "S3 push failed (token?) — files are in /home/onyxia/work/ddpm/fid"
-  echo "=== $(date) end"
+  echo "=== $(date) end, files in /home/onyxia/work/ddpm/fid"
 } 2>&1 | tee -a "$LOG"

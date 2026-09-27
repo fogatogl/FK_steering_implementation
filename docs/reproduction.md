@@ -28,13 +28,10 @@ pytest              # fast, no GPU, no weights
 pytest -m slow      # full runs on the real model, needs the weights
 ```
 
-On Onyxia, `scripts/onyxia_bootstrap.sh` brings an instance back to a working
-state; `docs/ONYXIA_setup.md` says what survives a restart and what does not.
-
 ## Data and weights
 
-Nothing heavy is in git. Everything lives in `/home/onyxia/work/ddpm/` and is
-mirrored on an S3 bucket with `scripts/sync_s3.sh {push,pull,status}`:
+Nothing heavy is in git. Everything lives outside the repository, in `/home/onyxia/work/ddpm/` on the
+machine that ran it, backed up to private storage and not distributed:
 
 | | |
 |---|---|
