@@ -1,23 +1,24 @@
-# requirements-sd.txt — venv SEPARE pour le bloc C (SD v1.5 + ImageReward + HPSv2).
+# requirements-sd.txt: a SEPARATE venv for the Stable Diffusion stage (SD v1.5 + ImageReward + HPSv2).
 #
-# Pourquoi un second venv. Le venv `ddpm` tourne sur diffusers 0.40, qui exige
-# transformers >= 4.48 et huggingface_hub >= 1.23. ImageReward 1.5 embarque une
-# copie du BERT de BLIP ecrite contre l'API transformers 4.x : elle importe
-# `apply_chunking_to_forward` depuis `transformers.modeling_utils` et lit
-# `tokenizer.additional_special_tokens_ids`, deux choses supprimees en
-# transformers 5. Les deux contraintes sont inconciliables dans un seul env, et
-# les resultats CIFAR / CelebA sont deja produits sur le stack `ddpm` gele.
+# Why a second venv. The `ddpm` venv runs diffusers 0.40, which requires
+# transformers >= 4.48 and huggingface_hub >= 1.23. ImageReward 1.5 ships a
+# copy of BLIP's BERT written against the transformers 4.x API: it imports
+# `apply_chunking_to_forward` from `transformers.modeling_utils` and reads
+# `tokenizer.additional_special_tokens_ids`, two things removed in
+# transformers 5. The two constraints cannot hold in one env, and the
+# CIFAR / CelebA results were already produced on the frozen `ddpm` stack.
 #
-# Cree avec --system-site-packages : torch vient de l'image Onyxia (2.14.0+cu130).
-# Voir scripts/setup_sd_env.sh, qui applique aussi deux correctifs manuels.
+# Created with --system-site-packages: torch comes from the GPU machine's image
+# (2.14.0+cu130); elsewhere, install the torch wheel that matches the CUDA version.
+# See scripts/setup_sd_env.sh, which also applies two manual patches.
 #
-# Versions installees le 19/09/2026, Python 3.13, Tesla T4.
+# Versions installed on 19/09/2026, Python 3.13, Tesla T4.
 
 transformers==4.49.0
-diffusers==0.31.0        # 0.40 exige transformers 5 ; 0.31 est la version testee ici
+diffusers==0.31.0        # 0.40 requires transformers 5; 0.31 is the version tested here
 accelerate==1.15.0
-setuptools<81            # openai-clip importe pkg_resources, retire de setuptools 81
-openai-clip==1.0.1       # dependance d'import d'ImageReward (AestheticScore)
+setuptools<81            # openai-clip imports pkg_resources, removed in setuptools 81
+openai-clip==1.0.1       # an import dependency of ImageReward (AestheticScore)
 image-reward==1.5
 hpsv2==1.2.0
-matplotlib==3.11.2      # plot_fig6_sd_grid.py regenere les images et trace dans le meme venv
+matplotlib==3.11.2      # plot_fig6_sd_grid.py regenerates the images and plots in the same venv
