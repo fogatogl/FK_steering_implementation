@@ -920,3 +920,50 @@ that distance the fix accounts for. On the first 40 prompts the released code's 
 0.949, 0.807, 0.720) spread by 0.19 where the spread within a prompt predicts 0.07 for exchangeable
 runs (`collapse_lab/ref/parse_authors.py`), so every +/- on a released-code run in this block is the
 spread within that run.
+
+## 20. Session G: the released code, best-of-4 and FK on seeds 2025 and 2026 (26/09 09:13 to 27/09 04:47)
+
+**Files.** `results/sd_seeds_bon4.json` (best-of-4, `run_sd_baseline.py` with the flags of
+`sd_baseline.json`, the device recorded), `results/sd_seeds_authors.json` (the released code at
+`9413005`, sampler `authors_paper`, and at `6726324`, `authors_paper_prefix`, paper configuration,
+global seed), `results/sd_seeds_fk4.json` (FK of this repository, `run_sd_baseline.py --samplers fk4`),
+each at seeds 2025 and 2026 on the 100 prompts. Launchers `collapse_lab/nuitG.sh`, `nuitG_fk.sh`;
+readout `collapse_lab/z_sessionG.py`; predictions in `docs/protocol_sd.md`, "Pre-registration of
+session G" and its amendment. Records written after the freeze, which they extend by two seeds of four
+arms already in it; `docs/data_freeze.md` lists them.
+
+**Tested.** Whether the released-code rows of section 7, each one run at seed 2024, hold on three
+seeds, and what their standard error becomes when the spread between runs enters it.
+
+**Cost.** 19 h 34 min of an NVIDIA A2: 79 s per best-of-4 run, 88 s per released-code or FK run.
+
+**Result.** Each seed pairs by x_T inside one machine (2024 on the T4, 2025 and 2026 on the A2: the
+A2's best-of-4 agrees with the T4's on none of the 200 prompts, `ir_max` correlated at 0.79). On three
+seeds, each prompt's difference averaged over the seeds, n = 100:
+
+| | seed 2024 | seed 2025 | seed 2026 | three seeds |
+|---|---|---|---|---|
+| released code minus best-of-4 | -0.000 | +0.010 | -0.018 | **-0.003 +/- 0.025** (60 won) |
+| before its fix minus best-of-4 | +0.077 | +0.098 | +0.049 | **+0.074 +/- 0.023** (66 won) |
+| before minus after the fix | +0.077 | +0.088 | +0.067 | +0.077 +/- 0.020 |
+| released code minus FK | -0.030 | -0.109 | -0.110 | **-0.083 +/- 0.026** (40 won) |
+| before its fix minus FK | +0.047 | -0.021 | -0.044 | -0.006 +/- 0.020 (48 won) |
+| FK minus best-of-4 | +0.030 | +0.119 | +0.092 | +0.080 +/- 0.023 (71 won) |
+
+The released code's run means are 0.770, 0.775 and 0.756 after the fix and 0.846, 0.864 and 0.823
+before it. The seed means of each difference spread by 0.011 to 0.047, against 0.030 to 0.043 for one
+seed's standard error. The gap rule of 22/09 reads not closed for both versions; the paper's +0.161 is
+6.5 standard errors above the released code and 3.8 above its version from before the fix. FK minus
+best-of-4 with this machine mix, +0.080 +/- 0.023, sits 0.018 from the three T4 seeds' +0.062 +/- 0.026.
+Three predictions missed: the released code minus FK (predicted within +/- 0.06 of zero), its version
+from before the fix minus FK (predicted positive), and the paper more than four standard errors above
+the version from before the fix.
+
+**What it changed.** Against best-of-4 the three seeds confirm the seed-2024 rows and cut their
+standard error from about 0.04 to 0.023 to 0.025; the three global-seed runs of the released code do
+not reproduce the 0.19 spread of block 19's four runs, which mixed two seedings and the launcher's
+seed 42 on the first 40 prompts. Against FK the reading changes: the released code, level with FK at
+seed 2024 (-0.030 +/- 0.044), sits 0.083 +/- 0.026 under it on three seeds, and its version from before
+the fix, +0.047 at seed 2024, is level with FK (-0.006 +/- 0.020). Seed and machine are not separated:
+seed 2024 is the only T4 seed, and the two A2 seeds carry the larger FK gains (+0.119 and +0.092 against
++0.089 and +0.068 for FK on the T4 at the same seeds, paired by prompt only). `R1` stays at one seed.
