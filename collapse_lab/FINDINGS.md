@@ -1,117 +1,118 @@
-# Pourquoi les quatre images finales descendent d'un seul x_T
+# Why the four final images descend from a single x_T
 
-## En bref
+## In short
 
-**Le probleme.** FK avec k = 4 rend quatre images issues du meme x_T dans 96 runs sur
-100 ; diversite pixel 0.09 contre 0.33 pour quatre tirages libres.
+**The problem.** FK with k = 4 returns four images from the same x_T in 96 runs out of
+100; pixel diversity 0.09 against 0.33 for four free draws.
 
-**La cause.** Deux degenerescences distinctes, que l'ESS ne separe pas (constat 15).
-*Les poids* : a chaque pas planifie le poids vaut `exp(lambda * r_phi)` a un facteur
-partage pres, et a lambda = 10 le premier pas (t = 80) a deja une etendue de 9 nats
-sur une reward guide toute negative et sans information -- ESS 1.24 sur 4. Le code des
-auteurs planche la statistique `max` a 0 et rend ce pas inerte ; `smc/fk.py` ne le fait
-pas, seul ecart a la reference (constat 6). *Les chemins* : reechantillonner quatre
-particules quatre fois fait coalescer l'arbre des ancetres vers une racine meme a poids
-moderes -- `adapt` tient l'ESS a 2.0 et finit quand meme a 1.40 lignees.
+**The cause.** Two distinct degeneracies, which the ESS does not separate (finding 15).
+*The weights*: at each scheduled step the weight is `exp(lambda * r_phi)` up to a
+shared factor, and at lambda = 10 the first step (t = 80) already has a range of 9 nats
+on a guide reward that is all negative and carries no information (ESS 1.24 out of 4). The
+authors' code floors the `max` statistic at 0 and makes this step inert; `smc/fk.py` does
+not, the only departure from the reference (finding 6). *The paths*: resampling four
+particles four times makes the ancestor tree coalesce to one root even at moderate
+weights. `adapt` holds the ESS at 2.0 and still ends at 1.40 lineages.
 
-**Le cout.** Rien de mesurable sur `ir_max` (+0.056 +/- 0.052 contre best-of-4, n = 100),
-mais quatre clones ont l'`ir` d'une seule image : l'`ir` moyen perd 0.53 +/- 0.12 contre
-quatre tirages libres (constat 13).
+**The cost.** Nothing measurable on `ir_max` (+0.056 +/- 0.052 against best-of-4, n = 100),
+but four clones have the `ir` of a single image: the mean `ir` loses 0.53 +/- 0.12 against
+four free draws (finding 13).
 
-**Les pistes** (constats 14, 17, 18, 20). Toutes ramenent `ir_max` au niveau de
-best-of-4, a une ou deux erreurs-types du bruit ; elles se distinguent par la diversite
-gardee et par l'`ir` moyen des quatre (-0.15 a -0.56). Mesure : plancher + lambda = 2
-(3.0 lignees, -0.01 sur `ir_max` apparie par x_T a n = 100) > plancher + lambda bisecte
-(2.12) > seuil ESS < k/2 ~ plancher seul ~ lambda = 2 seul (1.7-2.0) > lambda bisecte
-seul (1.40) ; calendrier sans t = 80 : 1.14. Le nombre de racines finales se predit depuis
-les poids et le resampler seuls, a 0.07 pres sur quinze bras (constat 17). A lambda = 10 la
-cible elle-meme ne porte que 1.2 a 1.5 particules sur 4 (constat 15) : rien ne « resout »
-l'effondrement a ce lambda, et la seule correction qui passe sous 25 % de runs a une racine
-change la cible. Mort : centrer la reward, changer de potentiel, reechantillonner moins.
+**The leads** (findings 14, 17, 18, 20). All of them bring `ir_max` back to the level of
+best-of-4, within one or two standard errors of noise; they differ by the diversity
+kept and by the mean `ir` of the four (-0.15 to -0.56). Measured: floor + lambda = 2
+(3.0 lineages, -0.01 on `ir_max` paired by x_T at n = 100) > floor + bisected lambda
+(2.12) > ESS threshold < k/2 ~ floor alone ~ lambda = 2 alone (1.7-2.0) > bisected lambda
+alone (1.40); schedule without t = 80: 1.14. The number of final roots is predicted from
+the weights and the resampler alone, to within 0.07 over fifteen arms (finding 17). At
+lambda = 10 the target itself carries only 1.2 to 1.5 particles out of 4 (finding 15):
+nothing "resolves" the collapse at this lambda, and the only correction that goes under
+25 % of one-root runs changes the target. Dead: centring the reward, changing the
+potential, resampling less.
 
-**La reference** (constat 16). La configuration du papier est celle de ce depot ; le code
-publie rend en moyenne moins que best-of-4 (-0.11 +/- 0.04 sur quatre runs) avec une
-dispersion d'un run a l'autre plus large que l'effet du papier. Ecart borne, pas ferme.
-
----
-
-## Le probleme, et la cause la plus probable
-
-**Le probleme.** Avec k = 4, les quatre images que FK rend a la fin descendent d'une
-seule racine x_T dans 96 runs sur 100. La diversite pixel tombe a 0.09 contre 0.33 pour
-quatre tirages libres. Ce n'est plus un echantillonneur a quatre particules : c'est une
-recherche gloutonne sequentielle sur une racine choisie tot.
-
-**La cause la plus probable.** Le premier pas planifie (t = 80) decide de tout, et c'est
-le pas ou la reward guide ne sait rien. Le poids y vaut `exp(lambda * r_phi)` a un
-facteur partage pres -- un classement sur le **niveau** de la reward, pas sur son
-increment, parce que le terme soustrait par le potentiel est commun aux particules et
-disparait a la normalisation. A lambda = 10, une etendue de 0.90 devient 9 nats, l'ESS
-tombe a 1.24 sur 4, et un seul passage du peigne ne laisse que 1.8 ancetres. Or le
-classement a ce pas ne predit pas la qualite finale (Kendall tau = +0.067 +/- 0.071).
-Quatre pas comme celui-la et il ne reste qu'une lignee.
-
-**Ce qui l'aggrave, et qui est un ecart au code de reference.** Les auteurs initialisent
-la statistique du potentiel `max` a `reward_min_value = 0.0` ; ici elle part de moins
-l'infini. ImageReward etant negative pour les quatre particules dans 90 % des runs a
-t = 80, leur pas est **inerte** la ou le notre depense 9 nats sur du bruit. C'est le seul
-endroit ou ce depot est plus agressif que sa reference, et il tombe exactement sur le pas
-qui tue la lignee. Le contrefactuel (constat 10) le confirme : avec le plancher, 3.9
-ancetres survivent a t = 80 au lieu de 1.8.
-
-**Ce que la correction ne promet pas.** Garder des lignees coute environ 0.10
-d'`ir_max` contre `ctl`, et ce prix est **plat** : il est le meme pour le bras qui garde
-0.35 lignee de plus et pour celui qui en garde 2.95 (constat 13). Sortir de
-l'effondrement ramene `ir_max` au niveau de best-of-4, ensuite la diversite ne coute plus
-rien sur `ir_max` ; c'est l'`ir` **moyen** des quatre images qui paie, et lui suit ce que
-l'on achete. Le meilleur compromis mesure est le plancher **avec lambda = 2** (`floor2`) :
-2.85 lignees au lieu de 1.05, diversite pixel 0.263 contre 0.092, pour le meme -0.10 que
-les autres bras (n = 20). Le lambda adaptatif seul ne repare presque rien : une cible
-d'ESS a k/2 fait reechantillonner a tous les pas et divise les lignees plus lentement au
-lieu de les garder. Les pistes, mesurees et non mesurees, sont au constat 14.
+**The reference** (finding 16). The paper's configuration is the one of this repository;
+the released code returns on average less than best-of-4 (-0.11 +/- 0.04 over four runs)
+with a run-to-run spread wider than the paper's effect. Gap bounded, not closed.
 
 ---
 
-Etat au 22/09 apres la nuit complete. Les constats 1 a 6 et 8 sont fermes et rejouables
-sans GPU depuis `collapse_lab/*.py`. Le constat 7 porte les predictions ecrites avant les
-donnees, le constat 10 ce que la sonde en dit sur 10 prompts, le constat 11 un controle
-qui echoue et qui met en doute les constats 3, 5 et 5 bis, le constat 12 les deux bras de
-correction sur 20 prompts, le constat 13 les sept bras au n final (40 ou 20 prompts) et
-les trois lectures du constat 12 qu'il renverse, le constat 14 les facons de reparer, le
-constat 15 une relecture independante : poids et genealogie sont deux degenerescences.
+## The problem, and the most likely cause
 
-## La chaine causale, en une phrase
+**The problem.** With k = 4, the four images that FK returns at the end descend from a
+single root x_T in 96 runs out of 100. Pixel diversity falls to 0.09 against 0.33 for
+four free draws. This is no longer a four-particle sampler: it is a sequential greedy
+search on a root chosen early.
 
-A chaque pas planifie, le poids d'une particule est `exp(lambda * r_phi(x_t))` a
-un facteur **partage** pres, donc un classement sur le **niveau** de la reward
-guide ; a `lambda = 10` l'etendue de ce niveau vaut 9 nats au premier pas, l'ESS
-tombe a 1.3 sur 4, et le peigne systematique donne 3 ou 4 cases sur 4 a une seule
-particule. Quatre rebelotes et il ne reste qu'une racine. Le pas qui decide est
-celui ou la reward guide ne predit rien.
+**The most likely cause.** The first scheduled step (t = 80) decides everything, and it
+is the step where the guide reward knows nothing. The weight there is
+`exp(lambda * r_phi)` up to a shared factor: a ranking on the **level** of the reward,
+not on its increment, because the term the potential subtracts is common to the
+particles and vanishes at normalisation. At lambda = 10, a range of 0.90 becomes 9 nats,
+the ESS falls to 1.24 out of 4, and a single pass of the comb leaves only 1.8 ancestors.
+Yet the ranking at this step does not predict final quality (Kendall tau = +0.067 +/- 0.071).
+Four steps like that one and only one lineage is left.
 
-## 1. Ce n'est pas un bug de `weights.py` ni de `resampling.py`
+**What makes it worse, and is a departure from the reference code.** The authors
+initialise the statistic of the `max` potential at `reward_min_value = 0.0`; here it
+starts from minus infinity. Since ImageReward is negative for all four particles in 90 %
+of runs at t = 80, their step is **inert** where ours spends 9 nats on noise. It is the
+only place where this repository is more aggressive than its reference, and it falls
+exactly on the step that kills the lineage. The counterfactual (finding 10) confirms it:
+with the floor, 3.9 ancestors survive at t = 80 instead of 1.8.
 
-L'ESS recalculee depuis `r_at_schedule[0]` colle a `ess_at_schedule[0]` a
-**4.3e-05** en median et 4.8e-04 au pire, sur les 20 runs qui portent le champ,
-et le meme chiffre sur `fk4_diff`, qui est le meme jeu de prompts
-(`collapse_lab/a_step0_ess.py`). L'effondrement est de l'arithmetique exacte.
+**What the correction does not promise.** Keeping lineages costs about 0.10 of `ir_max`
+against `ctl`, and this price is **flat**: it is the same for the arm that keeps 0.35
+lineage more and for the one that keeps 2.95 more (finding 13). Leaving the collapse
+brings `ir_max` back to the level of best-of-4, after which diversity costs nothing more
+on `ir_max`; it is the **mean** `ir` of the four images that pays, and that one follows
+what is bought. The best measured compromise is the floor **with lambda = 2** (`floor2`):
+2.85 lineages instead of 1.05, pixel diversity 0.263 against 0.092, for the same -0.10 as
+the other arms (n = 20). Adaptive lambda alone repairs almost nothing: an ESS target at
+k/2 makes it resample at every step and divides the lineages more slowly instead of
+keeping them. The leads, measured and unmeasured, are in finding 14.
 
-## 2. Un seul reechantillonnage suffit a tuer la moitie des lignees
+---
 
-Le peigne de `smc/resampling.py` donne a la particule j un nombre de cases egal a
-`floor` ou `ceil` de `k * w_j`. En integrant sur `u ~ U(0, 1/k)` a partir des
-poids du pas t = 80 : **1.835 ancetres distincts attendus**, et P(une seule
-lignee des ce pas) = 0.46 (`collapse_lab/b_comb.py`).
+State as of 22/09 after the full night. Findings 1 to 6 and 8 are closed and replayable
+without a GPU from `collapse_lab/*.py`. Finding 7 carries the predictions written before
+the data, finding 10 what the probe says about them on 10 prompts, finding 11 a control
+that fails and casts doubt on findings 3, 5 and 5 bis, finding 12 the two correction arms
+on 20 prompts, finding 13 the seven arms at the final n (40 or 20 prompts) and the three
+readings of finding 12 that it overturns, finding 14 the ways to repair, finding 15 an
+independent rereading: weights and genealogy are two degeneracies.
 
-Controle independant : `S80.json`, dont le calendrier `[0, 80]` ne contient qu'un
-seul reechantillonnage, observe **1.850** lignees. Prediction et mesure coincident
-sur un fichier qui n'a pas servi a la calculer.
+## The causal chain, in one sentence
 
-## 2 bis. Le chiffre de reference, sur 100 prompts
+At each scheduled step, a particle's weight is `exp(lambda * r_phi(x_t))` up to a
+**shared** factor, hence a ranking on the **level** of the guide reward; at
+`lambda = 10` the range of this level is 9 nats at the first step, the ESS falls to 1.3
+out of 4, and the systematic comb gives 3 or 4 slots out of 4 to a single particle. Four
+rounds of that and only one root is left. The step that decides is the one where the
+guide reward predicts nothing.
 
-`sd_ref_fields100.json`, la configuration exacte de la ligne FK :
+## 1. It is not a bug in `weights.py` or in `resampling.py`
 
-| pas | ESS mediane (sur k=4) | Q1 - Q3 | part des runs sous 1.5 |
+The ESS recomputed from `r_at_schedule[0]` matches `ess_at_schedule[0]` to
+**4.3e-05** at the median and 4.8e-04 at worst, over the 20 runs that carry the field,
+and the same figure on `fk4_diff`, which is the same set of prompts
+(`collapse_lab/a_step0_ess.py`). The collapse is exact arithmetic.
+
+## 2. A single resampling is enough to kill half the lineages
+
+The comb of `smc/resampling.py` gives particle j a number of slots equal to `floor` or
+`ceil` of `k * w_j`. Integrating over `u ~ U(0, 1/k)` from the weights of step t = 80:
+**1.835 distinct ancestors expected**, and P(a single lineage from this step on) = 0.46
+(`collapse_lab/b_comb.py`).
+
+Independent control: `S80.json`, whose schedule `[0, 80]` contains a single resampling,
+observes **1.850** lineages. Prediction and measurement coincide on a file that was not
+used to compute it.
+
+## 2 bis. The reference figure, on 100 prompts
+
+`sd_ref_fields100.json`, the exact configuration of the FK row:
+
+| step | median ESS (out of k=4) | Q1 - Q3 | share of runs under 1.5 |
 |---|---|---|---|
 | t = 80 | **1.24** | 1.01 - 2.00 | **58 %** |
 | t = 60 | 1.57 | 1.10 - 2.25 | 46 % |
@@ -119,13 +120,13 @@ sur un fichier qui n'a pas servi a la calculer.
 | t = 20 | 2.94 | 1.82 - 3.73 | 17 % |
 | t = 0 | 2.61 | 1.84 - 3.22 | 13 % |
 
-`n_lineages` vaut 1 dans **96 runs sur 100** et 2 dans les 4 autres ;
-`n_resamplings` moyen 3.78 sur 4 possibles. Une ESS de 1.24 sur 4 particules veut
-dire qu'une particule porte a elle seule pres de 90 % du poids.
+`n_lineages` is 1 in **96 runs out of 100** and 2 in the other 4; mean `n_resamplings`
+3.78 out of 4 possible. An ESS of 1.24 over 4 particles means that one particle alone
+carries close to 90 % of the weight.
 
-## 3. La pression de selection est maximale la ou le signal est nul
+## 3. The selection pressure is highest where the signal is zero
 
-| pas | niveau moyen de r_phi | etendue mediane | nats a lambda=10 | ESS mediane |
+| step | mean level of r_phi | median range | nats at lambda=10 | median ESS |
 |---|---|---|---|---|
 | t = 80 | -1.62 | 0.90 | 9.0 | 1.34 |
 | t = 60 | -0.33 | 0.77 | 7.7 | 1.48 |
@@ -133,99 +134,95 @@ dire qu'une particule porte a elle seule pres de 90 % du poids.
 | t = 20 | +0.68 | 0.32 | 3.2 | 2.58 |
 | t = 0  | +0.84 | 0.27 | 2.7 | 2.39 |
 
-Et l'information va dans l'autre sens. La case j de `fk4` et la case j de `bon4`
-partagent x_T, et la ligne 0 est lue avant tout reechantillonnage :
-`bon4["ir"][j]` est donc ce que cette racine devient si on la laisse tranquille.
-**Cette phrase est l'hypothese que le constat 11 met en echec** : le bras `lam0` ne
-reproduit pas `bon4` case par case. Ce qui suit, et le constat 5 bis, en dependent.
+And the information goes the other way. Slot j of `fk4` and slot j of `bon4` share
+x_T, and row 0 is read before any resampling: `bon4["ir"][j]` is therefore what this
+root becomes if it is left alone. **This sentence is the hypothesis that finding 11
+defeats**: the `lam0` arm does not reproduce `bon4` slot by slot. What follows, and
+finding 5 bis, depend on it.
 
-- Kendall tau entre le classement a t = 80 et le classement final : **+0.067 +/- 0.071**
-- la meilleure racine a t = 80 est la meilleure finale dans **3 runs sur 20** (hasard 25 %)
-- `ir(meilleure racine) - ir(racine choisie)` = **+0.627**, contre **+0.568** pour une
-  racine tiree au sort : difference appariee **+0.059 +/- 0.132**, donc
-  **indiscernable du hasard**. Le signe est defavorable, l'erreur-type le couvre.
+- Kendall tau between the ranking at t = 80 and the final ranking: **+0.067 +/- 0.071**
+- the best root at t = 80 is the best final one in **3 runs out of 20** (chance 25 %)
+- `ir(best root) - ir(chosen root)` = **+0.627**, against **+0.568** for a root drawn
+  at random: paired difference **+0.059 +/- 0.132**, hence **indistinguishable from
+  chance**. The sign is unfavourable, the standard error covers it.
 
-n = 20 et non 40 : `fk4_stat` et `fk4_diff` portent les memes prompts aux memes
-x_T, et le constat 4 montre que leur ligne 0 est identique a zero pres. Les
-empiler diviserait l'erreur-type par racine de 2 sans ajouter une observation
+n = 20 and not 40: `fk4_stat` and `fk4_diff` carry the same prompts at the same x_T,
+and finding 4 shows that their row 0 is identical, with zero difference. Stacking them
+would divide the standard error by the square root of 2 without adding an observation
 (`collapse_lab/commun.py`).
 
-## 4. La soustraction du potentiel ne protege de rien
+## 4. The subtraction of the potential protects against nothing
 
-`_potential_terms` soustrait `prev` (le `gate`, le max courant, la reward
-precedente selon le potentiel). Mais `prev` est **partage entre les cases** des
-que celles-ci descendent d'un meme ancetre, et il vaut 0 au premier pas par
-construction (`gate` vide pour `max`, zero pour `difference` et `sum`). Un terme
-partage disparait a la normalisation : le poids est `exp(lambda * r_t)`.
+`_potential_terms` subtracts `prev` (the `gate`, the running max, the previous reward,
+depending on the potential). But `prev` is **shared between slots** as soon as they
+descend from the same ancestor, and it is 0 at the first step by construction (empty
+`gate` for `max`, zero for `difference` and `sum`). A shared term vanishes at
+normalisation: the weight is `exp(lambda * r_t)`.
 
-Mesure directe sur un run de la sonde, t = 60 : `logG - 10 * r_phi` vaut
-3.5707 pour les quatre cases, exactement constant. Le "cliquet" ne se met a
-aplatir qu'a t = 40 et t = 20, quand le record devient dur a battre -- bien apres
-que la lignee soit morte.
+Direct measurement on a probe run, t = 60: `logG - 10 * r_phi` is 3.5707 for all four
+slots, exactly constant. The "ratchet" only starts to flatten at t = 40 and t = 20,
+when the record becomes hard to beat, well after the lineage has died.
 
-Consequence verifiable, et verifiee : **le choix du potentiel ne peut rien
-changer**. `fk4_stat` (max, forme statistique) et `fk4_diff` (difference)
-partagent prompts et seeds ; leurs `r_phi` sont identiques **a zero pres** a
-t = 80 et t = 60, ils gardent la meme racine dans 19 prompts sur 20, et l'ecart
-appariee sur `ir_max` est de **-0.0043 +/- 0.0240** (`collapse_lab/d_forms.py`).
-C'est la reponse a la question laissee ouverte par `docs/max_potential.md` :
-`difference` n'a pas ferme l'ecart parce que le pas qui decide de la lignee ne
-regarde pas le potentiel.
+A checkable consequence, and checked: **the choice of potential cannot change
+anything**. `fk4_stat` (max, statistic form) and `fk4_diff` (difference) share prompts
+and seeds; their `r_phi` are identical **with zero difference** at t = 80 and t = 60,
+they keep the same root in 19 prompts out of 20, and the paired difference on `ir_max`
+is **-0.0043 +/- 0.0240** (`collapse_lab/d_forms.py`). This is the answer to the
+question left open by `docs/max_potential.md`: `difference` did not close the gap
+because the step that decides the lineage does not look at the potential.
 
-## 5. Les 18 variantes deja sur disque disent la meme chose
+## 5. The 18 variants already on disk say the same thing
 
-`collapse_lab/e_variants.py` : `div_pix` reste au plancher de 0.09 (contre 0.33
-pour `bon4`) pour le calendrier dense, les rampes, les seuils, les deux formes et
-les trois potentiels. Les seules variantes qui remontent la diversite sont celles
-qui **affaiblissent le premier pas** (`T2`, lambda_1 = 0.4 : 1.55 lignees,
-div_pix 0.139) ou qui n'en ont qu'un (`S80` : 1.85 lignees, div_pix 0.233).
+`collapse_lab/e_variants.py`: `div_pix` stays at the floor of 0.09 (against 0.33 for
+`bon4`) for the dense schedule, the ramps, the thresholds, the two forms and the three
+potentials. The only variants that raise the diversity are those that **weaken the
+first step** (`T2`, lambda_1 = 0.4: 1.55 lineages, div_pix 0.139) or that have only one
+step (`S80`: 1.85 lineages, div_pix 0.233).
 
-## 5 bis. Ce n'est pas best-of-n : c'est pire que best-of-n sur la racine
+## 5 bis. It is not best-of-n: it is worse than best-of-n on the root
 
-Avec une ESS de 1.3 a chaque pas planifie, la methode degeneree est un **glouton
-sequentiel** : on tire 4 racines, on en garde une tot, on la clone, les clones
-divergent sous le bruit de DDIM a eta = 1, on en garde un au pas suivant, et ainsi
-de suite. Les quatre images finales sont quatre freres separes depuis t = 20
-environ.
+With an ESS of 1.3 at each scheduled step, the degenerate method is a **sequential
+greedy search**: it draws 4 roots, keeps one early, clones it, the clones diverge under
+the DDIM noise at eta = 1, it keeps one at the next step, and so on. The four final
+images are four siblings separated since about t = 20.
 
-La difference avec best-of-4 se chiffre. Sur les 100 prompts de
-`sd_ref_fields100.json`, apparies case par case avec `bon4`
-(`collapse_lab/j_decomposition.py`) :
+The difference from best-of-4 can be put in figures. On the 100 prompts of
+`sd_ref_fields100.json`, paired slot by slot with `bon4`
+(`collapse_lab/j_decomposition.py`):
 
 | | ImageReward |
 |---|---|
-| A meilleure des 4 racines, menee librement | +0.7698 |
-| M racine moyenne, libre | +0.2232 |
-| B **la racine que fk garde**, menee librement | +0.3592 |
-| C **ce que fk en tire reellement** | +0.8257 |
+| A best of the 4 roots, run freely | +0.7698 |
+| M average root, free | +0.2232 |
+| B **the root that fk keeps**, run freely | +0.3592 |
+| C **what fk actually gets from it** | +0.8257 |
 
-- **B - M = +0.136 +/- 0.057** : la racine gardee vaut mieux qu'un tirage au sort.
-  Elle recupere environ **un quart** de l'ecart disponible (IC95 bootstrap sur les
-  prompts [+0.023, +0.246], rang moyen 1.220 sur 4 contre 1.500 au hasard, IC95
+- **B - M = +0.136 +/- 0.057**: the root kept is worth more than a random draw. It
+  recovers about **a quarter** of the available gap (bootstrap CI95 over the prompts
+  [+0.023, +0.246], mean rank 1.220 out of 4 against 1.500 at random, CI95
   [1.020, 1.430], `collapse_lab/i_root100.py`).
-- **B - A = -0.411 +/- 0.060** : l'effondrement coute 0.41 de qualite de racine par
-  rapport a ce que best-of-4 choisit, qui prend la meilleure par construction.
-- **C - B = +0.467 +/- 0.073** : le pilotage le long de la trajectoire, a racine
-  fixee, remonte plus que cela.
-- **C - A = +0.056 +/- 0.052**, et la decomposition ferme exactement.
+- **B - A = -0.411 +/- 0.060**: the collapse costs 0.41 of root quality relative to
+  what best-of-4 chooses, which takes the best one by construction.
+- **C - B = +0.467 +/- 0.073**: steering along the trajectory, at a fixed root, wins
+  back more than that.
+- **C - A = +0.056 +/- 0.052**, and the decomposition closes exactly.
 
-Donc : `fk4` **part plus mal que best-of-4** et le rattrape en pilotant. Le gain
-publie n'est pas "FK choisit une meilleure racine", c'est "FK choisit moins bien
-et pilote mieux". L'effondrement est le **prix** du pilotage, pas son moyen.
+So: `fk4` **starts worse than best-of-4** and catches up by steering. The published gain
+is not "FK chooses a better root", it is "FK chooses worse and steers better". The
+collapse is the **price** of steering, not its means.
 
-**Correction a une lecture anterieure.** `docs/max_potential.md` constat 4 conclut
-que "la racine gardee n'est pas meilleure que le hasard", a partir d'un taux
-binaire (l'argmax de bon4 survit-il) mesure sur `S60`. Le test binaire est peu
-puissant et `S60` n'a pas de pas a t = 80. Sur le fichier de reference a 100
-prompts, le rang et le cout en reward rejettent le hasard a 2,5 erreurs-types. Ce
-qui reste vrai, c'est que **le seul pas t = 80** n'apporte rien (constat 3) : ce
-que `root_slots` mesure, c'est la composition de tous les reechantillonnages, et
-dans les 54 % de runs ou deux racines survivent a t = 80, c'est t = 60 qui
-tranche, avec une reward guide deja moins bruitee.
+**Correction to an earlier reading.** `docs/max_potential.md` finding 4 concludes that
+"the root it keeps is no better than chance", from a binary rate (does the argmax of
+bon4 survive) measured on `S60`. The binary test has little power and `S60` has no step
+at t = 80. On the reference file with 100 prompts, the rank and the cost in reward
+reject chance at 2.5 standard errors. What remains true is that **the t = 80 step
+alone** brings nothing (finding 3): what `root_slots` measures is the composition of
+all the resamplings, and in the 54 % of runs where two roots survive t = 80, it is
+t = 60 that decides, with a guide reward that is already less noisy.
 
-## 6. Le code publie des auteurs a un garde-fou que `smc/fk.py` n'a pas
+## 6. The authors' released code has a safeguard that `smc/fk.py` lacks
 
-`fkd_class.py` de <https://github.com/zacharyhorvitz/Fk-Diffusion-Steering> :
+`fkd_class.py` from <https://github.com/zacharyhorvitz/Fk-Diffusion-Steering>:
 
 ```python
 self.population_rs = torch.ones(self.num_particles, device=...) * reward_min_value  # 0.0
@@ -235,95 +232,89 @@ if self.potential_type == PotentialType.MAX:
     w = torch.exp(self.lmbda * rs_candidates)
 ```
 
-La statistique du potentiel `max` est **plancheee a 0**. `smc/fk.py` applique ce
-plancher a `prev` (`torch.where(torch.isneginf(gate), zeros, gate)`) mais **pas a
-`curr`** (`curr = torch.maximum(gate, r_t)` avec `gate` a -inf). Or ImageReward
-est negative pour toutes les particules dans **90 %** des runs a t = 80 et
-**40 %** a t = 60. Chez les auteurs ces pas donnent `max(r, 0) = 0` partout, donc
-des poids uniformes et **aucune selection** ; ici ils donnent 9 nats d'ecart sur
-du bruit.
+The statistic of the `max` potential is **floored at 0**. `smc/fk.py` applies this floor
+to `prev` (`torch.where(torch.isneginf(gate), zeros, gate)`) but **not to `curr`**
+(`curr = torch.maximum(gate, r_t)` with `gate` at -inf). Yet ImageReward is negative
+for all particles in **90 %** of runs at t = 80 and **40 %** at t = 60. In the authors'
+code these steps give `max(r, 0) = 0` everywhere, hence uniform weights and **no
+selection**; here they give 9 nats of spread on noise.
 
-Le plancher ne protege que `max`. Pour `diff`, `population_rs` vaut 0 au premier
-pas et le poids est `exp(lambda * (r_t - 0))` : un classement sur le niveau, lui
-aussi. La configuration d'evaluation publiee -- `lmbda=10`,
-`resample_frequency=5`, `resample_t_start=5`, `resample_t_end=30`,
-`potential_type="diff"`, `adaptive_resampling` **desactive** par defaut -- place
-son premier reechantillonnage a l'indice de boucle 5 sur 100, soit t d'environ
-950, encore plus bruite que le t = 80 d'ici. **L'effondrement n'est donc pas
-propre a ce depot : il est dans le regime du code publie aussi.** Leur
-configuration qualitative, elle, est `lmbda=2.0`, `adaptive_resampling=True`,
+The floor protects only `max`. For `diff`, `population_rs` is 0 at the first step and
+the weight is `exp(lambda * (r_t - 0))`: a ranking on the level, too. The released
+evaluation configuration (`lmbda=10`, `resample_frequency=5`, `resample_t_start=5`,
+`resample_t_end=30`, `potential_type="diff"`, `adaptive_resampling` **disabled** by
+default) places its first resampling at loop index 5 out of 100, that is t of about 950,
+even noisier than the t = 80 here. **The collapse is therefore not specific to this
+repository: it is in the regime of the released code too.** Their qualitative
+configuration, for its part, is `lmbda=2.0`, `adaptive_resampling=True`,
 `resample_frequency=20`, `t_start=20`, `t_end=80`.
 
-Les autres ecarts vont tous dans le sens d'un depot plus **doux** que la
-reference, pas plus dur : le peigne systematique de `smc/resampling.py` a une
-variance plus faible que le multinomial des auteurs, et a seuil 1.0
-`should_resample` teste `ESS < k` au sens strict, donc ne reechantillonne pas a
-poids exactement uniformes la ou leur boucle non adaptative tire quand meme. Le
-plancher manquant est le seul endroit ou ce depot est plus agressif que la
-reference.
+The other departures all go in the direction of a repository **gentler** than the
+reference, not harsher: the systematic comb of `smc/resampling.py` has a lower variance
+than the authors' multinomial, and at threshold 1.0 `should_resample` tests `ESS < k`
+in the strict sense, so it does not resample at exactly uniform weights where their
+non-adaptive loop draws anyway. The missing floor is the only place where this
+repository is more aggressive than the reference.
 
-## 7. Contrefactuel GPU : predictions ecrites avant les donnees
+## 7. GPU counterfactual: predictions written before the data
 
-Cinq bras, memes prompts, memes x_T, `collapse_lab/probe.py` : `ctl` (le fk4 de
-reference), `floor` (le plancher des auteurs, obtenu en enveloppant la reward
-passee a `fk_steer`, sans toucher a `smc/`), `lam2`, `floor2`, `lam0` (controle
-d'appariement). `ctl` et `floor` tournent sur 40 prompts, les autres sur 20.
-Depouillement : `collapse_lab/f_probe.py`.
+Five arms, same prompts, same x_T, `collapse_lab/probe.py`: `ctl` (the reference fk4),
+`floor` (the authors' floor, obtained by wrapping the reward passed to `fk_steer`,
+without touching `smc/`), `lam2`, `floor2`, `lam0` (pairing control). `ctl` and `floor`
+run on 40 prompts, the others on 20. Analysis: `collapse_lab/f_probe.py`.
 
-Le peigne, applique au premier pas aux poids reellement enregistres
-(`collapse_lab/b_comb.py`), donne le nombre d'ancetres attendus juste apres
-t = 80 :
+The comb, applied at the first step to the weights actually recorded
+(`collapse_lab/b_comb.py`), gives the number of ancestors expected just after t = 80:
 
-| regime | ESS mediane | ancetres apres t=80 | pas inerte |
+| regime | median ESS | ancestors after t=80 | inert step |
 |---|---|---|---|
 | lam=10 (`ctl`) | 1.34 | **1.835** | 0 % |
-| lam=10 + plancher (`floor`) | 4.00 | **3.849** | **90 %** |
+| lam=10 + floor (`floor`) | 4.00 | **3.849** | **90 %** |
 | lam=2 (`lam2`) | 2.72 | **2.898** | 0 % |
-| lam=2 + plancher (`floor2`) | 4.00 | **3.970** | 90 % |
+| lam=2 + floor (`floor2`) | 4.00 | **3.970** | 90 % |
 
-**Predictions, ecrites le 21/09 avant le depouillement.**
+**Predictions, written on 21/09 before the analysis.**
 
-1. `ctl` : 1.8 lignees apres t = 80, puis decroissance jusqu'a 1.05 a la fin ;
-   reproduit le `ir_max` du `fk4` de `sd_baseline.json` a l'erreur d'arrondi pres.
-2. `floor` : t = 80 inerte dans environ 90 % des runs, donc environ 3.8 lignees
-   apres ce pas. Le plancher **ne supprime pas** l'effondrement, il le **retarde**
-   jusqu'au premier pas ou une particule passe au-dessus de 0 : le run d'essai
-   montre un prompt ou une seule des quatre est positive a t = 80, logG =
-   [3.57, 0, 0, 0], ESS 1.17, effondrement immediat. Prediction finale : entre 2 et 3
-   lignees, nettement au-dessus de 1, nettement en dessous de 4.
-3. `lam2` : environ 2.9 lignees apres t = 80, environ 1.3 a 1.6 a la fin.
-4. `floor2` : le plus protecteur, environ 4.0 apres t = 80.
-5. `lam0` : 4 lignees partout, et les quatre `ir` egaux case par case a ceux de
-   `bon4` (derive fp16 attendue, pas egalite au bit).
-6. **`ir_max` ne bouge pas.** Aucun bras ne doit s'ecarter de `ctl` de plus d'une
-   erreur-type (environ 0.05 a 0.07 ici). C'est la prediction la plus exposee, et
-   elle suit du constat 3 : si la racine est choisie au hasard, en perdre trois ne
-   coute rien en moyenne. L'effondrement et l'ecart de 0.078 sur la reward sont
-   deux questions distinctes, et ce fichier ne traite que la premiere.
+1. `ctl`: 1.8 lineages after t = 80, then a decrease down to 1.05 at the end;
+   reproduces the `ir_max` of the `fk4` of `sd_baseline.json` up to rounding error.
+2. `floor`: t = 80 inert in about 90 % of runs, hence about 3.8 lineages after this
+   step. The floor **does not remove** the collapse, it **delays** it until the first
+   step where a particle goes above 0: the trial run shows a prompt where only one of
+   the four is positive at t = 80, logG = [3.57, 0, 0, 0], ESS 1.17, immediate
+   collapse. Final prediction: between 2 and 3 lineages, clearly above 1, clearly
+   below 4.
+3. `lam2`: about 2.9 lineages after t = 80, about 1.3 to 1.6 at the end.
+4. `floor2`: the most protective, about 4.0 after t = 80.
+5. `lam0`: 4 lineages everywhere, and the four `ir` equal slot by slot to those of
+   `bon4` (fp16 drift expected, not bitwise equality).
+6. **`ir_max` does not move.** No arm should depart from `ctl` by more than one
+   standard error (about 0.05 to 0.07 here). This is the most exposed prediction, and
+   it follows from finding 3: if the root is chosen at random, losing three of them
+   costs nothing on average. The collapse and the 0.078 gap on the reward are two
+   distinct questions, and this file deals only with the first.
 
 
-**La nuit du 21 au 22 a ete tuee avec le terminal apres 20 runs sur 80** ; la sonde a ete
-relancee detachee le 22 au matin, avec `lam0` en premier. Le depouillement partiel est au
-constat 10, le controle `lam0` au constat 11.
+**The night of the 21st to the 22nd was killed with the terminal after 20 runs out of
+80**; the probe was relaunched detached on the morning of the 22nd, with `lam0` first.
+The partial analysis is in finding 10, the `lam0` control in finding 11.
 
-## 8. Ce qui ne peut pas marcher, et pourquoi (`collapse_lab/h_invariances.py`)
+## 8. What cannot work, and why (`collapse_lab/h_invariances.py`)
 
-Le poids est `exp(lambda * r)` normalise. **Toute transformation de r qui ajoute
-la meme chose a toutes les particules disparait a la normalisation.** Sur le
-premier pas d'un run reel, ESS = 1.1761 ; centrer la reward, la decaler de +100,
-lui retrancher un max courant partage : **1.1761 a chaque fois, au bit pres**.
-Centrer la reward guide est donc une piste morte, et c'est aussi la raison pour
-laquelle la soustraction de `prev` dans `_potential_terms` ne protege de rien
-(constat 4).
+The weight is `exp(lambda * r)` normalised. **Any transformation of r that adds the
+same thing to all particles vanishes at normalisation.** On the first step of a real
+run, ESS = 1.1761; centring the reward, shifting it by +100, subtracting a shared
+running max from it: **1.1761 every time, to the bit**. Centring the guide reward is
+therefore a dead lead, and it is also the reason why the subtraction of `prev` in
+`_potential_terms` protects against nothing (finding 4).
 
-Ce qui bouge l'ESS, c'est ce qui comprime les **ecarts** entre particules :
-baisser lambda (2.70 a lambda = 2), ou creer des ex aequo, ce que fait le plancher
-(4.0000, le pas devient inerte).
+What moves the ESS is what compresses the **gaps** between particles: lowering lambda
+(2.70 at lambda = 2), or creating ties, which is what the floor does (4.0000, the step
+becomes inert).
 
-Le lambda qui tiendrait l'ESS a k/2, calcule par `smc.fk.bisect_lambda` sur les
-r_phi enregistres :
+The lambda that would hold the ESS at k/2, computed by `smc.fk.bisect_lambda` on the
+recorded r_phi:
 
-| pas | lambda pour ESS = 2 (median) | Q1 - Q3 |
+| step | lambda for ESS = 2 (median) | Q1 - Q3 |
 |---|---|---|
 | t = 80 | **3.91** | 2.55 - 15.49 |
 | t = 60 | 4.24 | 3.00 - 7.02 |
@@ -331,213 +322,212 @@ r_phi enregistres :
 | t = 20 | 11.93 | 8.15 - 20.07 |
 | t = 0 | 15.22 | 9.73 - 62.39 |
 
-Le run tourne a 10.0 partout : **2,5 fois trop fort au pas ou la reward ne predit
-rien, et trop faible aux pas ou elle predit**. Le profil correct monte le long du
-debruitage, ce qui est l'inverse des rampes des runs 13 a 15, qui baissaient
-lambda au debut sans le remonter a la fin.
+The run uses 10.0 everywhere: **2.5 times too strong at the step where the reward
+predicts nothing, and too weak at the steps where it predicts**. The correct profile
+rises along the denoising, which is the opposite of the ramps of runs 13 to 15, which
+lowered lambda at the start without raising it at the end.
 
-## 9. Ce que cela implique, sans ecrire le code
+## 9. What this implies, without writing the code
 
-Trois choses a faire, de la moins chere a la plus chere, chacune dans un fichier
-qui appartient a l'auteur.
+Three things to do, from the cheapest to the most expensive, each in a file that
+belongs to the author.
 
-**Le plancher.** `_potential_terms`, branche `max` de `smc/fk.py` : le plancher a
-0 est applique a `prev` et pas a `curr`. Le code publie initialise sa statistique
-a `reward_min_value = 0.0`, pas a moins l'infini, et lit `max(r_t, statistique)`.
-C'est le seul endroit ou ce depot est plus agressif que sa reference, et il tombe
-exactement sur le pas qui decide de la lignee. Le rendre parametrable plutot que
-constant : le bon plancher depend de la reward, 0 pour ImageReward n'a rien
-d'universel.
+**The floor.** `_potential_terms`, `max` branch of `smc/fk.py`: the floor at 0 is
+applied to `prev` and not to `curr`. The released code initialises its statistic at
+`reward_min_value = 0.0`, not at minus infinity, and reads `max(r_t, statistic)`. It is
+the only place where this repository is more aggressive than its reference, and it
+falls exactly on the step that decides the lineage. Make it a parameter rather than a
+constant: the right floor depends on the reward, and 0 for ImageReward is in no way
+universal.
 
-**Le lambda adaptatif.** `fk_steer` a deja `adaptive_lam` et `bisect_lambda`
-depuis le 21/09, et `scripts/run_sd_baseline.py` ne les expose pas. La table
-ci-dessus dit ce qu'il ferait : environ 4 au premier pas au lieu de 10, environ 15
-au dernier. Le compromis est a trancher : il change la cible intermediaire mais
-pas `exp(lambda * r(x_0))`, puisque `acc` porte la correction et que le pas
-terminal garde lambda.
+**The adaptive lambda.** `fk_steer` has had `adaptive_lam` and `bisect_lambda` since
+21/09, and `scripts/run_sd_baseline.py` does not expose them. The table above says what
+it would do: about 4 at the first step instead of 10, about 15 at the last. The
+trade-off is still to be decided: it changes the intermediate target but not
+`exp(lambda * r(x_0))`, since `acc` carries the correction and the terminal step keeps
+lambda.
 
-**Et la question qui reste ouverte.** Reparer l'effondrement pourrait rapporter
-plus que ce que `docs/max_potential.md` laissait attendre -- sous reserve du constat 11,
-qui met en doute l'appariement dont ce chiffre sort. Le constat 5 bis chiffre
-a **0.411 +/- 0.060** ce que l'effondrement coute au niveau de la racine : un
-echantillonneur qui garderait quatre lignees distinctes et les piloterait toutes
-aurait ce 0.411 a portee, la ou le gain publie n'est que de 0.056. Mais rien ne
-dit qu'il le prendrait : le pilotage, lui, profite de la concentration, et le
-Spearman de +0.015 entre l'ESS du premier pas et le gain
-(`docs/max_potential.md`) dit que les runs les plus effondres ne perdent pas plus
-que les autres. Diversite et reward restent deux questions ; ce fichier traite la
-premiere et borne la seconde.
+**And the question that remains open.** Repairing the collapse could bring more than
+`docs/max_potential.md` led one to expect (subject to finding 11, which casts doubt on
+the pairing this figure comes from). Finding 5 bis puts at **0.411 +/- 0.060** what the
+collapse costs at the level of the root: a sampler that kept four distinct lineages and
+steered all of them would have this 0.411 within reach, where the published gain is
+only 0.056. But nothing says it would take it: steering, for its part, benefits from
+the concentration, and the Spearman of +0.015 between the ESS of the first step and the
+gain (`docs/max_potential.md`) says that the most collapsed runs do not lose more than
+the others. Diversity and reward remain two questions; this file deals with the first
+and bounds the second.
 
-Le classement mesure de ces pistes, et celles qui restent a tester : constat 14.
+The measured ranking of these leads, and those that remain to be tested: finding 14.
 
-## 10. Le contrefactuel GPU : ce que la sonde a rendu
+## 10. The GPU counterfactual: what the probe returned
 
-La nuit du 21 a ete tuee avec le terminal apres 20 runs sur 80 (`ctl` et `floor` sur les
-dix premiers prompts, les trois autres bras jamais lances). Relancee detachee le 22.
-Sur ces dix prompts, apparies :
+The night of the 21st was killed with the terminal after 20 runs out of 80 (`ctl` and
+`floor` on the first ten prompts, the other three arms never launched). Relaunched
+detached on the 22nd. On these ten prompts, paired:
 
-| bras | t=80 | t=60 | t=40 | t=20 | t=0 | reech. | div_pix | ir_max |
+| arm | t=80 | t=60 | t=40 | t=20 | t=0 | resamplings | div_pix | ir_max |
 |---|---|---|---|---|---|---|---|---|
 | `ctl` | 1.80 | 1.40 | 1.20 | 1.10 | 1.10 | 3.90 | 0.105 | +1.066 |
 | `floor` | 3.90 | 2.80 | 2.10 | 1.80 | 1.80 | 2.30 | 0.167 | +0.895 |
 | `lam0` | 4.00 | 4.00 | 4.00 | 4.00 | 4.00 | 0.00 | 0.338 | +0.961 |
 
-Part des pas ou les poids sortent uniformes, donc sans aucune selection : `floor` 90 % a
-t = 80, 40 % a t = 60, 30 % a t = 40. `ctl` : 0 % partout sauf 10 % a t = 40.
+Share of steps where the weights come out uniform, hence with no selection at all:
+`floor` 90 % at t = 80, 40 % at t = 60, 30 % at t = 40. `ctl`: 0 % everywhere except
+10 % at t = 40.
 
-Confrontation aux predictions du constat 7, ecrites avant :
+Against the predictions of finding 7, written before:
 
-1. **Tenue.** `ctl` : 1.80 ancetres apres t = 80 contre 1.835 predits par le peigne, et
-   1.10 a la fin.
-2. **Tenue sur le mecanisme, ratee sur le chiffre final.** `floor` : t = 80 inerte dans
-   90 % des runs (predit 90 %), 3.90 ancetres (predit 3.849). Mais l'effondrement reprend
-   plus vite qu'annonce : 1.80 a la fin, sous la fourchette 2-3. Le plancher **retarde**
-   l'effondrement d'un a deux pas, il ne le supprime pas.
-6. **Sous tension.** `floor - ctl` sur `ir_max` vaut **-0.171** de moyenne, la ou la
-   prediction voulait moins d'une erreur-type. Mais la mediane est de -0.025 et trois
-   prompts portent toute la moyenne, dont deux ou `floor` n'a jamais reechantillonne,
-   c'est-a-dire ou il *est* best-of-4. A n = 10 la direction est contraire a la
-   prediction et compatible avec le constat 5 bis (le pilotage paye, la diversite non) ;
-   rien n'est tranche.
+1. **Held.** `ctl`: 1.80 ancestors after t = 80 against 1.835 predicted by the comb, and
+   1.10 at the end.
+2. **Held on the mechanism, missed on the final figure.** `floor`: t = 80 inert in 90 %
+   of runs (predicted 90 %), 3.90 ancestors (predicted 3.849). But the collapse resumes
+   faster than announced: 1.80 at the end, below the 2-3 range. The floor **delays** the
+   collapse by one to two steps, it does not remove it.
+6. **Under strain.** `floor - ctl` on `ir_max` is **-0.171** on average, where the
+   prediction wanted less than one standard error. But the median is -0.025 and three
+   prompts carry the whole mean, two of them where `floor` never resampled, that is,
+   where it *is* best-of-4. At n = 10 the direction is contrary to the prediction and
+   compatible with finding 5 bis (steering pays, diversity does not); nothing is
+   settled.
 
-Le controle du pilote 0a de `f_probe.py` comparait `ctl` au `fk4` de `sd_baseline.json`,
-ecrit le 20/09, donc **avant** le commit 5025180 : il affichait un faux ecart de +0.090.
-Contre `sd_ref_fields100.json`, qui est la ligne FK du code actuel, `ctl` est identique
-aux dix prompts, ESS a t = 80 comprise, ecart apparie +0.0000. Le pilote est propre ; le
-fichier de reference ne l'etait pas.
+The pilot check 0a of `f_probe.py` compared `ctl` to the `fk4` of `sd_baseline.json`,
+written on 20/09, hence **before** commit 5025180: it showed a false gap of +0.090.
+Against `sd_ref_fields100.json`, which is the FK row of the current code, `ctl` is
+identical on the ten prompts, ESS at t = 80 included, paired difference +0.0000. The
+pilot is clean; the reference file was not.
 
-## 11. Le controle d'appariement echoue, et il emporte les constats 3, 5 et 5 bis
+## 11. The pairing control fails, and it takes findings 3, 5 and 5 bis with it
 
-`lam0` (lambda = 0, aucun reechantillonnage) devait rendre les quatre tirages libres de
-`bon4`, case par case, a la derive fp16 pres. Sur dix prompts :
+`lam0` (lambda = 0, no resampling) was supposed to return the four free draws of
+`bon4`, slot by slot, up to fp16 drift. On ten prompts:
 
-- ecart maximum par prompt sur les quatre `ir` : **0.76** en median, 2.97 au pire ;
-- correlation intra-prompt entre `lam0[j]` et `bon4[j]` sur les 40 cases : **-0.107**
-  (controle avec les prompts permutes : +0.059) ;
-- l'argmax coincide dans 3 prompts sur 10, soit le hasard ;
-- mais les marges collent : `ir` moyen 0.416 contre 0.468, `ir_max` moyen 0.961 contre
-  0.949, `div_pix` 0.338 contre 0.33.
+- maximum gap per prompt over the four `ir`: **0.76** at the median, 2.97 at worst;
+- within-prompt correlation between `lam0[j]` and `bon4[j]` over the 40 slots:
+  **-0.107** (control with the prompts permuted: +0.059);
+- the argmax coincides in 3 prompts out of 10, that is, chance;
+- but the marginals match: mean `ir` 0.416 against 0.468, mean `ir_max` 0.961 against
+  0.949, `div_pix` 0.338 against 0.33.
 
-Donc `lam0` est un echantillonneur libre correct **en loi**, et l'identite de la case ne
-survit pas d'un echantillonneur a l'autre. En lisant le code, `initial_state` tire le
-meme `randn_tensor((4, 4, 64, 64))` que `prepare_latents` du pipeline et les deux passent
-par le meme `scheduler.step(..., generator)` : x_T devrait etre partage au bit pres et
-seul l'arrondi fp16 de `eps` differe (CLIP encode en batch 4 contre un encode etendu).
-Deux lectures restent ouvertes, et elles ont la meme consequence :
+So `lam0` is a correct free sampler **in distribution**, and the identity of the slot
+does not survive from one sampler to the other. Reading the code, `initial_state` draws
+the same `randn_tensor((4, 4, 64, 64))` as the pipeline's `prepare_latents` and both go
+through the same `scheduler.step(..., generator)`: x_T should be shared to the bit and
+only the fp16 rounding of `eps` differs (CLIP encoded in a batch of 4 against an
+expanded encoding). Two readings remain open, and they have the same consequence:
 
-- soit le flux de bruit diverge malgre tout, et `bon4[j]` n'est pas la continuation de la
-  racine j ;
-- soit x_T est bien partage, et a eta = 1 sur 100 pas la racine n'explique presque rien
-  de la variance de la reward finale -- ce que la correlation de -0.107 dit directement.
+- either the noise stream diverges despite everything, and `bon4[j]` is not the
+  continuation of root j;
+- or x_T is indeed shared, and at eta = 1 over 100 steps the root explains almost none
+  of the variance of the final reward, which is what the correlation of -0.107 says
+  directly.
 
-Dans les deux cas, la phrase « `bon4["ir"][j]` est ce que la racine j devient si on la
-laisse tranquille » n'est pas mesurable ainsi. **Le constat 3 (tau = +0.067), le constat 5
-et la decomposition A / M / B / C du constat 5 bis reposent sur elle et sont a
-reprendre.** Ce qui ne bouge pas : les constats 1, 2, 2 bis, 4, 6 et 8, qui ne lisent
-jamais `bon4`.
+In both cases, the sentence "`bon4["ir"][j]` is what root j becomes if it is left
+alone" is not measurable this way. **Finding 3 (tau = +0.067), finding 5 and the
+A / M / B / C decomposition of finding 5 bis rest on it and have to be redone.** What
+does not move: findings 1, 2, 2 bis, 4, 6 and 8, which never read `bon4`.
 
-Le test qui tranche est au niveau des latents, pas de la reward : un prompt, capturer les
-latents du pipeline aux pas 0 et 1 par `callback_on_step_end`, et les comparer a
-`initial_state` puis un `step`. S'ils coincident, c'est la seconde lecture.
+The deciding test is at the level of the latents, not of the reward: one prompt,
+capture the pipeline's latents at steps 0 and 1 through `callback_on_step_end`, and
+compare them to `initial_state` followed by one `step`. If they coincide, it is the
+second reading.
 
-*Ajout du 23/09.* Le test a ete fait (`m_latents.py`) : x_T coincide au bit et les
-trajectoires restent correlees a 0.98 ou plus jusqu'au dernier pas ; la troisieme lecture
-est la bonne, le chemin avec reechantillonnage n'est pas rejouable d'une session a l'autre
-(constat 19). La session C rejoue `ctl` et `lam0` dans un meme processus et recalcule les
-constats 3 et 5 bis sur cet appariement (constat 20) : ils tiennent, en plus faible.
+*Addition of 23/09.* The test was done (`m_latents.py`): x_T coincides to the bit and
+the trajectories stay correlated at 0.98 or more up to the last step; the third reading
+is the right one, the path with resampling is not replayable from one session to
+another (finding 19). Session C replays `ctl` and `lam0` in a single process and
+recomputes findings 3 and 5 bis on this pairing (finding 20): they hold, more weakly.
 
-## 12. Les deux corrections, evaluees hors de `smc/`
+## 12. The two corrections, evaluated outside `smc/`
 
-Aucun des deux bras ne demande de modifier `smc/` : le plancher passe par la reward
-(`torch.clamp(r, min=0)`, equivalent au potentiel des auteurs a 9e-7, constat 6 et
-`g_equivalence.py`), le lambda adaptatif par `adaptive_lam` / `ess_target` / `lam_max`,
-que `fk_steer` porte depuis le 21/09.
+Neither arm requires modifying `smc/`: the floor goes through the reward
+(`torch.clamp(r, min=0)`, equivalent to the authors' potential to 9e-7, finding 6 and
+`g_equivalence.py`), the adaptive lambda through `adaptive_lam` / `ess_target` /
+`lam_max`, which `fk_steer` has carried since 21/09.
 
-| bras | lambda | plancher | ce qu'il isole |
+| arm | lambda | floor | what it isolates |
 |---|---|---|---|
-| `adapt` | 10 en plafond | non | lambda bisecte a ESS = k/2 aux pas non terminaux |
-| `fadapt` | 10 en plafond | oui | les deux |
+| `adapt` | 10 as a cap | no | lambda bisected to ESS = k/2 at non-terminal steps |
+| `fadapt` | 10 as a cap | yes | both |
 
-Reserve de reglage : `bisect_lambda` rend le plafond des que l'ESS y est deja au-dessus
-de la cible, et le pas terminal garde lambda. Avec `lam_max = 10`, lambda_t ne peut donc
-que **descendre** : ces deux bras testent « moins fort tot », pas le profil montant que
-la table du constat 8 appelle (environ 4 a t = 80, environ 15 a t = 0). « Plus fort
-tard » demanderait `lam_max = 100`, et c'est un troisieme bras.
+Tuning caveat: `bisect_lambda` returns the cap as soon as the ESS there is already
+above the target, and the terminal step keeps lambda. With `lam_max = 10`, lambda_t can
+therefore only **go down**: these two arms test "weaker early", not the rising profile
+that the table of finding 8 calls for (about 4 at t = 80, about 15 at t = 0). "Stronger
+late" would require `lam_max = 100`, and that is a third arm.
 
-**Predictions, ecrites avant le depouillement.** `adapt` : lambda median autour de 4 a
-t = 80, ESS clouee a 2.0 a chaque pas non inerte, donc environ 2.5 a 2.9 ancetres apres
-t = 80 -- mais comme l'ESS cible est sous k, il reechantillonne a **tous** les pas, et
-les lignees continuent de se diviser par deux : 1.5 a 2 a la fin, au-dessus de `ctl`,
-proche de `floor`. `fadapt` : t = 80 inerte dans environ 90 % des runs (`base` plat,
-`bisect_lambda` rend son defaut, logG nul), puis bisection au premier pas ou une reward
-passe au-dessus de zero au lieu de l'effondrement immediat ; le plus protecteur, au moins
-3 ancetres apres t = 60. Sur la reward, les deux doivent rester **sous** `ctl`, pour la
-raison du constat 5 bis.
+**Predictions, written before the analysis.** `adapt`: median lambda around 4 at
+t = 80, ESS pinned at 2.0 at each non-inert step, hence about 2.5 to 2.9 ancestors after
+t = 80. But since the target ESS is under k, it resamples at **every** step, and the
+lineages keep halving: 1.5 to 2 at the end, above `ctl`, close to `floor`. `fadapt`:
+t = 80 inert in about 90 % of runs (flat `base`, `bisect_lambda` returns its default,
+zero logG), then bisection at the first step where a reward goes above zero instead of
+the immediate collapse; the most protective, at least 3 ancestors after t = 60. On the
+reward, both should stay **under** `ctl`, for the reason of finding 5 bis.
 
-### Ce que les deux bras ont rendu, sur 20 prompts
+### What the two arms returned, on 20 prompts
 
-Apparies contre `ctl`, qui est `sd_ref_fields100.json` case par case (constat 10) :
+Paired against `ctl`, which is `sd_ref_fields100.json` slot by slot (finding 10):
 
-| bras | n | lignees | div_pix | ir_max | contre `bon4` |
+| arm | n | lineages | div_pix | ir_max | against `bon4` |
 |---|---|---|---|---|---|
 | `adapt` | 20 | **+0.20 +/- 0.09** | +0.041 +/- 0.014 | **-0.028 +/- 0.033** | +0.111 +/- 0.094 |
 | `fadapt` | 20 | **+1.20 +/- 0.26** | +0.117 +/- 0.032 | -0.103 +/- 0.077 | +0.036 +/- 0.093 |
 | `floor` | 11 | +0.91 +/- 0.44 | +0.082 +/- 0.054 | -0.198 +/- 0.079 | -0.015 +/- 0.149 |
 | `lam0` | 10 | +2.90 +/- 0.10 | +0.241 +/- 0.025 | -0.105 +/- 0.104 | +0.012 +/- 0.168 |
 
-`ctl` sur ces 20 prompts : 1.05 lignees, div_pix 0.089, ir_max +0.961.
+`ctl` on these 20 prompts: 1.05 lineages, div_pix 0.089, ir_max +0.961.
 
-**Le lambda adaptatif seul ne repare presque rien, et c'est la surprise.** Il fait ce qu'on
-lui demande : lambda median **3.91** a t = 80, exactement la table du constat 8, et l'ESS
-clouee a 2.0 a t = 80 et t = 60. Il finit quand meme a 1.25 lignees, sous la fourchette
-1.5-2 predite. La raison est structurelle : une cible d'ESS a k/2 est **sous** le seuil de
-reechantillonnage 1.0, donc le bras reechantillonne a tous les pas planifies (3.95 sur 4)
-et donne a chaque fois deux cases sur quatre a une seule particule. Tenir l'ESS a k/2 ne
-garde pas les lignees, cela les divise plus lentement.
+**Adaptive lambda alone repairs almost nothing, and that is the surprise.** It does what
+it is asked: median lambda **3.91** at t = 80, exactly the table of finding 8, and the
+ESS pinned at 2.0 at t = 80 and t = 60. It still ends at 1.25 lineages, below the
+predicted 1.5-2 range. The reason is structural: an ESS target at k/2 is **under** the
+resampling threshold 1.0, so the arm resamples at every scheduled step (3.95 out of 4)
+and each time gives two slots out of four to a single particle. Holding the ESS at k/2
+does not keep the lineages, it divides them more slowly.
 
-**Ce qui marche, c'est de rendre le pas inerte, pas de l'adoucir.** `floor` et `fadapt`
-laissent t = 80 inerte dans 90 % des runs et finissent a 2.0 et 2.25 lignees. Et `fadapt`
-domine `floor` seul sur les deux axes a ce n : plus de diversite (+1.20 contre +0.91) pour
-la moitie du cout en reward (-0.103 contre -0.198). Lecture : une fois les premiers pas
-neutralises par le plancher, la bisection empeche les pas suivants d'effondrer ce qui
-reste. Les erreurs-types se chevauchent, 20 prompts contre 11 : c'est une direction, pas
-un resultat.
+**What works is making the step inert, not softening it.** `floor` and `fadapt` leave
+t = 80 inert in 90 % of runs and end at 2.0 and 2.25 lineages. And `fadapt` dominates
+`floor` alone on both axes at this n: more diversity (+1.20 against +0.91) for half the
+cost in reward (-0.103 against -0.198). Reading: once the first steps are neutralised by
+the floor, the bisection prevents the following steps from collapsing what is left. The
+standard errors overlap, 20 prompts against 11: this is a direction, not a result.
 
-**Le classement en reward confirme encore le constat 5 bis.** Tout bras qui garde des
-lignees les paie, et le prix suit ce qu'il achete : `lam0` (aucun pilotage, 4 lignees)
--0.105, `fadapt` -0.103, `floor` -0.198. `adapt` est le seul presque gratuit, et c'est
-aussi celui qui n'achete rien. La prediction 6 du constat 7 -- « `ir_max` ne bouge pas » --
-est maintenant fausse dans le sens ou **reparer l'effondrement coute de la reward**.
+**The ranking on reward confirms finding 5 bis again.** Every arm that keeps lineages
+pays for them, and the price follows what it buys: `lam0` (no steering, 4 lineages)
+-0.105, `fadapt` -0.103, `floor` -0.198. `adapt` is the only one that is almost free,
+and it is also the one that buys nothing. Prediction 6 of finding 7 ("`ir_max` does not
+move") is now false in the sense that **repairing the collapse costs reward**.
 
-Un fil laisse pendant : avec lambda adaptatif, `logG - lambda_t * r_phi` cesse d'etre
-constant entre les cases des t = 60 (0 % des runs, contre 50 % pour `ctl`). L'explication
-probable est le cliquet du `max` qui se met a mordre une fois lambda_t assez petit pour
-qu'aucune particule ne batte le record -- le potentiel ferait enfin quelque chose -- mais
-ce n'est pas verifie et ce n'est pas ce que le bras testait.
+A loose thread: with adaptive lambda, `logG - lambda_t * r_phi` stops being constant
+across slots from t = 60 on (0 % of runs, against 50 % for `ctl`). The probable
+explanation is the ratchet of `max` starting to bite once lambda_t is small enough for
+no particle to beat the record (the potential would finally do something), but this is
+not checked and it is not what the arm was testing.
 
-**A 40 prompts, trois des lectures ci-dessus ne tiennent plus** : `adapt` n'est pas
-gratuit, `fadapt` ne divise pas par deux le cout de `floor`, et le prix ne suit pas ce
-qu'il achete sur `ir_max`. Les -0.20 de `floor` a n = 10 et 11 etaient du bruit. Voir le
-constat 13 ; le texte ci-dessus est garde tel qu'ecrit a 20 prompts.
+**At 40 prompts, three of the readings above no longer hold**: `adapt` is not free,
+`fadapt` does not halve the cost of `floor`, and the price does not follow what it buys
+on `ir_max`. The -0.20 of `floor` at n = 10 and 11 was noise. See finding 13; the text
+above is kept as written at 20 prompts.
 
-## 13. La nuit complete : sept bras, 40 ou 20 prompts
+## 13. The full night: seven arms, 40 or 20 prompts
 
-`nuit.sh` est alle au bout (`NUIT TERMINEE` dans `out/nuit.log`) : `ctl`, `floor`,
-`adapt`, `fadapt` sur 40 prompts, `lam0`, `lam2`, `floor2` sur 20. Depouillement :
-`collapse_lab/f_probe.py`. Controles d'abord :
+`nuit.sh` ran to the end (`NUIT TERMINEE` in `out/nuit.log`): `ctl`, `floor`, `adapt`,
+`fadapt` on 40 prompts, `lam0`, `lam2`, `floor2` on 20. Analysis:
+`collapse_lab/f_probe.py`. Controls first:
 
-- `ctl` contre le `fk4` de `sd_ref_fields100.json`, 40 prompts : ecart apparie
-  **0.0000** au pire. Le pilote est la ligne FK de reference.
-- ESS recalculee depuis `logG` contre ESS enregistree, sept bras x 5 pas : 1.2e-04 au
-  pire. Arithmetique exacte partout, y compris sous lambda adaptatif.
-- `lam0` contre `bon4` case par case, 20 prompts : ecart max median **0.89**, 2.96 au
-  pire. Le constat 11 tient a n double ; l'appariement case par case reste casse.
+- `ctl` against the `fk4` of `sd_ref_fields100.json`, 40 prompts: paired difference
+  **0.0000** at worst. The pilot is the reference FK row.
+- ESS recomputed from `logG` against recorded ESS, seven arms x 5 steps: 1.2e-04 at
+  worst. Exact arithmetic everywhere, including under adaptive lambda.
+- `lam0` against `bon4` slot by slot, 20 prompts: median max gap **0.89**, 2.96 at
+  worst. Finding 11 holds at double n; slot-by-slot pairing stays broken.
 
-### Ou meurent les lignees
+### Where the lineages die
 
-Nombre moyen de racines x_T distinctes apres chaque pas planifie :
+Mean number of distinct x_T roots after each scheduled step:
 
-| bras | n | t=80 | t=60 | t=40 | t=20 | t=0 | reech. | div_pix |
+| arm | n | t=80 | t=60 | t=40 | t=20 | t=0 | resamplings | div_pix |
 |---|---|---|---|---|---|---|---|---|
 | `ctl` | 40 | 1.70 | 1.20 | 1.07 | 1.05 | 1.05 | 3.75 | 0.092 |
 | `adapt` | 40 | 2.45 | 1.75 | 1.55 | 1.40 | 1.40 | 3.88 | 0.153 |
@@ -547,23 +537,25 @@ Nombre moyen de racines x_T distinctes apres chaque pas planifie :
 | `floor2` | 20 | 4.00 | 3.50 | 3.10 | 2.85 | 2.85 | 2.15 | 0.263 |
 | `lam0` | 20 | 4.00 | 4.00 | 4.00 | 4.00 | 4.00 | 0.00 | 0.335 |
 
-Part des pas inertes (poids uniformes) : 90 % a t = 80 pour les trois bras a plancher,
-puis 50 % a t = 60, environ 30 % a t = 40, 15 a 22 % ensuite. Sans plancher : 0 a 12 %.
+Share of inert steps (uniform weights): 90 % at t = 80 for the three arms with a floor,
+then 50 % at t = 60, about 30 % at t = 40, 15 to 22 % after that. Without a floor: 0 to
+12 %.
 
-Confrontation aux predictions encore ouvertes :
+Against the predictions still open:
 
-- constat 7, prediction 3 (`lam2`) : 3.00 apres t = 80 contre environ 2.9 predit,
-  **tenue** ; 1.85 a la fin contre 1.3-1.6, **ratee par le haut**.
-- constat 7, prediction 4 (`floor2`) : 4.00 apres t = 80, **tenue**. 2.85 a la fin.
-- constat 12, `adapt` : 2.45 apres t = 80 contre 2.5-2.9, 1.40 a la fin contre 1.5-2,
-  **les deux juste en dessous**. Lambda median a t = 80 : 3.53 (3.91 a 20 prompts).
-- constat 12, `fadapt` : au moins 3 ancetres apres t = 60 predit, 3.35 obtenu, **tenue**.
+- finding 7, prediction 3 (`lam2`): 3.00 after t = 80 against about 2.9 predicted,
+  **held**; 1.85 at the end against 1.3-1.6, **missed on the high side**.
+- finding 7, prediction 4 (`floor2`): 4.00 after t = 80, **held**. 2.85 at the end.
+- finding 12, `adapt`: 2.45 after t = 80 against 2.5-2.9, 1.40 at the end against 1.5-2,
+  **both just below**. Median lambda at t = 80: 3.53 (3.91 at 20 prompts).
+- finding 12, `fadapt`: at least 3 ancestors after t = 60 predicted, 3.35 obtained,
+  **held**.
 
-### La reward, appariee contre `ctl`
+### The reward, paired against `ctl`
 
-`ctl` sur ses 40 prompts : 1.05 lignees, `ir_max` +0.958, `ir` moyen des quatre +0.824.
+`ctl` on its 40 prompts: 1.05 lineages, `ir_max` +0.958, mean `ir` of the four +0.824.
 
-| bras | n | lignees | div_pix | ir_max | ir moyen |
+| arm | n | lineages | div_pix | ir_max | mean ir |
 |---|---|---|---|---|---|
 | `adapt` | 40 | +0.35 +/- 0.08 | +0.061 +/- 0.012 | -0.099 +/- 0.044 | -0.171 +/- 0.056 |
 | `floor` | 40 | +0.68 +/- 0.19 | +0.059 +/- 0.021 | -0.091 +/- 0.055 | -0.153 +/- 0.075 |
@@ -572,134 +564,135 @@ Confrontation aux predictions encore ouvertes :
 | `floor2` | 20 | +1.80 +/- 0.24 | +0.175 +/- 0.024 | -0.099 +/- 0.076 | -0.302 +/- 0.111 |
 | `lam0` | 20 | +2.95 +/- 0.05 | +0.247 +/- 0.015 | -0.098 +/- 0.072 | -0.532 +/- 0.115 |
 
-Entre bras de correction, apparies :
+Between correction arms, paired:
 
-| comparaison | n | lignees | div_pix | ir_max | ir moyen |
+| comparison | n | lineages | div_pix | ir_max | mean ir |
 |---|---|---|---|---|---|
 | `fadapt - floor` | 40 | +0.40 +/- 0.08 | +0.050 +/- 0.010 | -0.015 +/- 0.021 | -0.061 +/- 0.033 |
 | `floor2 - fadapt` | 20 | +0.60 +/- 0.15 | +0.058 +/- 0.014 | +0.004 +/- 0.029 | -0.098 +/- 0.039 |
 | `floor2 - lam2` | 20 | +1.00 +/- 0.26 | +0.048 +/- 0.023 | +0.033 +/- 0.116 | |
 
-**1. Le prix en `ir_max` est plat.** Six bras qui gardent de 0.35 a 2.95 lignees de plus
-perdent tous entre 0.09 et 0.13, indiscernables entre eux. Et c'est l'ecart de `ctl` a
-best-of-4 : `ctl - bon4` = +0.112 +/- 0.091 sur ces 40 prompts, alors que chaque bras de
-correction tombe entre +0.006 et +0.040 de `bon4`. Des qu'on desserre la selection,
-`ir_max` revient au niveau de best-of-4 ; au-dela, garder plus de lignees ne coute plus
-rien sur `ir_max`. Le choix n'est pas un curseur, il est binaire : tout miser sur une
-lignee et prendre environ +0.1 sur best-of-4 (non significatif a n = 40, +0.056 +/- 0.052
-a n = 100 au constat 5 bis), ou garder de la diversite au niveau de best-of-4.
+**1. The price in `ir_max` is flat.** Six arms that keep from 0.35 to 2.95 more
+lineages all lose between 0.09 and 0.13, indistinguishable from each other. And that is
+the gap from `ctl` to best-of-4: `ctl - bon4` = +0.112 +/- 0.091 on these 40 prompts,
+while each correction arm falls between +0.006 and +0.040 of `bon4`. As soon as the
+selection is loosened, `ir_max` comes back to the level of best-of-4; beyond that,
+keeping more lineages costs nothing more on `ir_max`. The choice is not a slider, it is
+binary: bet everything on one lineage and take about +0.1 over best-of-4 (not
+significant at n = 40, +0.056 +/- 0.052 at n = 100 in finding 5 bis), or keep diversity
+at the level of best-of-4.
 
-**2. Le prix en `ir` moyen, lui, suit ce qu'on achete.** Il va de -0.15 (`floor`) a -0.53
-(`lam0`) dans l'ordre des lignees gardees. C'est mecanique : sous effondrement les quatre
-images sont quatre clones de la meilleure, donc `ir` moyen est presque `ir_max` ; quatre
-images differentes ont une moyenne plus basse. `ir_max` sur une population effondree ne
-mesure qu'une image. Les deux chiffres sont a rapporter ensemble.
+**2. The price in mean `ir`, for its part, follows what is bought.** It goes from -0.15
+(`floor`) to -0.53 (`lam0`) in the order of the lineages kept. It is mechanical: under
+collapse the four images are four clones of the best one, so mean `ir` is almost
+`ir_max`; four different images have a lower mean. `ir_max` on a collapsed population
+measures only one image. The two figures have to be reported together.
 
-**3. `floor2` domine.** A `ir_max` egal (+0.004 +/- 0.029 contre `fadapt`), il garde
-+0.60 lignee et +0.058 de diversite pixel de plus. Le plancher est ce qui rend t = 80
-inerte, lambda = 2 est ce qui empeche t = 60 et t = 40 de refaire l'effondrement que le
-plancher a seulement retarde (`floor2 - lam2` : +1.00 lignee a reward egale). Reserve :
-n = 20 contre 40.
+**3. `floor2` dominates.** At equal `ir_max` (+0.004 +/- 0.029 against `fadapt`), it
+keeps +0.60 lineage and +0.058 of pixel diversity more. The floor is what makes t = 80
+inert, lambda = 2 is what prevents t = 60 and t = 40 from redoing the collapse that the
+floor only delayed (`floor2 - lam2`: +1.00 lineage at equal reward). Caveat: n = 20
+against 40.
 
-**4. Les trois lectures du constat 12 qui tombent.** `adapt` coute -0.099 +/- 0.044, pas
--0.028 : il n'est pas gratuit, il est domine (moins de lignees que `floor` pour le meme
-prix). `fadapt` ne divise pas par deux le cout de `floor` (-0.015 +/- 0.021 entre eux) ;
-ce qu'il achete en plus, ce sont 0.40 lignee, a 5 erreurs-types. Et le mecanisme annonce
-tient en partie : la bisection de `fadapt` ne mord que dans 5 % des runs a t = 80 (le
-plancher rend le pas inerte avant), mais dans 28 %, 48 % et 35 % a t = 60, 40 et 20, avec
-un lambda median autour de 4 quand elle mord. Le lambda median de 10.00 affiche par
-`f_probe.py` pour `fadapt` est celui des pas ou elle ne mord pas.
+**4. The three readings of finding 12 that fall.** `adapt` costs -0.099 +/- 0.044, not
+-0.028: it is not free, it is dominated (fewer lineages than `floor` for the same
+price). `fadapt` does not halve the cost of `floor` (-0.015 +/- 0.021 between them);
+what it buys in addition is 0.40 lineage, at 5 standard errors. And the announced
+mechanism holds in part: the bisection of `fadapt` bites in only 5 % of runs at t = 80
+(the floor makes the step inert first), but in 28 %, 48 % and 35 % at t = 60, 40 and 20,
+with a median lambda around 4 when it bites. The median lambda of 10.00 shown by
+`f_probe.py` for `fadapt` is that of the steps where it does not bite.
 
-**5. L'information du premier pas, a 40 prompts** : Kendall tau +0.117 +/- 0.055, top-1
-30 % contre 25 %. Le chiffre monte depuis +0.067, mais il lit `bon4[j]` comme la
-continuation de la racine j, et le controle `lam0` dit que ce n'est pas mesurable ainsi.
-Il reste sous le constat 11 et ne sert d'argument a rien tant que le test sur les latents
-n'est pas fait.
+**5. The information of the first step, at 40 prompts**: Kendall tau +0.117 +/- 0.055,
+top-1 30 % against 25 %. The figure rises from +0.067, but it reads `bon4[j]` as the
+continuation of root j, and the `lam0` control says that this is not measurable that
+way. It stays under finding 11 and serves as an argument for nothing until the test on
+the latents is done.
 
-## 14. Comment reparer : ce qui est mesure, ce qui ne l'est pas
+## 14. How to repair: what is measured, what is not
 
-Toutes les pistes ci-dessous sont a ecrire par l'auteur, dans les fichiers qu'indique le
-constat 9. Ce qui suit donne les trade-offs, pas le choix.
+All the leads below are for the author to write, in the files that finding 9 names.
+What follows gives the trade-offs, not the choice.
 
-### Mesure, classe par ce que les donnees disent
+### Measured, ranked by what the data say
 
-A `ir_max` indiscernable (environ -0.10 contre `ctl`, constat 13), du plus protecteur au
-moins protecteur :
+At indistinguishable `ir_max` (about -0.10 against `ctl`, finding 13), from the most
+protective to the least protective:
 
-1. **plancher + lambda = 2** (`floor2`) : 2.85 lignees, div_pix 0.263 sur 0.335
-   possible. Deux changements : le plancher dans la branche `max` de `_potential_terms`
-   (`smc/fk.py`), et lambda dans la configuration. Trade-off : lambda = 2 est la
-   configuration qualitative des auteurs, pas celle d'evaluation (lambda = 10) ; le gain
-   publie de FK sur best-of-n est mesure a 10.
-2. **plancher + lambda bisecte** (`fadapt`) : 2.12 lignees. Plus cher en plomberie
-   (`adaptive_lam`, `ess_target`, `lam_max` a exposer dans `scripts/run_sd_baseline.py`)
-   pour moins de lignees que `floor2`.
-3. **plancher seul** (`floor`) ou **lambda = 2 seul** (`lam2`) : 1.73 et 1.85 lignees. Le
-   plancher retarde l'effondrement d'un a deux pas, lambda = 2 le ralentit ; aucun des
-   deux ne suffit.
-4. **lambda bisecte seul** (`adapt`) : 1.40 lignees. A ecarter en l'etat, pour la raison
-   structurelle du constat 12 (cible d'ESS sous le seuil, reechantillonnage a chaque pas).
+1. **floor + lambda = 2** (`floor2`): 2.85 lineages, div_pix 0.263 out of 0.335
+   possible. Two changes: the floor in the `max` branch of `_potential_terms`
+   (`smc/fk.py`), and lambda in the configuration. Trade-off: lambda = 2 is the
+   authors' qualitative configuration, not the evaluation one (lambda = 10); the
+   published gain of FK over best-of-n is measured at 10.
+2. **floor + bisected lambda** (`fadapt`): 2.12 lineages. More expensive in plumbing
+   (`adaptive_lam`, `ess_target`, `lam_max` to expose in `scripts/run_sd_baseline.py`)
+   for fewer lineages than `floor2`.
+3. **floor alone** (`floor`) or **lambda = 2 alone** (`lam2`): 1.73 and 1.85 lineages.
+   The floor delays the collapse by one to two steps, lambda = 2 slows it; neither is
+   enough.
+4. **bisected lambda alone** (`adapt`): 1.40 lineages. To be set aside as it stands, for
+   the structural reason of finding 12 (ESS target under the threshold, resampling at
+   every step).
 
-Deux reserves communes. Le plancher a 0 est propre a ImageReward, dont le premier pas est
-negatif pour les quatre particules dans 90 % des runs : pour une autre reward il faut un
-autre plancher, donc un parametre et pas une constante. Et aucune piste ne rend un
-meilleur `ir_max` que `ctl` : elles rendent de la diversite au prix de l'avance de `ctl`
-sur best-of-4.
+Two shared caveats. The floor at 0 is specific to ImageReward, whose first step is
+negative for all four particles in 90 % of runs: another reward needs another floor,
+hence a parameter and not a constant. And no lead returns a better `ir_max` than `ctl`:
+they return diversity at the cost of `ctl`'s advantage over best-of-4.
 
-### Non mesure, a tester
+### Not measured, to be tested
 
-- **Commencer le calendrier plus tard.** Le levier le moins cher, et deja dans les donnees
-  du constat 5 : `S80` (un seul reechantillonnage) finit a 1.85 lignees, `T2` (premier pas
-  affaibli) a 1.55. Retirer t = 80 du calendrier revient a rendre ce pas inerte sans
-  toucher au potentiel, pour toute reward. La configuration qualitative des auteurs
-  commence a `t_start = 20` sur 100. Trade-off : moins de pas de selection, donc moins de
-  pilotage, et le plancher reste necessaire aux pas suivants si la reward y est encore
-  negative.
-- **Un seuil de reechantillonnage sous la cible d'ESS.** `adapt` echoue parce que la
-  cible (ESS = k/2) est sous le seuil (ESS < k), donc chaque pas reechantillonne. Le
-  reechantillonnage adaptatif standard (Chopin et Papaspiliopoulos, chapitre 10) ne
-  reechantillonne que sous ESS < k/2. Avec une cible au-dessus du seuil, les pas
-  bisectes ne reechantillonneraient plus du tout et les poids s'accumuleraient dans
-  `logW` jusqu'au pas terminal. Trade-off : c'est plus de lignees par construction, mais
-  la selection est alors reportee plutot qu'adoucie, et a lambda = 10 au pas terminal
-  elle peut effondrer en un seul coup.
-- **Le profil montant de lambda** que la table du constat 8 appelle (environ 4 a t = 80,
-  environ 15 a t = 0). `adapt` et `fadapt` ne peuvent que descendre sous `lam_max = 10` ;
-  « plus fort tard » demande `lam_max = 100`. Bras manquant.
-- **Rapporter `ir` moyen a cote de `ir_max`.** Pas une reparation, une mesure : `ir_max`
-  sur une population effondree est la reward d'une seule image, et cache ce que fait le
-  pilotage (constat 13, point 2).
+- **Start the schedule later.** The cheapest lever, and already in the data of
+  finding 5: `S80` (a single resampling) ends at 1.85 lineages, `T2` (weakened first
+  step) at 1.55. Removing t = 80 from the schedule amounts to making this step inert
+  without touching the potential, for any reward. The authors' qualitative
+  configuration starts at `t_start = 20` out of 100. Trade-off: fewer selection steps,
+  hence less steering, and the floor stays necessary at the following steps if the
+  reward is still negative there.
+- **A resampling threshold under the ESS target.** `adapt` fails because the target
+  (ESS = k/2) is under the threshold (ESS < k), so every step resamples. Standard
+  adaptive resampling (Chopin and Papaspiliopoulos, chapter 10) resamples only under
+  ESS < k/2. With a target above the threshold, the bisected steps would no longer
+  resample at all and the weights would accumulate in `logW` until the terminal step.
+  Trade-off: it is more lineages by construction, but the selection is then postponed
+  rather than softened, and at lambda = 10 at the terminal step it can collapse in a
+  single blow.
+- **The rising profile of lambda** that the table of finding 8 calls for (about 4 at
+  t = 80, about 15 at t = 0). `adapt` and `fadapt` can only go down under
+  `lam_max = 10`; "stronger late" requires `lam_max = 100`. Missing arm.
+- **Report mean `ir` next to `ir_max`.** Not a repair, a measurement: `ir_max` on a
+  collapsed population is the reward of a single image, and hides what steering does
+  (finding 13, point 2).
 
-- **Plus de particules que d'images rendues.** La coalescence de la genealogie est une
-  affaire de k et de nombre de reechantillonnages (constat 15) : k = 16 particules et
-  rendre les quatre meilleures de racines distinctes. Trade-off : quatre fois le cout
-  GPU, et ce n'est plus la configuration comparee a best-of-4 a budget egal.
+- **More particles than images returned.** The coalescence of the genealogy is a matter
+  of k and of the number of resamplings (finding 15): k = 16 particles, and return the
+  four best from distinct roots. Trade-off: four times the GPU cost, and it is no
+  longer the configuration compared to best-of-4 at equal budget.
 
-### Ce qui ne peut pas marcher
+### What cannot work
 
-Centrer, decaler ou normaliser la reward par une quantite partagee entre particules, et
-changer de potentiel (`max`, `difference`, `sum`) : invariants au premier pas (constats 4
-et 8), ESS identique au bit pres. Et, plus largement, tout reglage qui agit sur les
-**poids** sans changer le nombre de reechantillonnages : il ralentit la coalescence, il
-ne l'arrete pas (constat 15, `adapt`).
+Centring, shifting or normalising the reward by a quantity shared between particles, and
+changing the potential (`max`, `difference`, `sum`): invariant at the first step
+(findings 4 and 8), ESS identical to the bit. And, more broadly, any setting that acts
+on the **weights** without changing the number of resamplings: it slows the
+coalescence, it does not stop it (finding 15, `adapt`).
 
-### Ce qui reste a trancher avant d'ecrire quoi que ce soit
+### What remains to be settled before writing anything
 
-Le test sur les latents du constat 11 (un prompt, `callback_on_step_end` aux pas 0 et 1
-contre `initial_state` puis un `step`). Il ne change aucune des pistes ci-dessus, qui ne
-lisent jamais `bon4` case par case, mais il decide si les constats 3, 5 et 5 bis
-survivent.
+The test on the latents of finding 11 (one prompt, `callback_on_step_end` at steps 0
+and 1 against `initial_state` followed by one `step`). It changes none of the leads
+above, which never read `bon4` slot by slot, but it decides whether findings 3, 5 and
+5 bis survive.
 
-## 15. Relecture independante : degenerescence des poids, degenerescence des chemins
+## 15. Independent rereading: degeneracy of the weights, degeneracy of the paths
 
-Tout ce qui precede mesure l'effondrement a l'ESS, puis compte les lignees. Ce sont deux
-quantites differentes, et le dossier les a laissees se confondre.
+Everything above measures the collapse with the ESS, then counts the lineages. These
+are two different quantities, and the file let them blur together.
 
-**Ce que l'ESS mesure.** `collapse_lab/l_target_ess.py` prend les quatre images de
-`bon4` (quatre racines menees librement), les repondere par `exp(lambda * ir)` et lit
-l'ESS, sur 100 prompts :
+**What the ESS measures.** `collapse_lab/l_target_ess.py` takes the four images of
+`bon4` (four roots run freely), reweights them by `exp(lambda * ir)` and reads the ESS,
+on 100 prompts:
 
-| lambda | ESS mediane sur 4 | Q1 - Q3 | part < 1.5 |
+| lambda | median ESS out of 4 | Q1 - Q3 | share < 1.5 |
 |---|---|---|---|
 | 0.5 | 3.85 | 3.71 - 3.93 | 0 % |
 | 1 | 3.51 | 3.16 - 3.74 | 0 % |
@@ -707,31 +700,32 @@ l'ESS, sur 100 prompts :
 | 5 | 1.89 | 1.25 - 2.45 | 37 % |
 | **10** | **1.23** | **1.02 - 1.90** | **59 %** |
 
-C'est l'echantillonnage preferentiel de la cible p(x0) exp(lambda r) avec le prior pour
-proposition, autrement dit best-of-4 repondere, l'estimateur **sans** pilotage. A lambda
-= 10 il vaut 1.23 : quatre tirages libres representent la cible aussi mal que le premier
-pas de `fk4` (ESS 1.24, Q1 - Q3 1.01 - 2.00, 58 % sous 1.5, constat 2 bis ; les deux
-distributions sont les memes). C'est **pourquoi FK a besoin de pas intermediaires** a ce
-lambda : deplacer les particules vers la cible avant le poids terminal. Et le pilotage
-le fait : l'ESS de `exp(10 * r)` sur les quatre images finales de chaque bras vaut 2.1 a
-2.9 pour tous les bras pilotes (`floor` 2.89, `floor2` 2.47, `lam2` 2.07), contre 1.22
-pour `lam0`. Un echantillonneur exact de la cible, lui, aurait une ESS de 4 : l'ESS
-1.23 n'est pas un plafond de la cible, c'est la distance du prior a la cible.
+This is importance sampling of the target p(x0) exp(lambda r) with the prior as
+proposal, in other words reweighted best-of-4, the estimator **without** steering. At
+lambda = 10 it is 1.23: four free draws represent the target as badly as the first step
+of `fk4` (ESS 1.24, Q1 - Q3 1.01 - 2.00, 58 % under 1.5, finding 2 bis; the two
+distributions are the same). This is **why FK needs intermediate steps** at this
+lambda: to move the particles toward the target before the terminal weight. And
+steering does it: the ESS of `exp(10 * r)` over the four final images of each arm is 2.1
+to 2.9 for all the steered arms (`floor` 2.89, `floor2` 2.47, `lam2` 2.07), against 1.22
+for `lam0`. An exact sampler of the target, for its part, would have an ESS of 4: the
+ESS of 1.23 is not a ceiling of the target, it is the distance from the prior to the
+target.
 
-L'observation qui reste : l'etendue mediane de l'ir final libre est 1.04, celle de r_phi
-a t = 80 est 0.90. La reward guide a des le premier pas l'etendue de la reward finale,
-sans en avoir l'information (constat 3).
+The observation that remains: the median range of the free final ir is 1.04, that of
+r_phi at t = 80 is 0.90. From the first step on, the guide reward has the range of the
+final reward, without having its information (finding 3).
 
-**Ce que l'ESS ne mesure pas.** Le nombre de racines distinctes est une propriete de la
-**genealogie**, pas des poids. Reechantillonner k particules R fois fait coalescer
-l'arbre des ancetres en O(k) generations quelle que soit la moderation des poids
-(Jacob, Murray et Rubenthaler 2015 sur le stockage des chemins ; Chopin et
-Papaspiliopoulos, chapitres sur le reechantillonnage, numeros a verifier). Avec k = 4
-et R = 4, la coalescence est presque sure. `adapt` en est la demonstration propre : ESS
-tenue a 2.0 a chaque pas, 3.88 reechantillonnages, **1.40 lignees**. Et sur les sept
-bras, le compte final de lignees suit le nombre de reechantillonnages avant lambda :
+**What the ESS does not measure.** The number of distinct roots is a property of the
+**genealogy**, not of the weights. Resampling k particles R times makes the ancestor
+tree coalesce in O(k) generations whatever the moderation of the weights (Jacob, Murray and
+Rubenthaler 2015 on path storage; Chopin and Papaspiliopoulos, chapters on resampling,
+numbers to be checked). With k = 4 and R = 4, coalescence is almost certain. `adapt` is
+the clean demonstration of it: ESS held at 2.0 at each step, 3.88 resamplings,
+**1.40 lineages**. And over the seven arms, the final count of lineages follows the
+number of resamplings before lambda:
 
-| bras | lambda | reech. | lignees |
+| arm | lambda | resamplings | lineages |
 |---|---|---|---|
 | `lam2` | 2 | 4.00 | 1.85 |
 | `adapt` | 3.5-10 | 3.88 | 1.40 |
@@ -741,148 +735,155 @@ bras, le compte final de lignees suit le nombre de reechantillonnages avant lamb
 | `floor` | 10 | 2.00 | 1.73 |
 | `lam0` | 0 | 0 | 4.00 |
 
-Par prompt, l'ESS repondere de `bon4` ne predit pas le nombre de lignees (correlation
--0.02 pour `ctl`, -0.39 pour `floor2`) : meme signal.
+Per prompt, the reweighted ESS of `bon4` does not predict the number of lineages
+(correlation -0.02 for `ctl`, -0.39 for `floor2`): same signal.
 
-**Ce que ca change a la lecture.**
+**What this changes in the reading.**
 
-- Le plancher marche parce qu'il rend des pas **inertes**, donc supprime des
-  reechantillonnages (3.75 -> 2.00), pas parce qu'il adoucit les poids. Lambda = 2 seul
-  reechantillonne a tous les pas et n'y gagne que 0.8 lignee. Les deux ensemble : moins
-  de reechantillonnages, et ceux qui restent a poids moderes.
-- Aucun reglage qui agit sur les poids seuls (potentiel, centrage, lambda bisecte a
-  cible sous le seuil) ne peut arreter la coalescence : il la ralentit. Ce qui l'arrete,
-  c'est moins de reechantillonnages (calendrier plus court, seuil sous la cible d'ESS,
-  pas inertes) ou plus de particules que d'images rendues (constat 14).
-- Le prix plat de -0.10 sur `ir_max` (constat 13) se relit ainsi : les pas intermediaires
-  a lambda = 10 sont ce qui porte l'avance de `ctl` sur best-of-4 ; tout bras qui en
-  neutralise ou en adoucit tombe au niveau de l'echantillonnage preferentiel simple.
+- The floor works because it makes steps **inert**, hence removes resamplings
+  (3.75 -> 2.00), not because it softens the weights. Lambda = 2 alone resamples at
+  every step and gains only 0.8 lineage from it. The two together: fewer resamplings,
+  and those that remain are at moderate weights.
+- No setting that acts on the weights alone (potential, centring, bisected lambda with a
+  target under the threshold) can stop the coalescence: it slows it. What stops it is
+  fewer resamplings (shorter schedule, threshold under the ESS target, inert steps) or
+  more particles than images returned (finding 14).
+- The flat price of -0.10 on `ir_max` (finding 13) reads again as follows: the
+  intermediate steps at lambda = 10 are what carries `ctl`'s advantage over best-of-4;
+  any arm that neutralises or softens some of them falls to the level of plain
+  importance sampling.
 
-Ce que cette relecture ne remet pas en cause : le premier pas est le mauvais endroit
-pour choisir (constat 3, sous la reserve du constat 11), et le plancher manquant est un
-ecart a la reference (constat 6).
+What this rereading does not call into question: the first step is the wrong place to
+choose (finding 3, subject to the caveat of finding 11), and the missing floor is a
+departure from the reference (finding 6).
 
 
-## 16. La reference : l'ecart au papier est borne, pas ferme
+## 16. The reference: the gap to the paper is bounded, not closed
 
-Source : `docs/reference_config.md`, `results/sd_authors_R0.json`, `collapse_lab/ref/`,
-depouillement `ref/parse_authors.py` ; le detail horodate dans `collapse_lab/ASSESSMENT.md`,
-section C de l'etat final.
+Source: `docs/reference_config.md`, `results/sd_authors_R0.json`, `collapse_lab/ref/`,
+analysis `ref/parse_authors.py`; the timestamped detail in `collapse_lab/ASSESSMENT.md`,
+section C of the final state.
 
-La configuration du papier (max, [0, 20, 40, 60, 80], lambda 10, k 4, DDIM eta 1, 100 pas,
-CFG 7.5, ImageReward sur l'estimee de Tweedie) est celle de ce depot ; les defauts du script
-publie (`diff`, 5-30-5) sont une autre configuration, que l'annexe du papier note plus bas.
-Le code publie differe par quatre choix d'implementation non ecrits : statistique `max`
-planchee a 0, multinomial a chaque pas planifie (poids plats compris), reechantillonnage
-adaptatif de la population terminale, VAE du pipeline pour le decodage du guide.
+The paper's configuration (max, [0, 20, 40, 60, 80], lambda 10, k 4, DDIM eta 1, 100
+steps, CFG 7.5, ImageReward on the Tweedie estimate) is the one of this repository; the
+defaults of the released script (`diff`, 5-30-5) are another configuration, which the
+paper's appendix scores lower. The released code differs by four unwritten
+implementation choices: `max` statistic floored at 0, multinomial at every scheduled
+step (flat weights included), adaptive resampling of the terminal population, the
+pipeline's VAE for decoding the guide.
 
-Sur les 100 prompts du benchmark, SD v1.5, contre `bon4` apparie :
+On the 100 prompts of the benchmark, SD v1.5, against paired `bon4`:
 
-| lecture | code | n | `ir_max` | contre `bon4` |
+| reading | code | n | `ir_max` | against `bon4` |
 |---|---|---|---|---|
-| table 1 du papier | | | 0.898 | +0.161 |
-| `ctl`, ce depot | `smc/` | 100 | 0.826 | +0.056 +/- 0.052 |
-| `R1`, `smc/` avec leurs quatre choix | `smc/` | 100 | 0.756 | -0.011 +/- 0.041 |
-| leur code, quatre runs groupes | le leur | 220 | 0.702 | -0.110 +/- 0.036 |
-| les memes quatre runs sur leurs 40 prompts communs | le leur | 40 x 4 | | -0.35, -0.04, -0.13, +0.10 |
+| table 1 of the paper | | | 0.898 | +0.161 |
+| `ctl`, this repository | `smc/` | 100 | 0.826 | +0.056 +/- 0.052 |
+| `R1`, `smc/` with their four choices | `smc/` | 100 | 0.756 | -0.011 +/- 0.041 |
+| their code, four runs pooled | theirs | 220 | 0.702 | -0.110 +/- 0.036 |
+| the same four runs on their 40 common prompts | theirs | 40 x 4 | | -0.35, -0.04, -0.13, +0.10 |
 
-Leur pipeline sans FK, a generateur egal, rend les quatre rewards de `bon4` a la
-quatrieme decimale ; leur scorer ImageReward vaut l'officiel a la troisieme. Les deux
-implementations partent donc des memes images et les notent pareil. Avec le filtre, leur
-moyenne est sous best-of-4 et leurs quatre runs s'ecartent entre eux de plus que l'effet du
-papier : deux d'entre eux partagent x_T et bruit DDIM et ne different que par le flux du
-tirage multinomial, et ils rendent -0.13 et +0.10 (ecart-type par prompt entre leurs runs :
-mediane 0.25 ; `ctl` de ce depot bouge de 0.04 entre deux sessions sur les memes prompts).
-Un run sur quatre atteint le +0.16 a une erreur-type ; aucune moyenne ne l'atteint. Lecture
-du code (23/09, `fkd_class.py`, `fkd_pipeline_sd.py`) : aucun reensemencement, aucun biais
-d'un chemin de graine sur l'autre ; sans generateur le multinomial avance le flux global et
-change le bruit DDIM des pas suivants, avec generateur il n'y touche pas ; le poids terminal
-divise par le produit float32 des poids intermediaires, qui peut deborder. Rien de cela
-n'explique 0.23 entre deux runs a bruit egal (trois erreurs-types) : **la dispersion de leur
-filtre est mesuree, pas expliquee.** Regle pre-enregistree : ecart **borne**, pas ferme ; il
-n'est pas dans l'implementation, et une part est dans la variance d'un filtre a quatre
-particules qui garde une racine.
+Their pipeline without FK, at equal generator, returns the four rewards of `bon4` to the
+fourth decimal; their ImageReward scorer matches the official one to the third. The two
+implementations therefore start from the same images and score them the same way. With
+the filter, their mean is below best-of-4 and their four runs differ from each other by
+more than the paper's effect: two of them share x_T and DDIM noise and differ only by
+the stream of the multinomial draw, and they return -0.13 and +0.10 (standard deviation
+per prompt between their runs: median 0.25; this repository's `ctl` moves by 0.04
+between two sessions on the same prompts). One run in four reaches the +0.16 within one
+standard error; no mean reaches it. Reading of the code (23/09, `fkd_class.py`,
+`fkd_pipeline_sd.py`): no reseeding, no bias of one seed path over the other; without a
+generator the multinomial advances the global stream and changes the DDIM noise of the
+following steps, with a generator it does not touch it; the terminal weight divides by
+the float32 product of the intermediate weights, which can overflow. None of this
+explains 0.23 between two runs at equal noise (three standard errors): **the spread of
+their filter is measured, not explained.** Pre-registered rule: gap **bounded**, not
+closed; it is not in the implementation, and part of it is in the variance of a
+four-particle filter that keeps one root.
 
-## 17. La coalescence se lit sur les poids seuls
+## 17. The coalescence can be read from the weights alone
 
-`n_coalescence.py`. Rejouer le peigne systematique (integre sur son decalage `u`) ou le
-multinomial sur les poids enregistres a chaque pas planifie predit le nombre moyen de
-racines finales de quinze bras a **0.07 pres** (`ctl` 1.08 contre 1.06, `floor` 1.73 contre
-1.73, `fadapt` 2.16 contre 2.12, `floor2` 2.94 contre 2.94, `R1` 1.25 contre 1.19) et la part
-de runs a une racine a trois points pres ; correlation par run 0.87 a 0.99 sur les bras qui
-ont de l'etendue. Le pilotage n'entre pas dans la prediction. `adapt` tient l'ESS a 2.0 a
-chaque pas et finit a 1.4 racine : l'ESS mesure la degenerescence des poids, pas celle des
-chemins (constat 15). A poids plats le peigne est l'identite et le multinomial ne l'est pas :
-quatre passages plats laissent 1.58 racines sur 4, et le code publie perd des racines avant
-toute information. Prediction pre-enregistree sur `thr05`, ecrite par ce modele avant la
-mesure : 1.84 racines, 61 % a une racine, 1.12 reechantillonnement ; mesure : 2.00, 62 %,
-0.97. Le plan disait 2.4 a 2.8. Figure : `out/fig_coalescence.png`.
+`n_coalescence.py`. Replaying the systematic comb (integrated over its offset `u`) or
+the multinomial on the weights recorded at each scheduled step predicts the mean number
+of final roots of fifteen arms to **within 0.07** (`ctl` 1.08 against 1.06, `floor` 1.73
+against 1.73, `fadapt` 2.16 against 2.12, `floor2` 2.94 against 2.94, `R1` 1.25 against
+1.19) and the share of one-root runs to within three points; per-run correlation 0.87
+to 0.99 on the arms that have some range. Steering does not enter the prediction.
+`adapt` holds the ESS at 2.0 at each step and ends at 1.4 roots: the ESS measures the
+degeneracy of the weights, not that of the paths (finding 15). At flat weights the comb
+is the identity and the multinomial is not: four flat passes leave 1.58 roots out of 4,
+and the released code loses roots before any information. Pre-registered prediction on
+`thr05`, written by this model before the measurement: 1.84 roots, 61 % with one root,
+1.12 resamplings; measured: 2.00, 62 %, 0.97. The plan said 2.4 to 2.8. Figure:
+`out/fig_coalescence.png`.
 
-## 18. Reechantillonner moins ne garde pas les lignees
+## 18. Resampling less does not keep the lineages
 
-`thr05` (plancher, reechantillonner seulement si ESS < k/2) : 0.97 reechantillonnement par
-run, 2.0 racines, 62 % a une racine (predit par le constat 17, voir ci-dessus). Quand le
-seuil declenche enfin, les poids accumules sont pointus et un seul passage prend presque
-tout. `ir_max` -0.06 +/- 0.10 contre `ctl`. `late` (calendrier sans t = 80) ne repare rien
-non plus : 86 % a une racine a n = 300, 1.14 racine, pour +0.04 +/- 0.03 sur `ir_max`. Ce
-dernier chiffre dit autre chose : retirer le pas t = 80 ne coute rien au score, donc ce pas
-ne porte pas d'information utile a la selection, sans avoir besoin de `bon4` pour le dire.
+`thr05` (floor, resample only if ESS < k/2): 0.97 resamplings per run, 2.0 roots, 62 %
+with one root (predicted by finding 17, see above). When the threshold finally
+triggers, the accumulated weights are peaked and a single pass takes almost everything.
+`ir_max` -0.06 +/- 0.10 against `ctl`. `late` (schedule without t = 80) repairs nothing
+either: 86 % with one root at n = 300, 1.14 roots, for +0.04 +/- 0.03 on `ir_max`. This
+last figure says something else: removing the t = 80 step costs nothing on the score,
+so this step carries no information useful to the selection, without needing `bon4` to
+say so.
 
-## 19. Rejouabilite : le chemin libre l'est, le chemin avec reechantillonnage ne l'est pas
+## 19. Replayability: the free path is replayable, the path with resampling is not
 
-Le pipeline diffusers a generateur seme rend le 23/09 les rewards de `bon4` (20/09) a la
-troisieme decimale. Le chemin `smc.models.StableDiffusion` : deterministe dans une session ;
-entre sessions, le 21/09 et le matin du 22/09 rendent les memes chiffres a 0.0000, et le soir
-du 22/09 d'autres racines et d'autres `ir_max` (jusqu'a 1.6 d'ecart sur un prompt), memes
-poids, meme code, meme graine. La session C (constat 20) separe les deux cas : `lam0`
-(lambda = 0, aucune reward lue) rend `bon4` case par case a la correlation 1.00, `ctl` rend
-le `ctl` du 21/09 a 0.70 avec la meme racine dans 30 % des prompts. Le chemin libre est donc
-rejouable d'une session a l'autre ; celui qui lit la reward du guide (VAE ft-mse, ImageReward,
-BERT en fp16) ne l'est pas, et 1e-3 sur une reward suffit a deplacer une dent du peigne a
-quatre cases.
+The diffusers pipeline with a seeded generator returns on 23/09 the rewards of `bon4`
+(20/09) to the third decimal. The `smc.models.StableDiffusion` path: deterministic
+within a session; across sessions, 21/09 and the morning of 22/09 return the same
+figures to 0.0000, and the evening of 22/09 other roots and other `ir_max` (up to 1.6
+apart on one prompt), same weights, same code, same seed. Session C (finding 20)
+separates the two cases: `lam0` (lambda = 0, no reward read) returns `bon4` slot by slot
+at correlation 1.00, `ctl` returns the `ctl` of 21/09 at 0.70 with the same root in
+30 % of prompts. The free path is therefore replayable from one session to another; the
+one that reads the guide's reward (VAE ft-mse, ImageReward, BERT in fp16) is not, and
+1e-3 on a reward is enough to move a tooth of the four-slot comb.
 
-*Test du 23/09 apres-midi (`nuit4.sh`, `u_determinism.py`, non pre-enregistre).* `ctl` sur les
-prompts 0 et 1 dans trois processus separes : deux sans rien changer, un avec
-`cudnn.benchmark = False` et `use_deterministic_algorithms(True)` ; puis la version de
-`probe.py` du 22/09 matin (celle de la session A) sur les memes prompts. Les quatre rendent
-les **memes quatre rewards** a la quatrieme decimale, egales a celles de la session C du matin
-et de la session B du 22/09 soir (six prompts communs, `ctl_b1` = `ctl_C` a 0.0000), a travers
-un redemarrage du pod entre la session C et le test. Elimines : le processus, les drapeaux
-deterministes, le chemin de cache (`~/.cache` pour B, `work/hf_cache` pour C et le test, memes
-revisions), le pod, le venv `sd` (aucune installation depuis le 20/09), `smc/` (inchange depuis
-le 21/09 17h27, avant toutes les sessions), la reecriture de `probe.py`. Ce qui reste : les
-sessions qui rendent la reference du 21/09 (la reference elle-meme, la session A du 22/09
-matin) tournaient a **87 a 90 s par run** ; toutes celles depuis le 22/09 soir tournent a
-**55 a 60 s**, meme code, meme pipeline. Les deux groupes different par le chemin d'execution
-de la machine (noyaux fp16 choisis, materiel), pas par quoi que ce soit dans le depot ; la
-machine du premier groupe n'existe plus et le point ne peut pas etre pousse plus loin.
-Consequence inchangee : tout appariement par case entre fichiers de sessions differentes est
-invalide ; les moyennes par prompt entre bras FK restent utilisables ; a l'interieur du
-groupe depuis le 22/09 soir, l'appariement par case tient.
+*Test of the afternoon of 23/09 (`nuit4.sh`, `u_determinism.py`, not pre-registered).*
+`ctl` on prompts 0 and 1 in three separate processes: two without changing anything,
+one with `cudnn.benchmark = False` and `use_deterministic_algorithms(True)`; then the
+version of `probe.py` from the morning of 22/09 (the one of session A) on the same
+prompts. All four return the **same four rewards** to the fourth decimal, equal to
+those of session C in the morning and of session B on the evening of 22/09 (six common
+prompts, `ctl_b1` = `ctl_C` to 0.0000), across a restart of the pod between session C
+and the test. Ruled out: the process, the deterministic flags, the cache path
+(`~/.cache` for B, `work/hf_cache` for C and the test, same revisions), the pod, the
+`sd` venv (no installation since 20/09), `smc/` (unchanged since 21/09 17h27, before all
+sessions), the rewrite of `probe.py`. What remains: the sessions that return the
+reference of 21/09 (the reference itself, session A on the morning of 22/09) ran at
+**87 to 90 s per run**; all those since the evening of 22/09 run at **55 to 60 s**, same
+code, same pipeline. The two groups differ by the machine's execution path (fp16
+kernels chosen, hardware), not by anything in the repository; the machine of the first
+group no longer exists and the point cannot be pushed further. Consequence unchanged:
+any slot-by-slot pairing between files from different sessions is invalid; per-prompt
+means between FK arms stay usable; within the group since the evening of 22/09,
+slot-by-slot pairing holds.
 
-## 20. Session C : les constats 3 et 5 bis tiennent, reformules
+## 20. Session C: findings 3 and 5 bis hold, reworded
 
-`out/probe_C.json`, `t_sessionC.py` : `ctl`, `lam0`, `floor2` a 100 prompts dans **un seul
-processus**, le seul appariement par case valide (constat 19). Predictions en face dans
-`docs/protocol_sd.md`, « Pre-registration of session C ».
+`out/probe_C.json`, `t_sessionC.py`: `ctl`, `lam0`, `floor2` at 100 prompts in **a
+single process**, the only valid slot-by-slot pairing (finding 19). The predictions to
+set against them are in `docs/protocol_sd.md`, "Pre-registration of session C".
 
-- **Constat 3.** Kendall tau entre le classement de `r_phi(t = 80)` dans `ctl` et l'`ir`
-  libre de la meme racine (`lam0`) : **+0.137 +/- 0.050**, top-1 dans 35 % des prompts contre
-  25 % au hasard (n = 100). Le premier pas porte un peu d'information, pas aucune ; le
-  +0.067 du constat 3 etait lu sur un appariement invalide.
-- **Constat 5 bis.** A meilleure racine libre 0.779 ; M racine moyenne 0.233 ; B la racine que
-  `ctl` garde, lue libre, 0.466 ; C ce que `ctl` en tire 0.799. B - M = +0.233 +/- 0.047 (la
-  racine gardee vaut un tiers du chemin vers la meilleure, rang moyen 2.04 sur 4) ;
-  **A - B = +0.313 +/- 0.042** (l'effondrement coute encore 0.31 de racine) ; C - B = +0.333
-  +/- 0.038 (le pilotage rend un peu plus) ; C - A = +0.021 +/- 0.038 (le solde sur best-of-4).
-- **`floor2` apparie par x_T** : `ir_max` **-0.012 [-0.082, +0.060]** contre `ctl` (predit
-  [-0.14, -0.02], rate par le haut), `ir` moyen des quatre -0.250 +/- 0.045, 3.03 racines, 4 %
-  a une racine. Le prix des lignees sur `ir_max` est de l'ordre de l'avance de `ctl` sur
-  best-of-4 (+0.030 +/- 0.037 dans cette session, +0.056 le 21/09), pas plus ; le prix sur
-  la moyenne des quatre reste.
+- **Finding 3.** Kendall tau between the ranking of `r_phi(t = 80)` in `ctl` and the
+  free `ir` of the same root (`lam0`): **+0.137 +/- 0.050**, top-1 in 35 % of prompts
+  against 25 % at random (n = 100). The first step carries a little information, not
+  none; the +0.067 of finding 3 was read on an invalid pairing.
+- **Finding 5 bis.** A best free root 0.779; M average root 0.233; B the root that `ctl`
+  keeps, read free, 0.466; C what `ctl` gets from it 0.799. B - M = +0.233 +/- 0.047
+  (the root kept is worth a third of the way to the best one, mean rank 2.04 out of 4);
+  **A - B = +0.313 +/- 0.042** (the collapse still costs 0.31 of root); C - B = +0.333
+  +/- 0.038 (steering gives back a little more); C - A = +0.021 +/- 0.038 (the balance
+  over best-of-4).
+- **`floor2` paired by x_T**: `ir_max` **-0.012 [-0.082, +0.060]** against `ctl`
+  (predicted [-0.14, -0.02], missed on the high side), mean `ir` of the four
+  -0.250 +/- 0.045, 3.03 roots, 4 % with one root. The price of the lineages on
+  `ir_max` is of the order of `ctl`'s advantage over best-of-4 (+0.030 +/- 0.037 in this
+  session, +0.056 on 21/09), no more; the price on the mean of the four remains.
 
-Ce que cela change au constat 13 : « prix plat de -0.10 » etait trop dit. A n = 40 chaque IC
-couvre zero, la moyenne des sept bras est -0.07 [-0.18, +0.04], et `floor2` apparie par x_T
-a n = 100 vaut -0.01. La phrase tenable : **aucune configuration ne bat best-of-4 de plus
-que le bruit sur `ir_max`, pendant que la diversite varie d'un facteur trois et l'`ir` moyen
-de -0.15 a -0.56.** Les gros effets sont sur les lignees et la moyenne.
+What this changes in finding 13: "flat price of -0.10" was overstated. At n = 40 each CI
+covers zero, the mean of the seven arms is -0.07 [-0.18, +0.04], and `floor2` paired by
+x_T at n = 100 is -0.01. The tenable sentence: **no configuration beats best-of-4 by
+more than the noise on `ir_max`, while diversity varies by a factor of three and the
+mean `ir` from -0.15 to -0.56.** The large effects are on the lineages and the mean.

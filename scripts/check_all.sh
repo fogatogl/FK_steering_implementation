@@ -16,8 +16,7 @@ figs=$(grep -oE '\]\(\.\./figures/[^)]+\.png\)' $P | sed -E 's/^\]\(\.\.\///; s/
 fig_scripts="scripts/fig_hero_grid.py scripts/fig_algorithm.py scripts/plot_fig4_sd.py collapse_lab/o_ancestry_fig.py
              collapse_lab/q_image_grid.py collapse_lab/s_coalescence_fig.py collapse_lab/p_two_rewards.py
              scripts/fig_three_scales.py scripts/figstyle.py"
-# FINDINGS.md and ASSESSMENT.md are the lab's working notes, in French by design; A.5 quotes them in English
-cited=$(grep -oE '`[A-Za-z0-9_./-]+\.(py|sh|md|json)`' $P | tr -d '`' | sort -u | grep -vE 'FINDINGS.md|ASSESSMENT.md' \
+cited=$(grep -oE '`[A-Za-z0-9_./-]+\.(py|sh|md|json)`' $P | tr -d '`' | sort -u \
         | while read f; do [ -f "$f" ] && echo "$f"; done)
 
 run prose    python3 scripts/check_prose.py $P || fail=1
