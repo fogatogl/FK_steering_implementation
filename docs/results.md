@@ -736,7 +736,7 @@ now holds 34 for that arm. Pooled over the seven corrections, `ir_max` - `ctl` i
 incident, -0.106 [-0.193, -0.019]. Against `bon4` on the same prompts, `ctl` is at
 +0.112 +/- 0.091 and every correction between -0.01 and +0.06.
 
-**Result, the coalescence model** (`n_coalescence.py`, output `collapse_lab/out/n_coalescence.txt`).
+**Result, the coalescence model** (`n_coalescence.py`, output `results/post_numbers/n_coalescence.txt`).
 Replaying the recorded per-step weights through the systematic comb integrated over
 its offset (or through the multinomial draw at every scheduled step) predicts the mean
 number of final roots of all fifteen arms within 0.1, and within 0.05 for eleven of
@@ -804,7 +804,7 @@ reference. Against the reference of the same machine they read -0.013, -0.024, +
 and the guide's VAE keeps the reference's roots in 78 % of prompts (`collapse_lab/r_solutions.py`,
 `p_two_rewards.py`).
 
-**Result, three scales** (`scripts/fig_three_scales.py`, `figures/fig8_three_scales.png`).
+**Result, three scales** (`scripts/fig_three_scales.py`, `figures/f8_three_scales.png`).
 Minimum ESS over the run divided by k, and pixel diversity of the finals relative to
 the free model, against lambda: CIFAR 32 px (k = 16) 1.00 to 0.066 and 1.00 to 0.52
 from lambda 0 to 4; CelebA 256 px (k = 16) 1.00 to 0.063 and 1.00 to 0.11; SD 512 px

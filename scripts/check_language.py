@@ -20,7 +20,7 @@ DEFAULT = ["README.md", "collapse_lab/README.md", "figures", "notebooks", "scrip
            "collapse_lab/n_coalescence.py", "collapse_lab/r_solutions.py",
            "collapse_lab/p_two_rewards.py", "collapse_lab/o_ancestry_fig.py",
            "collapse_lab/q_image_grid.py", "collapse_lab/s_coalescence_fig.py",
-           "docs/demo", "docs/collapse_findings_en.md", "docs/paper.md"]
+           "docs/demo", "collapse_lab/FINDINGS.md", "collapse_lab/ASSESSMENT.md", "docs/paper.md"]
 # Frequent French words that are not English words. Kept short on purpose: a false
 # positive costs a look, a missing word costs a French label in a published figure.
 FRENCH_WORDS = """
