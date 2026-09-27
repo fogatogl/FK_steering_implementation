@@ -24,7 +24,7 @@ best image stays at best-of-4's level, and the mean of the four falls 0.250 ± 0
 
 The authors' released code, run through this repository's launcher under the paper's configuration on
 three seeds, does not close the gap. It gains -0.003 ± 0.025 over best-of-4, and +0.074 ± 0.023 in its
-version from before a later fix. On those runs, two of whose three seeds ran on the other GPU, this
+version from before a later fix. On those runs, two of whose three seeds ran on a second GPU model, this
 repository's FK gains +0.080 ± 0.023.
 
 ## 1. What inference-time steering does to an image
@@ -37,7 +37,7 @@ others.
 
 ![F1. A free sample, best-of-4 and the best of FK's four particles, from the same four initial noises, with ImageReward and HPS v2.1 under each image; three prompts where FK beats best-of-4, picked by a rule fixed before the session, one category chosen by eye (A.3); labels reworded.](../figures/f1_hero_grid.png)
 
-These are favourable cases, chosen among the prompts where FK beats best-of-4 (A.3). Over all 46 eligible prompts of that run, FK's median margin
+These are favourable cases, chosen among the prompts where FK beats best-of-4 (A.3). Over all 46 eligible prompts, FK's median margin
 over best-of-4 is -0.024.
 
 ## 2. How FK Steering works
@@ -93,7 +93,7 @@ Conventions: ± is a standard error over prompts, seeds averaged first; [a, b]
 is a 95 % interval, bootstrap for a difference and Wilson for a proportion. A comparison is a *test*
 when A.5 lists a prediction with a tolerance written before the run, and a *screen* otherwise.
 
-These 900 runs used an NVIDIA T4, inferred from their run times (A.2).
+These 900 runs used an NVIDIA T4, inferred from their run times (A.5).
 The project also ran on an A2, and I pair runs only within one machine (section 10).
 
 | | ImageReward, best of $k$ | HPS v2.1, best of $k$ | ImageReward, mean of $k$ | paper (IR / HPS) |
@@ -111,7 +111,8 @@ HPS lands within 0.002 of the paper on all three rows.
 
 The paper's own comparison, FK against best-of-4 on the same noises, gives +0.062 ± 0.026: 69 prompts
 of 100 won, [+0.009, +0.110]. That is 2.2 units under the paper if Table 1 is one
-seed, and 3.1 if it averages three, as the released launcher's seeds 42 to 44 suggest (A.4). I set this
+seed, and 3.1 if it averages three, as the released launcher's seeds 42 to 44 suggest (A.4); 1.7 and 2.6 if the paper's two rows
+did not share noises. I set this
 target before the runs but without a tolerance, so it is a screen.
 
 ![F3. ImageReward of the best image (left) and best HPS v2.1 of the k images (right), 100 prompts times three seeds, the paper's value as a dark tick. The error bars are the seed-to-seed spread of a one-seed mean, from which the text's unit is built.](../figures/f3_reproduction.png)
@@ -185,7 +186,7 @@ on a single root, was written after its 20-prompt screen read 5 % and before its
 T4. That run gives 3.03 roots of 4 and 4 % of runs on a single root ([2, 10] %), one point under the 5
 to 10 % written before it; its `div_pix` is 0.300 ± 0.008 against FK's 0.109. It needs both parts: $\lambda = 2$
 alone leaves 35 % of runs on one root and the floor alone 68 % (A.2). Lowering $\lambda$ changes the
-target, as the paper's appendix reports for $\lambda = 2$ (section 2). In 17
+target. In 17
 of the 100 prompts it never resamples and returns the free sampler's four images; these are half of
 its four-root runs.
 
@@ -194,7 +195,7 @@ its four-root runs.
 What does keeping the roots cost? On the mean of the four, a clear -0.250 ± 0.045 against FK (a
 screen). On the best image, 100 prompts cannot tell: floor + λ = 2 reads -0.012 [-0.082, +0.060]
 against FK, shallower than the -0.14 to -0.02 written before the run (a test, missed). It sits +0.009 ± 0.012
-above the free sampler's best image of the same T4 run (session C), where FK sits +0.021 ± 0.038 (the
+above the free sampler's best image of the same T4 run, where FK sits +0.021 ± 0.038 (the
 A2 rerun in A.2).
 
 Where does FK's gain come from? In that session the free and FK runs of a prompt ran in one process from
@@ -209,9 +210,9 @@ in 35 % of prompts ([26, 45] %) against 25 % by chance. Read on the free outcome
 | the root FK keeps | 0.466 |
 | FK's best image, grown from that root | 0.799 |
 
-The early choice costs 0.313 ± 0.042 against the best root (a test, held). What follows returns 0.333
+The root choice costs 0.313 ± 0.042 against the best root (a test, held). What follows returns 0.333
 ± 0.038: 0.185 ± 0.036 as the mean of FK's four rising above their root, and 0.148 ± 0.011 as the
-best-of-four read-out over near-copies. The two nearly cancel: FK's best image ends +0.021 ± 0.038
+best-of-four read-out over near-copies. Cost and return nearly cancel: FK's best image ends +0.021 ± 0.038
 above the best root. This split was measured at seed 2024 only, where FK gains least over best-of-4
 (+0.030; +0.089 and +0.068 at the other seeds, A.2).
 
@@ -238,11 +239,11 @@ seed pairs on one machine. Hence FK's +0.080 ± 0.023 here, against +0.062 on se
 |---|---|---|---|---|---|
 | best-of-4 | `smc/` | 3 | 0.770 | | |
 | FK | `smc/` | 3 | 0.850 | +0.080 ± 0.023 | |
-| `R1`, FK with the released code's choices but the final resampling | `smc/` | 2024 | 0.759 | -0.011 ± 0.041 | -0.040 ± 0.043 (FK at 2024, 0.799) |
+| `R1`, FK with the released code's choices but the final resampling | `smc/` | 1 (2024) | 0.759 | -0.011 ± 0.041 | -0.040 ± 0.043 (FK at 2024, 0.799) |
 | released code | theirs | 3 | 0.767 | -0.003 ± 0.025 | -0.083 ± 0.026 |
 | released code before its fix | theirs | 3 | 0.844 | +0.074 ± 0.023 | -0.006 ± 0.020 |
 
-With matching choices the two codes agree. Without its particle filter the released code returns best-of-4's four rewards
+With matching choices and noises the two codes agree. Without its particle filter the released code returns best-of-4's four rewards
 to the fourth decimal (5 prompts); with it, at seed 2024, it lands +0.011 ± 0.009 from `R1` (n = 100;
 the test on the 60 later prompts held, A.5).
 
@@ -250,14 +251,13 @@ Against FK, whose choices differ, it reads -0.083 ± 0.026, and -0.006 ± 0.020 
 means in A.4), both off the test written before the runs (missed, A.5).
 
 Before these runs I fixed the test that would close the gap: this repository's loop with the released
-code's choices beating best-of-4 by +0.12 or more. It reads -0.011 ± 0.041, and the released code before
-its fix +0.074 ± 0.023, so the gap stays open. I have not yet asked the authors
+code's choices beating best-of-4 by +0.12 or more. No row of the table reaches it, so the gap stays open. I have not yet asked the authors
 which command, seeds, floor, VAE and potential produced Table 1 (A.4); their answer could close part of
 the gap.
 
 ## 8. The same shape at three scales, and the judge
 
-The collapse is not specific to SD. On CIFAR-10 and CelebA-HQ 256, with a classifier as reward (screens,
+The weight collapse is not specific to SD. On CIFAR-10 and CelebA-HQ 256, with a classifier as reward (screens,
 A.6), a second classifier, the judge, sees the steering work. It
 counts 11 cats in 48 free CIFAR-10 finals and 37 at $\lambda = 4$, as the minimum ESS falls from 16 to
 1.05. It sees glasses on 2 of 48 free CelebA-HQ faces, 21 at $\lambda = 1$ and none at $\lambda = 2$,
@@ -338,8 +338,8 @@ best-of-4 both read 800 per run, one sample 200.
 CelebA only.
 
 **Paired difference.** Computed per prompt (and per seed) on runs that share their $x_T$, then averaged;
-the standard error is over prompts, the seeds of a prompt averaged first. Runs at another seed (section
-7's seed-42 runs) are paired by prompt only. A slot or root comparison is made only between runs of one
+the standard error is over prompts, the seeds of a prompt averaged first. Runs at another seed (the
+seed-42 runs of A.4) are paired by prompt only. A slot or root comparison is made only between runs of one
 machine.
 
 **Screen, test.** A comparison is a test when a prediction written before the run names it with a
@@ -514,7 +514,7 @@ them on the T4, with section 3's runs.
 On the first 40 prompts, where best-of-4 reads 0.846, the four runs of the fixed code read 0.497,
 0.949, 0.807 and 0.720, a standard deviation of 0.19 where the spread within a prompt predicts 0.07 for
 exchangeable runs. Against FK, the fixed code's seed means, -0.030 on the T4 and -0.109 and -0.110 on the A2, leave seed
-and machine unseparated. On the 100 prompts the three global-seed runs at seeds 2024 to 2026 read 0.770,
+and machine unseparated; before the fix they read +0.047, -0.021 and -0.044. On the 100 prompts the three global-seed runs at seeds 2024 to 2026 read 0.770,
 0.775 and 0.756, and their gains over best-of-4 spread by 0.014 where one seed's standard error is
 0.043. At seed 2024 the two seedings differ by +0.229 ± 0.085 on those 40 and +0.006 ±
 0.067 on the other 60, which the prediction of A.5 reads as chance between runs. At seed 42, on the
