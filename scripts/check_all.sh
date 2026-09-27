@@ -5,6 +5,7 @@
 cd "$(dirname "$0")/.."
 P=docs/paper.md
 V=/home/onyxia/work/.venvs/ddpm/bin/python
+[ -x "$V" ] || V=python3
 fail=0
 run() { local name=$1; shift; local out; out=$("$@" 2>&1); local rc=$?
         printf '%-9s %s  %s\n' "$name" "$([ $rc = 0 ] && echo ok || echo FAIL)" "$(echo "$out" | tail -1)"

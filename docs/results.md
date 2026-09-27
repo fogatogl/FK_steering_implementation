@@ -4,7 +4,7 @@ One block per run that left a file in `results/`, in the order they were run.
 Each block has the same five fields, so a run can be looked up without reading
 the others. Every number was recomputed from the JSON for this document; the
 figure scripts and `scripts/compare_sd_variants.py` print the same aggregates.
-Wall times are on the T4 of the Onyxia service, 15 GiB, and come from the
+Wall times are on the T4 of the Onyxia service, 15 GiB, unless a block names the NVIDIA A2, and come from the
 `seconds` field of the records or from the job logs in `/home/onyxia/work/ddpm/`
 when the JSON has no timing key. The story that joins the runs is in
 `docs/chronology.md`; the reason behind each choice is in `docs/decisions.md`.
@@ -31,6 +31,8 @@ when the JSON has no timing key. The story that joins the runs is in
 | 16 | 21/09 | the last two screen variants, `S80` and `D10` | `sd_variants/{S80,D10}.json` | 19 + 33 min | both predictions held; neither end of the schedule buys reward |
 | 17 | 21/09 | `S60` confirmatory, 100 prompts x 3 seeds | `sd_s60_full.json` | 7 h 28 min | +0.100 over best-of-4, not settled against `fk4`, root at chance |
 | 18 | 21-23/09 | the collapse lab and the reference night: fifteen arms, the released code, the coalescence model | `sd_ref_fields100.json`, `collapse_lab/out/probe.json`, `sd_authors_R0.json` | about 14 h | the paper's configuration is this repo's; nothing reaches +0.161; lineages are predicted from the weights alone |
+| 19 | 25/09 | sessions E and F: the machine, the released code on 100 prompts, its commit before the fix | `sd_authors_R0_100.json`, `sd_authors_prefix.json`, `collapse_lab/out/session_E/t4_check.json` | about 4 h 30 min | the released code level with best-of-4; before its fix +0.077 |
+| 20 | 26-27/09 | session G: seeds 2025 and 2026 of best-of-4, FK and both released versions, on the A2 | `sd_seeds_bon4.json`, `sd_seeds_authors.json`, `sd_seeds_fk4.json` | 19 h 34 min | on three seeds the released code is level with best-of-4 and 0.083 under FK; before its fix +0.074 |
 
 Not in the table: `smoke_hub.json` (2 runs, the Hub model's first FK run, 17/09),
 kept as the check that the wrapper worked before the sweeps.

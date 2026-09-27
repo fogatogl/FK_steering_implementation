@@ -1,7 +1,7 @@
 # Reproducing every run
 
-Every command that produced a record of `results/` or `collapse_lab/out/`, the environment they
-need, and where the heavy files live. The post's numbers and figures need none of this: they are
+The main commands behind the records of `results/` and `collapse_lab/out/`, the environment they
+need, and where the heavy files live; `docs/results.md` describes every run, block by block. The post's numbers and figures need none of this: they are
 rebuilt on CPU from the committed records (`scripts/post_numbers.py`, the figure scripts).
 
 ## Environment
@@ -112,6 +112,12 @@ python scripts/select_visual_prompts.py collapse_lab/out/session_D/probe_D.json 
 # and its commit before the max-potential fix (a second checkout at 6726324, FKD_ROOT)
 collapse_lab/nuitE.sh                             # session_E/t4_check.json, results/sd_authors_R0_100.json
 collapse_lab/nuitF.sh                             # results/sd_authors_prefix.json
+
+# session G, the A2: seeds 2025 and 2026 of best-of-4, the released code and its commit before the
+# fix, then FK, each seed paired by x_T on one machine
+collapse_lab/nuitG.sh                             # results/sd_seeds_bon4.json, results/sd_seeds_authors.json
+collapse_lab/nuitG_fk.sh                          # results/sd_seeds_fk4.json, after nuitG.sh
+python collapse_lab/z_sessionG.py                 # the three-seed rows of docs/results.md, block 20
 
 # every number the post quotes, from the committed records (CPU, about 10 min), and the checks
 /home/onyxia/work/.venvs/ddpm/bin/python scripts/post_numbers.py   # results/post_numbers.json

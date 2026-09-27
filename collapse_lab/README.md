@@ -22,8 +22,9 @@ The conclusions are in `FINDINGS.md`. This file only says how to replay.
     python collapse_lab/n_coalescence.py    # the lineages predicted from the weights alone, against the observed
     python collapse_lab/t_sessionC.py       # session C: findings 3 and 5 bis on the valid per-slot pairing
     python collapse_lab/ref/parse_authors.py  # the authors' code against bon4, ctl and table 1
+    python collapse_lab/z_sessionG.py       # session G: the authors' code, bon4 and FK on three seeds
     python collapse_lab/p_two_rewards.py    # F7: ir_max and mean ir paired against ctl (venv ddpm)
-    python collapse_lab/o_ancestry_fig.py    # F4: the ancestry of F5's prompt, FK against floor + lambda = 2
+    python collapse_lab/o_ancestry_fig.py    # F4: the ancestry of F5's prompt, the free sampler against FK
     python collapse_lab/q_image_grid.py     # F5: the four finals per arm, framed by root (--appendix: the ten of A.3)
     python collapse_lab/s_coalescence_fig.py  # F6: roots replayed from the weights against observed
     python scripts/fig_three_scales.py      # F8: CIFAR / CelebA / SD (venv ddpm)
@@ -43,6 +44,9 @@ The launchers, one per GPU session, kept as they ran (2026):
 | `nuit3.sh` | 23/09 | session C: `ctl`, `lam0`, `floor2` at 100 prompts in one process, then the released code at seed 2024 |
 | `nuit4.sh` | 23/09 | the determinism test: `ctl` on two prompts in three processes |
 | `nuitD.sh`, `nuitD_hps.sh` | 23-24/09 | session D on the A2, with every image and Tweedie estimate saved, then HPS v2.1 of its finals |
+| `nuitE.sh` | 25/09 | session E on the T4: the machine check, then the released code at seed 2024 on the 100 prompts |
+| `nuitF.sh` | 25/09 | session F on the T4: the released code at its commit before the max-potential fix |
+| `nuitG.sh`, `nuitG_fk.sh` | 26-27/09 | session G on the A2: seeds 2025 and 2026 of best-of-4, both released versions, then FK |
 
 `commun.py` carries the rule against double counting: `fk4_stat.json` and
 `fk4_diff.json` are the same 20 prompts at the same x_T, and their first step is

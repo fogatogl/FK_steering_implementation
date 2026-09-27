@@ -9,11 +9,11 @@ rebuilt from the run records committed in `results/` and `collapse_lab/out/`.
 
 The write-up is the blog post [`docs/paper.md`](docs/paper.md).
 
-![Four finals of one prompt under three samplers](figures/f5_root_grid.png)
+![Four finals of one prompt under the free sampler and FK](figures/f5_root_grid.png)
 
-*One prompt, the same four initial noises: the free sampler (top), FK at the paper's setting (middle)
-and FK with a floor and λ = 2 (bottom), each image framed in the colour of the noise it descends from.
-FK returns four variations of one image.*
+*One prompt, the same four initial noises: the free sampler (top) and FK at the paper's setting
+(bottom), each image framed in the colour of the noise it descends from. The free sampler returns four
+images from four roots, FK four near-copies of one.*
 
 ## Results
 
@@ -21,24 +21,25 @@ SD v1.5 with ImageReward as the reward, at the paper's setting (λ = 10, k = 4, 
 scheduled steps), on the 100 ImageReward benchmark prompts × 3 seeds, at an equal number of UNet
 evaluations:
 
-| | ImageReward, best of k | HPS v2.1 | paper (IR / HPS) |
+| | ImageReward, best of k | HPS v2.1, best of k | paper (IR / HPS) |
 |---|---|---|---|
 | one sample | 0.237 | 0.245 | 0.187 / 0.245 |
-| best-of-4 | 0.758 | 0.258 | 0.737 / 0.265 |
-| FK, k = 4 | 0.820 | 0.259 | 0.898 / 0.263 |
+| best-of-4 | 0.758 | 0.266 | 0.737 / 0.265 |
+| FK, k = 4 | 0.820 | 0.265 | 0.898 / 0.263 |
 
 - **Best-of-4 reproduces, FK's gain over it is smaller:** +0.062 ± 0.026 on 100 prompts paired on
   their initial noises, against +0.161 in the paper (post, section 3).
 - **The four particles become one.** In 93 to 96 runs of 100 the four final images descend from a
   single initial noise: the first resampling weighs rewards read on a blurred estimate of the image.
   Replaying the recorded weights through the resampler recovers the number of surviving lineages
-  within 0.09 on eighteen steered runs of the probe (sections 4 and 5).
+  within 0.09 on the eighteen steered arms recorded (sections 4 and 5).
 - **Keeping the lineages changes the target.** Of eight corrections, only a floor at 0 with λ = 2
   keeps three roots of four; its best image stays at best-of-4's level and the mean of its four
   images costs 0.250 ± 0.045 against FK (section 6).
 - **The released code does not close the gap.** Under the paper's configuration, on the same 100
-  prompts and noises, it gains -0.000 ± 0.041 over best-of-4, and +0.077 ± 0.039 at its commit from
-  before a fix of the MAX potential, both under the paper's +0.161 (section 7).
+  prompts and noises, it gains -0.003 ± 0.025 over best-of-4 on three seeds, and +0.074 ± 0.023 at
+  its commit from before a fix of the MAX potential, both under the paper's +0.161 (section 7 at seed
+  2024; the three seeds in `docs/results.md`, block 20).
 
 ## Repository
 

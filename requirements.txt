@@ -11,6 +11,7 @@
 # On a GPU machine, replace the two +cpu wheels with the matching CUDA wheel:
 # https://pytorch.org/get-started/locally/
 
+--extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.14.0+cpu
 torchvision==0.29.0+cpu
 numpy==2.3.5

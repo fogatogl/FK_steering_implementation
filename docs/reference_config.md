@@ -1,7 +1,7 @@
 # The reference configuration: what the paper states, what the released code does
 
 Written 22/09 before the reference night, from the paper source
-(`.claude/arXiv-2501.06848v5.tar.gz`, v5) and the released repository
+(arXiv:2501.06848v5, https://arxiv.org/abs/2501.06848v5) and the released repository
 (`zacharyhorvitz/Fk-Diffusion-Steering`, commit 9413005 of 2025-06-25, read in
 `/home/onyxia/work/fkd_ref/`, not copied into this repository). Each cell names its source; the line numbers of the released code
 were rechecked at 9413005 on 25/09.
