@@ -18,6 +18,15 @@ data, the timestamped predictions, then what the data returned. Readout:
 
 ## Final state (23/09, 07h). Everything after this section is the chronological log.
 
+*Amended 28/09: the reference readings below are those of 23/09, and later runs replace them.*
+This repository's +0.056 compares FK at seed 2024, run on the A2, with the T4's best-of-4, so it is not
+paired by noise; on three T4 seeds FK gains +0.062 +/- 0.026 over best-of-4. The released-code run that read
++0.10 on its first 40 prompts reads -0.000 +/- 0.041 on the 100. On three seeds (2024 on the T4, 2025
+and 2026 on the A2, n = 100), the gains over best-of-4 are -0.003 +/- 0.025 for the released code,
++0.074 +/- 0.023 for its commit before the MAX fix `699c929` and +0.080 +/- 0.023 for this
+repository's FK on the same noises. On the 100 prompts, no released-code run gains more than +0.098
+(its commit before the fix, seed 2025). Sources: `docs/results.md` blocks 19 and 20; the post, section 7.
+
 **In short.** At k = 4 and lambda = 10, no correction returns four lineages: the target
 itself carries only 1.2 to 1.5 of the 4 (finding 15), and the number of final roots is
 predicted from the weights and the resampler alone, to within 0.05 across fifteen arms, without

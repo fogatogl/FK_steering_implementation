@@ -15,11 +15,14 @@ were rechecked at 9413005 on 25/09.
 | paper, SD v1.5, IR of the best particle (`experiments_new.tex:82-85`) | 0.187 | 0.737 | 0.898 | **+0.161** |
 | this repo, 100 prompts x 3 seeds (`results/sd_baseline.json`) | 0.237 | 0.758 | 0.820 | +0.062 +/- 0.026 |
 | this repo, per seed 2024 / 2025 / 2026 | | | | +0.030 +/- 0.037, +0.089 +/- 0.034, +0.068 +/- 0.050 |
-| this repo, current code, seed 2024 (`results/sd_ref_fields100.json`) | | 0.770 | 0.826 | +0.056 +/- 0.052 |
+| this repo, seed 2024 rerun on the A2 (`results/sd_ref_fields100.json`) | | | 0.826 | not paired |
 
 The paper reports "the performance of the highest reward particle" (`experiments_new.tex:45`),
 which is `ir_max`. Its k = 1 and BoN rows sit 0.05 and 0.02 under this repo's, its FK row
 0.08 above. The seed spread here is as large as the mean gain: one seed cannot close 0.10.
+Every row of this repo ran on the T4 except the last, whose FK ran on the A2 (89 s per run). The
+same noise gives different images on the two machines, so that row has no paired difference: the
++0.056 once written there set it against the T4's best-of-4 (corrected 28/09).
 
 ## Configuration, column by column
 
@@ -67,14 +70,27 @@ which is `ir_max`. Its k = 1 and BoN rows sit 0.05 and 0.02 under this repo's, i
 ## What the reference night measures
 
 `R0`: the released code, paper configuration (`max`, 20-80-20), SD v1.5 fp16, 100 prompts,
-seed 42, one pass. `R1`: `smc/fk.py` with the four implementation choices above, by wrappers
-(`collapse_lab/probe.py --arms R1`). Then each choice alone against `ctl`: `stat0`, `multi`,
+seed 42, one pass through `collapse_lab/ref/run_authors.py`, which resets the global seed per
+prompt (`42000 + i`) where the released launcher seeds once per pass. `R1`: `smc/fk.py` with the
+released code's choices, all but the resampling of the terminal population: the floor, the
+statistic form, the multinomial at every scheduled step, the pipeline's VAE and the indices
+{20, 40, 60, 80, 99}, by wrappers (`collapse_lab/probe.py --arms R1`; `resample_last` stays
+off). Then each choice alone against `ctl`: `stat0`, `multi`,
 `vae`, `idx`. Predictions and decision rule: `docs/protocol_sd.md`, "Pre-registration of the
 reference arms (22/09)".
 
 **Outcome (23/09).** `R1 - bon4` = -0.011 +/- 0.041 on 100 prompts: bounded, by the rule.
-The released code in four runs (its seeding at 42 on 100 prompts, our generator at 42 and at
-2024 on 40, its seeding at 2024 on 40): 0.554, 0.807, 0.720, 0.949; against `bon4`, pooled
+The released code in four runs (global seed at 42 on 100 prompts, our generator at 42 and at
+2024 on 40, global seed at 2024 on 40): 0.554, 0.807, 0.720, 0.949; against `bon4`, pooled
 over 220 run-prompts, -0.110 +/- 0.036; on the common 40 prompts, -0.35, -0.04, -0.13, +0.10.
 Its free sampler is bit-identical to this repository's best-of-4 given the same generator.
 Full account: `collapse_lab/ASSESSMENT.md`, sections C and H; `docs/results.md` block 18.
+
+**Later runs (25 to 27/09), which replace the pooled reading above.** Completed to the 100
+prompts, the global-seed run at 2024 reads 0.770, -0.000 +/- 0.041 against `bon4`: the +0.10 of
+its first 40 prompts does not hold. On three seeds, 2024 on the T4 and 2025 and 2026 on the A2,
+each paired by noise within its machine, the gains over best-of-4 are -0.003 +/- 0.025 for the
+released code at 9413005, +0.074 +/- 0.023 at its commit before `699c929` and +0.080 +/- 0.023
+for this repository's FK (n = 100, each prompt averaged over its seeds). Sources:
+`docs/results.md` blocks 19 and 20, `results/post_numbers/z_sessionG.txt`; the post, section 7
+and A.4.
