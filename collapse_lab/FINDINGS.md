@@ -2,21 +2,27 @@
 
 ## In short
 
-**The problem.** FK with k = 4 returns four images from the same x_T in 96 runs out of
-100; pixel diversity 0.09 against 0.33 for four free draws.
+*Updated 28/09 to the figures of the post (`docs/paper.md`); the findings below keep their
+dated text. The +0.056 that findings 5 bis, 9, 13, 16 and 20 quote sets FK on the A2 against
+best-of-4 on the T4, so it is not paired by noise (amendment of finding 16).*
+
+**The problem.** FK with k = 4 returns four images from the same x_T in 93 runs out of
+100 on the T4 and 96 on the A2; pixel diversity 0.109 against 0.355 for four free draws (T4).
 
 **The cause.** Two distinct degeneracies, which the ESS does not separate (finding 15).
 *The weights*: at each scheduled step the weight is `exp(lambda * r_phi)` up to a
 shared factor, and at lambda = 10 the first step (t = 80) already has a range of 9 nats
-on a guide reward that is all negative and carries no information (ESS 1.24 out of 4). The
-authors' code floors the `max` statistic at 0 and makes this step inert; `smc/fk.py` does
-not, the only departure from the reference (finding 6). *The paths*: resampling four
-particles four times makes the ancestor tree coalesce to one root even at moderate
-weights. `adapt` holds the ESS at 2.0 and still ends at 1.40 lineages.
+on a guide reward that is all negative and carries no information (median ESS 1.18 out of 4
+on the T4, 1.24 on the A2). The authors' code floors the `max` statistic at 0 and makes this
+step inert; `smc/fk.py` does not, the only departure that makes this repository more
+aggressive than the reference (finding 6; finding 16 lists the others). *The paths*:
+resampling four particles four times makes the ancestor tree coalesce to one root even at
+moderate weights. `adapt` holds the ESS at 2.0 and still ends at 1.40 lineages.
 
-**The cost.** Nothing measurable on `ir_max` (+0.056 +/- 0.052 against best-of-4, n = 100),
-but four clones have the `ir` of a single image: the mean `ir` loses 0.53 +/- 0.12 against
-four free draws (finding 13).
+**The cost.** On `ir_max`, FK gains +0.062 +/- 0.026 over best-of-4 (100 prompts x 3 seeds,
+T4, paired by x_T, 69 won), against +0.161 in the paper. Its four finals are near-copies of
+one image: their mean `ir`, 0.687, sits far above that of best-of-4's four free draws, 0.207,
+and their pixel diversity falls to a third (`results/post_numbers/make_table_sd.txt`).
 
 **The leads** (findings 14, 17, 18, 20). All of them bring `ir_max` back to the level of
 best-of-4, within one or two standard errors of noise; they differ by the diversity
@@ -24,15 +30,20 @@ kept and by the mean `ir` of the four (-0.15 to -0.56). Measured: floor + lambda
 (3.0 lineages, -0.01 on `ir_max` paired by x_T at n = 100) > floor + bisected lambda
 (2.12) > ESS threshold < k/2 ~ floor alone ~ lambda = 2 alone (1.7-2.0) > bisected lambda
 alone (1.40); schedule without t = 80: 1.14. The number of final roots is predicted from
-the weights and the resampler alone, to within 0.07 over fifteen arms (finding 17). At
+the weights and the resampler alone, to within 0.09 over eighteen steered arms (finding 17,
+`results/post_numbers/n_coalescence.txt`). At
 lambda = 10 the target itself carries only 1.2 to 1.5 particles out of 4 (finding 15):
 nothing "resolves" the collapse at this lambda, and the only correction that goes under
 25 % of one-root runs changes the target. Dead: centring the reward, changing the
 potential, resampling less.
 
-**The reference** (finding 16). The paper's configuration is the one of this repository;
-the released code returns on average less than best-of-4 (-0.11 +/- 0.04 over four runs)
-with a run-to-run spread wider than the paper's effect. Gap bounded, not closed.
+**The reference** (finding 16). The paper's configuration is the one of this repository.
+On the same 100 prompts and noises, on three seeds (2024 on the T4, 2025 and 2026 on the
+A2), the released code gains -0.003 +/- 0.025 over best-of-4 and its commit before the MAX
+fix `699c929` +0.074 +/- 0.023, where this repository's FK gains +0.080 +/- 0.023 on the same
+runs. With the released code's choices, all but the final resampling (`R1`), this
+repository's filter lands 0.011 +/- 0.009 from the released code at seed 2024. No version
+reaches the paper's +0.161. Gap bounded, not closed.
 
 ---
 
@@ -799,6 +810,28 @@ explains 0.23 between two runs at equal noise (three standard errors): **the spr
 their filter is measured, not explained.** Pre-registered rule: gap **bounded**, not
 closed; it is not in the implementation, and part of it is in the variance of a
 four-particle filter that keeps one root.
+
+*Amended 28/09: the text above is the reading of 23/09, and the runs of 25 to 27/09 replace
+its figures.*
+
+- The `ctl` row sets FK at seed 2024 on the A2 (`sd_ref_fields100.json`) against the T4's
+  `bon4`, so it is not paired by noise (finding 19). On the T4, FK gains +0.030 +/- 0.037
+  over best-of-4 at seed 2024 and +0.062 +/- 0.026 on three seeds.
+- `R1` takes every choice of the released code but the resampling of the terminal
+  population: the floor, the statistic form, the multinomial at every scheduled step, the
+  pipeline's VAE and the indices {20, 40, 60, 80, 99} (`probe.py`).
+- Completed to the 100 prompts, the run that read +0.10 on the first 40 reads -0.000 +/-
+  0.041 against `bon4`, and the two seedings at seed 2024 differ by +0.006 +/- 0.067 on the
+  other 60 prompts, which the post reads as chance between runs. "One run in four reaches the
+  +0.16" does not hold on 100 prompts: no released-code run gains more than +0.098 there
+  (the commit before the fix, seed 2025).
+- On three seeds the released code gains -0.003 +/- 0.025 over best-of-4, its commit before
+  `699c929` +0.074 +/- 0.023, and this repository's FK +0.080 +/- 0.023 on the same runs. The
+  released code's three seed means spread by 0.014 where one seed's standard error is 0.043;
+  the spread wider than chance remains on the first 40 prompts only (0.19 against 0.07).
+
+Sources: `docs/results.md` blocks 19 and 20, `results/post_numbers/parse_authors.txt` and
+`z_sessionG.txt`; the post, section 7 and A.4.
 
 ## 17. The coalescence can be read from the weights alone
 
