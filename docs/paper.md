@@ -248,8 +248,8 @@ and FK 0.850 (each difference a test, A.5):
 Two of the three seeds here ran on the A2, which is why FK reads +0.080 in this table and +0.062 in
 section 3. Before these runs I fixed the bar that would close the gap: a gain of +0.12 or more over
 best-of-4, about three quarters of the paper's. No version reaches it. Both released versions also sit under this repository's FK, by 0.083 and 0.006,
-missing the predictions I wrote for that distance (A.5). I have not yet asked the authors which command, seeds and settings produced
-Table 1 (A.4).
+missing the predictions I wrote for that distance (A.5). On 28 September I asked the authors which command, seeds and settings produced
+Table 1 (A.4); they have not replied yet.
 
 ## 8. The same shape at three scales, and the judge
 
