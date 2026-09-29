@@ -13,7 +13,8 @@ module (`shim/google/genai.py`).
 
 Two departures from their launcher, stated here: (1) the seed is reset per prompt
 (`seed * 1000 + i`) instead of once per pass, so that the queue resumes after an interruption;
-their seeds 42/43/44 set once would not give our x_T anyway; (2) one pass (one seed) instead
+their seeds 42/43/44 set once would not give our x_T anyway (`--seed-once` restores their
+seeding, for session H); (2) one pass (one seed) instead
 of three, and ImageReward alone (HPS with --hps).
 Output: results/sd_authors_R0.json, pairable with bon4 / ctl by prompt_id.
 
@@ -55,7 +56,12 @@ def main():
     p.add_argument("--generator", action="store_true",
                    help="passes torch.Generator(seed_effective) to the pipeline; with --seed 2024, the same x_T and the "
                         "same DDIM noise as bon4 / ctl / R1 (the multinomial draws of their FKD stay on the global RNG)")
+    p.add_argument("--seed-once", action="store_true",
+                   help="their launcher's seeding: the global seed set once before the first prompt, then one "
+                        "stream through the pass; a pass does not resume")
     args = p.parse_args()
+    if args.seed_once and args.generator:
+        raise SystemExit("--seed-once and --generator are two seedings: pick one")
 
     sys.path.insert(0, str(Path(__file__).parent / "shim"))
     sys.path.insert(0, str(FKD))
@@ -74,8 +80,12 @@ def main():
 
     out = Path(args.out)
     records = json.loads(out.read_text())["runs"] if out.exists() else []
-    sampler = ("authors_free" if args.no_smc else f"authors_{args.config}") + ("_g" if args.generator else "") + args.tag
+    sampler = (("authors_free" if args.no_smc else f"authors_{args.config}") + ("_g" if args.generator else "")
+               + ("_once" if args.seed_once else "") + args.tag)
     faits = {(r["prompt_id"], r["sampler"], r["seed"]) for r in records}
+    if args.seed_once and any(s == sampler and seed == args.seed for _, s, seed in faits):
+        raise SystemExit(f"{out} already holds part of the {sampler} pass at seed {args.seed}: a single stream "
+                         "does not resume, delete those records and rerun the whole pass")
 
     pipe = FKDStableDiffusion.from_pretrained(REPO, torch_dtype=torch.float16, variant="fp16",
                                               safety_checker=None).to("cuda")
@@ -90,13 +100,19 @@ def main():
     versions = {"diffusers": diffusers.__version__, "torch": torch.__version__, "fkd_commit": subprocess.run(["git", "-C", str(FKD), "rev-parse", "--short=7", "HEAD"],
                                             capture_output=True, text=True).stdout.strip()}
 
+    if args.seed_once:
+        # their main() seeds before loading the models; nothing in the loading draws on the CUDA
+        # stream, which alone feeds x_T, the DDIM noise and their multinomial draws
+        torch.manual_seed(args.seed)
+        torch.cuda.manual_seed_all(args.seed)
     for i, item in enumerate(prompts):
         pid, prompt = item["id"], item["prompt"]
         if (pid, sampler, args.seed) in faits:
             continue
-        effective = args.seed * 1000 + i
-        torch.manual_seed(effective)
-        torch.cuda.manual_seed_all(effective)
+        effective = None if args.seed_once else args.seed * 1000 + i
+        if not args.seed_once:
+            torch.manual_seed(effective)
+            torch.cuda.manual_seed_all(effective)
         fkd_args = None if args.no_smc else dict(
             lmbda=10.0, num_particles=4, use_smc=True, adaptive_resampling=False,
             time_steps=100, guidance_reward_fn="ImageReward", **CONFIGS[args.config])

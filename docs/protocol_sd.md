@@ -762,3 +762,70 @@ and 3.8 above the second (predicted more than four: **missed**). After the fix m
 T4's +0.062 (held). The seed means of each difference spread by 0.011 to 0.047, against 0.030 to 0.043
 for one seed's standard error. Seed 2024 ran on the T4 and the other two on the A2, so seed and machine
 are not separated.
+
+## Pre-registration of session H (29/09, 06h40 UTC, before any run of it)
+
+Two questions, on the pod's NVIDIA A2 (`collapse_lab/nuitH.sh`). New files only:
+`collapse_lab/out/session_H/` and `results/sd_authors_once.json`.
+
+**H1, appendix D of the paper.** Its "Effect of sampling steps" bullet reads: "diversity can be
+increased by increasing the number of sampling steps from 100 to 200. Here we use [180, 160, 140, 120,
+0] and [80, 60, 40, 20, 0] as the resampling interval. We note that even if the samples x_0 share the
+same particle as parent, there is diversity in the final samples." The lists are read in t, 0
+terminal, as the paper writes Table 1's schedule; this is also what the released launcher does when
+only `--num_inference_steps` changes. Written as s = t / steps, Table 1 resamples at s = 0.8 to 0.2
+and leaves 20 free steps after the last resampling; appendix D resamples at s = 0.9 to 0.6 and leaves
+120. Two things change at once, the step count and where the last resampling falls, so the session
+crosses them: `d200` (200 steps, s = 0.9 to 0.6), `st200` (200 steps, Table 1's s), `pos100` (100 steps,
+appendix D's s), against `ctl` (Table 1), with `free200` (`lam0` at 200 steps) the best-of-4 of the
+200-step arms. `ctl` and `lam0` come from session D, same machine group, same prompts and x_T: H0 first
+reruns `ctl` on two prompts and stops the queue unless the 8 slots match session D within 1e-3.
+`probe.py`, seed 2024, the first 40 prompts (a screen), images saved. `recipeD` (appendix D's other
+settings: lambda 2, difference potential, resampling only if ESS < k/2, k = 4, no floor, 200 steps)
+runs only on request. The difference potential alone is not rerun: `fk4_diff.json` (20 prompts, A2)
+already ends on one root in 19 runs of 20, `div_pix` 0.088, as MAX does.
+
+On these 40 prompts, session D gives: `ctl` one root in 38 runs, `div_pix` 0.092 (0.083 in the runs
+with one root), first-step ESS median 1.20, mean of the four `ir` 0.824; `lam0` `div_pix` 0.344;
+`ctl` minus `lam0` on `ir_max` +0.127 +/- 0.055, 25 won.
+
+Predictions:
+- cost: the 200-step arms 165 to 185 s per run, `pos100` 85 to 92 s; H1 about 7 h;
+- roots: a free tail cannot create a lineage, so `d200`, `st200` and `pos100` each end on one root in
+  32 runs of 40 or more;
+- first step: at s = 0.9 the guide reads a blurrier preview; the first-step ESS of `d200` and `pos100`
+  has a median between 1.0 and 1.6. Above 1.6, a weaker first selection, not the tail, would explain
+  any extra roots;
+- primary, `div_pix` in the runs that end on one root, paired by prompt with `ctl`: `d200` 0.05 or more
+  above `ctl` (0.13 or more against 0.083); `pos100` within +/- 0.03 of `d200`; `st200` within +/- 0.03
+  of `ctl`. That is, the position of the last resampling carries the effect and the step count does
+  not. The appendix's wording ("increasing the number of sampling steps") predicts `st200` above `ctl`
+  by as much as `d200`;
+- `free200`'s `div_pix` within +/- 0.03 of `lam0`'s 0.344;
+- price: `d200` minus `free200` on `ir_max` between -0.05 and +0.10, below `ctl` minus `lam0` (+0.127),
+  since the last selection is made at s = 0.6; the mean of the four `ir` under `d200` below `ctl`'s 0.824.
+
+Decision: appendix D's setting keeps the gain and diversifies the one image if `d200`'s `div_pix` in
+one-root runs reads 0.13 or more with the bootstrap 95 % interval of `d200` minus `ctl` above 0, and
+`d200` minus `free200` on `ir_max` is no more than one standard error below `ctl` minus `lam0`. A
+screen: if it holds, `d200` and `free200` go to the 100 prompts (about 5.8 h) as a test.
+
+**H2, Table 1 under the released launcher's own seeding.** `launch_eval_runs.py` seeds once, before
+the first prompt, and carries one stream through the pass; every released-code run so far reseeded
+per prompt (A.4 of the post). `run_authors.py --seed-once` restores that seeding, after loading the
+models where the launcher seeds before (nothing in the loading draws on the CUDA stream, which alone
+feeds x_T, the DDIM noise and the multinomial draws). The commit before the fix (`6726324`), which the
+paper's Table 1 predates, paper configuration (MAX, 20-80-20, lambda 10, k = 4, adaptive resampling off,
+`benchmark_ir.json`), one pass per seed at 42, 43 and 44, FK then the same pipeline without FK
+(`--no-smc`, their best-of-4), 100 prompts, 600 runs. FK and best-of-4 are separate passes and share
+their noise on the first prompt only: the difference pairs by prompt, not by noise. Estimator: per
+prompt, the mean over the three passes of FK's `ir_max` minus that of best-of-4, standard error over
+the 100 prompts.
+
+Predictions:
+- cost: FK 86 to 92 s per run, best-of-4 75 to 90 s; about 14 h;
+- best-of-4, three-pass mean between 0.71 and 0.83 (0.758 and 0.770 on the per-prompt seedings);
+- FK minus best-of-4 within +/- 0.08 of +0.074 (the same code on the per-prompt seeding, three seeds)
+  and below +0.12: the gap rule reads not closed, and the launcher's seeding does not explain the gap
+  to +0.161;
+- FK's three pass means within 0.10 of one another.

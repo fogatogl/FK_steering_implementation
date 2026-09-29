@@ -41,7 +41,8 @@ REPO = "stable-diffusion-v1-5/stable-diffusion-v1-5"
 DEFAUT = dict(lam=10.0, plancher=False, threshold=1.0, adapt=False, lam_max=None,
               schedule_t=None,      # valeurs de t ; None = --schedule
               schedule_idx=None,    # indices de boucle directs, prioritaires sur schedule_t
-              resampler="systematic", form="increment", reward_vae="ftmse")
+              resampler="systematic", form="increment", reward_vae="ftmse",
+              steps=None, potential=None)   # None = --steps, --potential
 ARMS = {  # ce qui differe du defaut, et rien d'autre
     "ctl":    dict(),
     "floor":  dict(plancher=True),
@@ -64,6 +65,16 @@ ARMS = {  # ce qui differe du defaut, et rien d'autre
     # plan du 22/09, B2 et B3
     "thr05":  dict(plancher=True, threshold=0.5),
     "rise":   dict(plancher=True, adapt=True, lam_max=100.0),
+    # session H, l'annexe D du papier : 200 pas, calendrier [180, 160, 140, 120, 0] lu en t
+    # (ce que fait leur lanceur quand seul --num_inference_steps change). s = t / steps :
+    # ctl reechantillonne a s = 0.8..0.2, d200 et pos100 a s = 0.9..0.6.
+    "free200": dict(lam=0.0, steps=200),
+    "d200":    dict(steps=200, schedule_t=[0, 120, 140, 160, 180]),
+    "st200":   dict(steps=200, schedule_t=[0, 40, 80, 120, 160]),
+    "pos100":  dict(schedule_t=[0, 60, 70, 80, 90]),
+    # la recette de la figure 7 (lambda 2, difference, ESS < k/2), k = 4, sans plancher
+    "recipeD": dict(lam=2.0, threshold=0.5, potential="difference", steps=200,
+                    schedule_t=[0, 120, 140, 160, 180]),
 }
 
 
@@ -191,17 +202,18 @@ def main():
                 index = [e for e in index if not (e["prompt_id"] == pid and e["arm"] == arm)]
             a = dict(DEFAUT, **ARMS[arm])
             lam, plancher, seuil, adapt = a["lam"], a["plancher"], a["threshold"], a["adapt"]
+            steps, potential = a["steps"] or args.steps, a["potential"] or args.potential
             if a["schedule_idx"] is not None:
                 sched = sorted(a["schedule_idx"])
-                cal = [args.steps - 1 - m for m in sched]
+                cal = [steps - 1 - m for m in sched]
             else:
                 cal = list(args.schedule) if a["schedule_t"] is None else list(a["schedule_t"])
-                sched = sorted(args.steps - 1 - t for t in cal)
+                sched = sorted(steps - 1 - t for t in cal)
             effective = args.seed * 1000 + i
             g = torch.Generator("cuda").manual_seed(effective)
 
             model = StableDiffusion(pipe, guidance_scale=args.guidance,
-                                    num_steps=args.steps, eta=args.eta)
+                                    num_steps=steps, eta=args.eta)
             model.set_prompt(prompt)
             # la reward guide decode avec ft-mse (decision 6) ou avec le VAE du pipeline (les auteurs)
             brut = ImageRewardSD(pipe.vae if a["reward_vae"] == "pipe" else vae_r, ir, prompt)
@@ -218,7 +230,7 @@ def main():
             resampler = resample_multinomial if a["resampler"] == "multinomial" else resample_systematic
 
             t0 = time.time()
-            x, info = fk_steer(model, reward, args.k, lam, args.potential, g,
+            x, info = fk_steer(model, reward, args.k, lam, potential, g,
                                resample_threshold=seuil, resampler=resampler, schedule=sched,
                                potential_form=a["form"],
                                adaptive_lam=adapt,
@@ -256,8 +268,8 @@ def main():
                 "plancher": plancher, "adaptatif": adapt, "lam_max": a["lam_max"],
                 "resampler": a["resampler"], "form": a["form"], "reward_vae": a["reward_vae"],
                 "threshold": seuil, "seed": args.seed,
-                "seed_effective": effective, "k": args.k, "potential": args.potential,
-                "schedule_t": cal, "schedule_idx": sched,
+                "seed_effective": effective, "k": args.k, "potential": potential,
+                "steps": steps, "schedule_t": cal, "schedule_idx": sched,
                 "ir": [round(float(s), 4) for s in scores],
                 "ir_max": round(float(max(scores)), 4),
                 "div_pix": diversite(images),
