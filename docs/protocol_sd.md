@@ -847,3 +847,17 @@ code and the DDIM configuration are unchanged between the two), and the best-of-
 than 1e-3, as between two GPU models (torch 2.4 and 2.14 do not run the same kernels), so that H2 runs in
 the pinned venv. The version change then acts on H2 like a change of machine, on the noise and not on
 the expected gain; the predictions of H2 stand as written.
+
+*Amendment, 29/09, 07h00 UTC, after H0 and before any other run of session H.* H0 failed: 1 of the 8
+slots matches session D (`collapse_lab/out/session_H/check_H.json`; first prompt `ir_max` 1.2705
+against 1.2715, first-step ESS 1.08 against 1.18). The device is the same NVIDIA A2 and cuDNN is the
+same (92400), but the pod image's torch went from `2.14.0+cu130` (sessions D and G) to `2.14.0+cu132`:
+a change of CUDA build is a change of machine group, like a change of GPU model. H1 therefore runs
+`ctl` and `lam0` in the session, on the same 40 prompts, and pairs every arm with them (about 2 h
+more, H1 about 8.7 h). Session D's values stay the context of the predictions above; the thresholds
+become relative to this session's `ctl`: `d200`'s `div_pix` in one-root runs 0.05 or more above this
+session's `ctl` (the 0.13 of the decision becomes `ctl` + 0.05), `st200` and `pos100` within +/- 0.03
+as written, and the price read against this session's `ctl` minus `lam0`. Prediction for the two
+controls: `ctl` one root in 34 runs of 40 or more and `div_pix` in one-root runs within +/- 0.03 of
+0.083; `lam0` `div_pix` within +/- 0.03 of 0.344; `ctl` minus `lam0` on `ir_max` within one of its
+standard errors (0.055) of +0.127.

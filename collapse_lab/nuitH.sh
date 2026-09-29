@@ -20,6 +20,7 @@ PREFIX=/home/onyxia/work/fkd_ref/prefix_6726324
 VP=/home/onyxia/work/.venvs/fkd_pinned/bin/python
 nvidia-smi --query-gpu=name --format=csv,noheader
 
+if [ "${H0:-1}" = 1 ]; then
 $V collapse_lab/probe.py --arms ctl --limit 2 --out $OUT/check_H.json
 $V - <<'EOF' || { echo "SESSION H STOPPED AT H0"; exit 1; }
 import json
@@ -30,6 +31,7 @@ bad = [(r["prompt_id"], j) for r in H for j in range(4)
 print(f"H0: {8 - len(bad)} of 8 slots as in session D", bad)
 raise SystemExit(1 if bad else 0)
 EOF
+fi
 
 export FKD_ROOT=$PREFIX
 $V collapse_lab/ref/h3_versions.py --tag current
@@ -49,7 +51,7 @@ echo "H3: H2 runs with $V2"
 unset FKD_ROOT
 echo "SESSION H3 DONE"
 
-ARMS="free200 d200 st200 pos100"
+ARMS="ctl lam0 free200 d200 st200 pos100"   # ctl, lam0 in session: H0 failed on 29/09 (cu130 -> cu132)
 [ "${H1B:-0}" = 1 ] && ARMS="$ARMS recipeD"
 $V collapse_lab/probe.py --arms $ARMS --limit 40 --save-images --out $OUT/probe_H.json
 echo "SESSION H1 DONE"
