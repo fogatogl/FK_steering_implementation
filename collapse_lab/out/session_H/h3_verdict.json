@@ -1,0 +1,9 @@
+{
+ "reward_max_diff": 0.009,
+ "scheduler_keys_differ": [],
+ "timesteps_equal": true,
+ "bon4_max_diff": 0.088,
+ "n_bon4_prompts": 3,
+ "agree": false,
+ "h2_venv": "/home/onyxia/work/.venvs/fkd_pinned"
+}

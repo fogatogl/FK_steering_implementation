@@ -1,0 +1,68 @@
+{
+ "runs": [
+  {
+   "prompt_id": "005695-0057",
+   "prompt": "a concept art of a vehicle, cyberpunk",
+   "sampler": "authors_paper_once_prefix",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 42,
+   "seed_effective": null,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.3195,
+    1.21,
+    1.4209,
+    1.1904
+   ],
+   "ir_max": 1.4209,
+   "ir_mean": 1.2852,
+   "n_distinct_images": 4,
+   "div_pix": 0.0847,
+   "seconds": 83.7,
+   "versions": {
+    "diffusers": "0.31.0.dev0",
+    "torch": "2.4.0+cu124",
+    "fkd_commit": "6726324"
+   },
+   "device": "NVIDIA A2"
+  },
+  {
+   "prompt_id": "005784-0093",
+   "prompt": "desolate space, 4, octane, beautifully, epic, magical, cinematic, masterpiece",
+   "sampler": "authors_paper_once_prefix",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 42,
+   "seed_effective": null,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    -0.0371,
+    0.1009,
+    0.0469,
+    0.0023
+   ],
+   "ir_max": 0.1009,
+   "ir_mean": 0.0282,
+   "n_distinct_images": 4,
+   "div_pix": 0.025,
+   "seconds": 83.5,
+   "versions": {
+    "diffusers": "0.31.0.dev0",
+    "torch": "2.4.0+cu124",
+    "fkd_commit": "6726324"
+   },
+   "device": "NVIDIA A2"
+  }
+ ]
+}

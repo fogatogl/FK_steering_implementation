@@ -861,3 +861,13 @@ as written, and the price read against this session's `ctl` minus `lam0`. Predic
 controls: `ctl` one root in 34 runs of 40 or more and `div_pix` in one-root runs within +/- 0.03 of
 0.083; `lam0` `div_pix` within +/- 0.03 of 0.344; `ctl` minus `lam0` on `ir_max` within one of its
 standard errors (0.055) of +0.127.
+
+*Outcome of H3, 29/09 07h15 UTC (`collapse_lab/out/session_H/h3_*.json`).* Rescored through their
+`rm_load` and `score_batched`, session D's 40 `ctl` finals read in the pinned venv exactly the rewards
+session D recorded (largest difference 0), and in the current venv, now on `2.14.0+cu132`, within
+0.009 of them (mean -0.0002, standard deviation 0.002). The rule as written compares the two venvs and
+reads 0.009 (predicted 1e-3 or less: **missed**); the drift belongs to the CUDA build of the current
+venv, not to the pinned versions, which return the 23/09 reward to the fourth decimal. The DDIM
+scheduler and its 100 timesteps are equal (held). Their best-of-4 on 3 prompts differs by up to 0.088
+on a slot between the two venvs (predicted more than 1e-3: held), as between two machines. Two prompts
+of FK ran in the pinned venv (83.5 to 83.7 s per run), so H2 runs there (held).

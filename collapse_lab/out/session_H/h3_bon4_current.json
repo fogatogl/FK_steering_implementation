@@ -1,0 +1,100 @@
+{
+ "runs": [
+  {
+   "prompt_id": "005695-0057",
+   "prompt": "a concept art of a vehicle, cyberpunk",
+   "sampler": "authors_free_h3",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024000,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    1.0051,
+    0.7449,
+    1.085,
+    0.7067
+   ],
+   "ir_max": 1.085,
+   "ir_mean": 0.8854,
+   "n_distinct_images": 4,
+   "div_pix": 0.3754,
+   "seconds": 78.7,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu132",
+    "fkd_commit": "6726324"
+   },
+   "device": "NVIDIA A2"
+  },
+  {
+   "prompt_id": "005784-0093",
+   "prompt": "desolate space, 4, octane, beautifully, epic, magical, cinematic, masterpiece",
+   "sampler": "authors_free_h3",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024001,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.2206,
+    -0.2312,
+    -0.9369,
+    -0.5953
+   ],
+   "ir_max": 0.2206,
+   "ir_mean": -0.3857,
+   "n_distinct_images": 4,
+   "div_pix": 0.3801,
+   "seconds": 78.9,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu132",
+    "fkd_commit": "6726324"
+   },
+   "device": "NVIDIA A2"
+  },
+  {
+   "prompt_id": "005848-0000",
+   "prompt": "a beautiful painting of the jungle in the morning with lots of smoke, fantasy art, matte painting",
+   "sampler": "authors_free_h3",
+   "config": {
+    "potential_type": "max",
+    "resample_frequency": 20,
+    "resampling_t_start": 20,
+    "resampling_t_end": 80
+   },
+   "seed": 2024,
+   "seed_effective": 2024002,
+   "k": 4,
+   "lam": 10.0,
+   "ir": [
+    0.5827,
+    0.9345,
+    0.6649,
+    -0.121
+   ],
+   "ir_max": 0.9345,
+   "ir_mean": 0.5153,
+   "n_distinct_images": 4,
+   "div_pix": 0.2967,
+   "seconds": 79.1,
+   "versions": {
+    "diffusers": "0.31.0",
+    "torch": "2.14.0+cu132",
+    "fkd_commit": "6726324"
+   },
+   "device": "NVIDIA A2"
+  }
+ ]
+}
