@@ -829,3 +829,21 @@ Predictions:
   and below +0.12: the gap rule reads not closed, and the launcher's seeding does not explain the gap
   to +0.161;
 - FK's three pass means within 0.10 of one another.
+
+*Amendment, 29/09, 06h55 UTC, before any run of it.* H1 runs `free200`, `d200`, `st200` and `pos100`;
+`recipeD` and k = 8 do not run. A check H3 comes between H0 and H1. The released repository's
+`requirements.txt` pins torch 2.4.0, transformers 4.38.2, diffusers at `af28ae2d` (it reports
+0.31.0.dev0) and ImageReward at `2ca71bac` (1.5); the runs so far used torch 2.14, transformers 4.49,
+diffusers 0.31.0 and image-reward 1.5 from PyPI. `collapse_lab/ref/make_pinned_venv.sh` builds those
+pins on Python 3.12 (torch 2.4.0 has no wheels for the 3.13 of the current venv).
+`collapse_lab/ref/h3_versions.py`, run in each venv: ImageReward through their `rm_load` and
+`score_batched` on session D's saved `ctl` finals (10 prompts, 40 images), the DDIM scheduler the
+pipeline builds and its 100 timesteps; then their best-of-4 (`run_authors.py --no-smc`, seed 2024,
+global seed) on 3 prompts in each venv. The two agree if the rescored rewards differ by 1e-3 or less,
+the scheduler and its timesteps are equal and the 12 best-of-4 slots differ by 1e-3 or less; H2 then
+runs in the current venv. Otherwise it runs in the pinned one, after two prompts of FK there, and falls
+back to the current venv if they fail. Predictions: the rewards and the scheduler agree (the ImageReward
+code and the DDIM configuration are unchanged between the two), and the best-of-4 slots differ by more
+than 1e-3, as between two GPU models (torch 2.4 and 2.14 do not run the same kernels), so that H2 runs in
+the pinned venv. The version change then acts on H2 like a change of machine, on the noise and not on
+the expected gain; the predictions of H2 stand as written.
