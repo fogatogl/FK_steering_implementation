@@ -40,10 +40,9 @@ if H:
     for a, runs in A.items():
         R = [runs[pid] for pid in ids]
         one = [r["n_lineages"] == 1 for r in R]
-        lo, hi = wilson(sum(one), len(R))
         dp1 = [r["div_pix"] for r, o in zip(R, one) if o]
-        print(f"{a:8s} roots {np.mean([r['n_lineages'] for r in R]):.2f}, one root {sum(one)}/{len(R)} "
-              f"[{lo:.2f}, {hi:.2f}], div_pix {np.mean([r['div_pix'] for r in R]):.3f}, "
+        print(f"{a:8s} roots {np.mean([r['n_lineages'] for r in R]):.2f}, one root {wilson(sum(one), len(R))}, "
+              f"div_pix {np.mean([r['div_pix'] for r in R]):.3f}, "
               f"one-root {np.mean(dp1) if dp1 else float('nan'):.3f}, first ESS {np.median([r['ess_at_schedule'][0] for r in R]):.2f}, "
               f"ir_max {np.mean([r['ir_max'] for r in R]):.3f}, mean of four {np.mean([np.mean(r['ir']) for r in R]):.3f}, "
               f"{np.median([r['seconds'] for r in R]):.0f} s")
