@@ -42,7 +42,7 @@ ARM_LABEL = {
     "lam0": "free sampler", "k1": "free sampler (one sample)",
     "floor2": "floor + λ = 2", "floor": "floor (released code)", "lam2": "λ = 2",
     "fadapt": "adaptive λ", "adapt": "adaptive λ", "late": "no step at t = 80",
-    "R0": "released code", "R1": "released choices in smc/",
+    "R0": "released code", "R1": "released choices (R1)",
     "thr05": "floor, resample if ESS < k/2", "rise": "floor + adaptive \u03bb, cap 100",
     "stat0": "floor, statistic form", "multi": "multinomial every step",
     "vae": "guide on pipeline VAE", "idx": "indices 20 to 99",

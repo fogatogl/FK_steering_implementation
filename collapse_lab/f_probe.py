@@ -55,7 +55,8 @@ for a in sorted(par):
         w /= w.sum(1, keepdims=True)
         pire = max(pire, float(np.abs(1 / (w ** 2).sum(1) - np.array(d[c]["ess_at_schedule"])).max()))
     print(f"    {a:8s} max gap over {len(d)} runs x 5 rows: {pire:.2e}"
-          + ("   <- exact arithmetic" if pire < 1e-3 else "   <- TO INVESTIGATE"))
+          + ("   <- exact arithmetic" if pire < 1e-3 else "   <- expected: this arm does not resample at every step, the check assumes it does"
+             if a in ("thr05",) else "   <- TO INVESTIGATE"))
 
 # --- 1. where the lineages die ---------------------------------------------
 print(f"\n1. number of distinct x_T roots after each scheduled step (mean over the prompts)")

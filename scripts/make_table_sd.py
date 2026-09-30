@@ -162,6 +162,9 @@ def main():
     for r in runs:
         mean4[r["sampler"]].setdefault(r["prompt_id"], []).append(float(np.mean(r["ir"])))
     mean4 = {x: {q: float(np.mean(v)) for q, v in d.items()} for x, d in mean4.items()}
+    for x in xs:
+        v = np.array(list(mean4[x].values()))
+        print(f"{x}: mean of the four {v.mean():.3f} +/- {v.std(ddof=1) / len(v) ** .5:.3f} (standard error over {len(v)} prompts)")
     if "fk4" in mean4 and "bon4" in mean4:
         q = sorted(set(mean4["fk4"]) & set(mean4["bon4"]))
         d = np.array([mean4["fk4"][c] - mean4["bon4"][c] for c in q])
@@ -169,11 +172,15 @@ def main():
     # HPS as the released evaluation reads it (fks_utils.do_eval): the best HPS of the k images, not
     # the HPS of the image ImageReward picks; per prompt, seeds averaged first
     for x in xs:
-        g = {}
+        g, a = {}, {}
         for r in runs:
             if r["sampler"] == x:
                 g.setdefault(r["prompt_id"], []).append(max(r["hps"]))
+                a.setdefault(r["prompt_id"], []).append(r["hps_at_ir_max"])
         v = np.array([np.mean(h) for h in g.values()])
+        w = np.array([np.mean(h) for h in a.values()])
+        print(f"{x}: HPS at the image ImageReward picks {w.mean():.3f} +/- {w.std(ddof=1) / len(w) ** .5:.3f} "
+              f"(standard error, {len(w)} prompts)")
         ref = paper.get(x)
         spread = sigma_seeds([dict(r, hps_max=max(r["hps"])) for r in runs if r["sampler"] == x], "hps_max")
         print(f"{x}: HPS best of k {v.mean():.4f} +/- {v.std(ddof=1) / len(v) ** .5:.4f} (standard error, {len(v)} prompts),"

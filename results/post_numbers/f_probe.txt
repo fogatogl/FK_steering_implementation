@@ -27,7 +27,7 @@ F. Readout of the probe: when the lineages die, and what the floor changes.
     multi    max gap over 40 runs x 5 rows: 1.12e-04   <- exact arithmetic
     rise     max gap over 20 runs x 5 rows: 5.78e-05   <- exact arithmetic
     stat0    max gap over 40 runs x 5 rows: 1.10e-04   <- exact arithmetic
-    thr05    max gap over 40 runs x 5 rows: 2.12e+00   <- TO INVESTIGATE
+    thr05    max gap over 40 runs x 5 rows: 2.12e+00   <- expected: this arm does not resample at every step, the check assumes it does
     vae      max gap over 40 runs x 5 rows: 1.20e-04   <- exact arithmetic
 
 1. number of distinct x_T roots after each scheduled step (mean over the prompts)

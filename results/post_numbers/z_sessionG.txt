@@ -46,8 +46,8 @@ Per seed, paired by x_T inside one machine
    seed 2026 fk4 - bon4 T4    +0.068 +/- 0.050 (n=100, 64 won)
 
 Over the seeds, each prompt averaged first (seeds complete at 100 prompts only)
-   post - bon4      seeds [2024, 2025, 2026]: -0.003 +/- 0.025 (n=100, 60 won); seed means -0.000, +0.010, -0.018, their spread 0.014 against 0.043 for one seed's standard error; the paper's +0.161 is 6.5 standard errors above; gap rule (+0.12): not closed
-   pre - bon4       seeds [2024, 2025, 2026]: +0.074 +/- 0.023 (n=100, 66 won); seed means +0.077, +0.098, +0.049, their spread 0.025 against 0.039 for one seed's standard error; the paper's +0.161 is 3.8 standard errors above; gap rule (+0.12): not closed
+   post - bon4      seeds [2024, 2025, 2026]: -0.003 +/- 0.025 (n=100, 60 won); seed means -0.000, +0.010, -0.018, their spread 0.014 against 0.043 for one seed's standard error; the paper's +0.161 is 6.5 standard errors above; gap rule (+0.12): not closed, bootstrap 95 % [-0.053, +0.045]
+   pre - bon4       seeds [2024, 2025, 2026]: +0.074 +/- 0.023 (n=100, 66 won); seed means +0.077, +0.098, +0.049, their spread 0.025 against 0.039 for one seed's standard error; the paper's +0.161 is 3.8 standard errors above; gap rule (+0.12): not closed, bootstrap 95 % [+0.031, +0.120]
    pre - post       seeds [2024, 2025, 2026]: +0.077 +/- 0.020 (n=100, 49 won); seed means +0.077, +0.088, +0.067, their spread 0.011 against 0.030 for one seed's standard error
    post - fk4       seeds [2024, 2025, 2026]: -0.083 +/- 0.026 (n=100, 40 won); seed means -0.030, -0.109, -0.110, their spread 0.046 against 0.043 for one seed's standard error
    pre - fk4        seeds [2024, 2025, 2026]: -0.006 +/- 0.020 (n=100, 48 won); seed means +0.047, -0.021, -0.044, their spread 0.047 against 0.036 for one seed's standard error

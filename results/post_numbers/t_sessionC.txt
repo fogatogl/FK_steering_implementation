@@ -16,7 +16,7 @@ T. Session C: ctl, lam0 and floor2 on 100 prompts in one process (out/probe_C.js
 
 3. finding 5 bis recomputed (n=100): A best free root +0.779, M mean root +0.233, B root(s) kept by ctl, read free +0.466, C what ctl makes of it +0.799
    B - M +0.233 +/- 0.047 (n=100) (is the kept root better than chance); A - B +0.313 +/- 0.042 (n=100) (predicted [0.25, 0.50]); C - B +0.333 +/- 0.038 (n=100) (what follows the choice); C - A +0.021 +/- 0.038 (n=100) (= ctl - lam0 on ir_max)
-   C - B split: the mean of ctl's four - B +0.185 +/- 0.036 (n=100) (the particles move up), C - that mean +0.148 +/- 0.011 (n=100) (ir_max picks the best of four near-copies)
+   C - B split: the mean of ctl's four +0.651, minus B +0.185 +/- 0.036 (n=100) (the particles move up), C - that mean +0.148 +/- 0.011 (n=100) (ir_max picks the best of four near-copies)
    mean rank of the kept root among the 4 free ones: 2.04 (2.5 at random, for a rank from 1 to 4)
 
 4. ctl in session C, n=100: median ESS at t = 80, 60, 40, 20, 0: 1.18, 1.63, 2.21, 3.29, 2.71; span of the four guide rewards at t = 80: mean 0.905, median 0.777; resamplings per run 3.69

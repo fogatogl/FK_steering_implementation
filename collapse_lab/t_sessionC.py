@@ -98,7 +98,7 @@ if com:
     print(f"   B - M {se(B - M)} (is the kept root better than chance); A - B {se(A - B)} (predicted [0.25, 0.50]);"
           f" C - B {se(C - B)} (what follows the choice); C - A {se(C - A)} (= ctl - lam0 on ir_max)")
     Cm = np.array([np.mean(ctl[p]["ir"]) for p in com])
-    print(f"   C - B split: the mean of ctl's four - B {se(Cm - B)} (the particles move up), C - that mean {se(C - Cm)} "
+    print(f"   C - B split: the mean of ctl's four {Cm.mean():+.3f}, minus B {se(Cm - B)} (the particles move up), C - that mean {se(C - Cm)} "
           f"(ir_max picks the best of four near-copies)")
     rang = np.array([1 + sum(v > lam0[p]["ir"][j] for v in lam0[p]["ir"]) for p in com for j in set(ctl[p]["root_slots"])])
     print(f"   mean rank of the kept root among the 4 free ones: {rang.mean():.2f} (2.5 at random, for a rank from 1 to 4)")

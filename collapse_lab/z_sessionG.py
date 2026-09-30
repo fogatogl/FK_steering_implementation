@@ -83,7 +83,9 @@ for nom, per_seed in diffs.items():
     print(f"   {nom:16s} seeds {seeds}: {se(x)}; seed means {', '.join(f'{v:+.3f}' for v in means)}, "
           f"their spread {np.std(means, ddof=1):.3f} against {one:.3f} for one seed's standard error"
           + (f"; the paper's +{PAPER} is {(PAPER - m) / e:.1f} standard errors above; gap rule (+0.12): "
-             f"{'CLOSED' if m >= 0.12 else 'not closed'}" if nom in ("post - bon4", "pre - bon4") else ""))
+             f"{'CLOSED' if m >= 0.12 else 'not closed'}, bootstrap 95 % "
+             f"[{np.percentile(b := np.random.default_rng(0).choice(x, (20000, len(x))).mean(1), 2.5):+.3f}, "
+             f"{np.percentile(b, 97.5):+.3f}]" if nom in ("post - bon4", "pre - bon4") else ""))
 for k in ("bon4", "fk4", "post", "pre"):
     seeds = [s for s in arms if len(arms[s][k]) == 100]
     if len(seeds) > 1:
