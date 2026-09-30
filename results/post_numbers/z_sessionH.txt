@@ -1,0 +1,49 @@
+H1, 40 prompts done in every arm (ctl, lam0, free200, d200, st200, pos100)
+
+ctl      roots 1.07, one root 37/40 = 92% [80%, 97%], div_pix 0.094, one-root 0.082, first ESS 1.19, ir_max 0.925, mean of four 0.803, 88 s
+lam0     roots 4.00, one root 0/40 = 0% [0%, 9%], div_pix 0.344, one-root nan, first ESS 4.00, ir_max 0.837, mean of four 0.272, 88 s
+free200  roots 4.00, one root 0/40 = 0% [0%, 9%], div_pix 0.350, one-root nan, first ESS 4.00, ir_max 0.933, mean of four 0.283, 165 s
+d200     roots 1.02, one root 39/40 = 98% [87%, 100%], div_pix 0.150, one-root 0.148, first ESS 2.56, ir_max 0.965, mean of four 0.721, 166 s
+st200    roots 1.05, one root 38/40 = 95% [83%, 99%], div_pix 0.095, one-root 0.090, first ESS 1.11, ir_max 0.919, mean of four 0.774, 165 s
+pos100   roots 1.02, one root 39/40 = 98% [87%, 100%], div_pix 0.138, one-root 0.135, first ESS 2.94, ir_max 0.906, mean of four 0.660, 87 s
+
+div_pix in one-root runs, arm minus ctl, on the prompts where both end on one root:
+  ctl      +0.000 +/- 0.000 (n=37, 0 won) [+0.000, +0.000]
+  d200     +0.063 +/- 0.005 (n=36, 35 won) [+0.053, +0.073]
+  st200    +0.003 +/- 0.008 (n=35, 17 won) [-0.012, +0.019]
+  pos100   +0.050 +/- 0.005 (n=36, 34 won) [+0.039, +0.061]
+
+ir_max over the free sampler at the same step count:
+  d200     - free200  +0.033 +/- 0.070 (n=40, 22 won)
+  st200    - free200  -0.014 +/- 0.086 (n=40, 19 won)
+  pos100   - lam0     +0.069 +/- 0.068 (n=40, 23 won)
+  ctl      - lam0     +0.088 +/- 0.053 (n=40, 25 won)
+
+decision (amendment of 07h00): d200 one-root div_pix 0.148 (>= ctl + 0.05 = 0.132), lower bound of d200 - ctl +0.053 (> 0), gain of d200 minus gain of ctl -0.056 +/- 0.076 (>= -1 se): holds
+
+H1-bis with H1, 100 prompts in every arm (ctl, lam0, free200, d200)
+  ctl      one root 93/100 = 93% [86%, 97%], div_pix 0.100, one-root 0.091, first ESS 1.25, ir_max 0.803, mean of four 0.670
+  lam0     one root 0/100 = 0% [0%, 4%], div_pix 0.354, one-root nan, first ESS 4.00, ir_max 0.774, mean of four 0.202
+  free200  one root 0/100 = 0% [0%, 4%], div_pix 0.363, one-root nan, first ESS 4.00, ir_max 0.791, mean of four 0.192
+  d200     one root 94/100 = 94% [88%, 97%], div_pix 0.157, one-root 0.151, first ESS 1.91, ir_max 0.796, mean of four 0.579
+  div_pix in one-root runs, d200 minus ctl: +0.059 +/- 0.004 (n=88, 83 won) [+0.050, +0.067]
+  ir_max, d200 minus free200 +0.005 +/- 0.044 (n=100, 50 won); ctl minus lam0 +0.029 +/- 0.037 (n=100, 49 won)
+  decision on 100 prompts: d200 one-root div_pix 0.151 (>= ctl + 0.05 = 0.141), lower bound of d200 - ctl +0.051 (> 0), gain of d200 minus gain of ctl -0.024 +/- 0.055 (>= -1 se): holds
+  mean of the four, d200 minus ctl, paired: -0.091 +/- 0.047 (n=100, 39 won)
+  the 60 new prompts alone: d200 one-root div_pix 0.153 (ctl + 0.05 = 0.146), d200 - ctl +0.056 +/- 0.006 (n=52, 48 won), lower bound +0.043, gain difference -0.003 +/- 0.076: holds
+
+H2, the released code before its fix, the launcher's seeding
+  authors_free_once_prefix     seed 42: n=100, ir_max 0.857, 74 s, 0.31.0.dev0
+  authors_free_once_prefix     seed 43: n=100, ir_max 0.738, 74 s, 0.31.0.dev0
+  authors_free_once_prefix     seed 44: n=100, ir_max 0.799, 74 s, 0.31.0.dev0
+  authors_paper_once_prefix    seed 42: n=100, ir_max 0.791, 83 s, 0.31.0.dev0
+  authors_paper_once_prefix    seed 43: n=100, ir_max 0.793, 83 s, 0.31.0.dev0
+  authors_paper_once_prefix    seed 44: n=100, ir_max 0.762, 84 s, 0.31.0.dev0
+  FK minus best-of-4 on seeds [42, 43, 44], each prompt averaged over the passes: -0.016 +/- 0.035 (n=100, 45 won), paper +0.161
+  FK pass means [0.791, 0.793, 0.762]
+  seed 42, FK minus best-of-4: -0.066 +/- 0.057 (n=100, 48 won)
+  seed 43, FK minus best-of-4: +0.055 +/- 0.058 (n=100, 60 won)
+  seed 44, FK minus best-of-4: -0.037 +/- 0.051 (n=100, 53 won)
+  three-pass means: best-of-4 0.798, FK 0.782; the paper's +0.161 is 5.0 standard errors above
+  FK: div_pix 0.064, fewer than four distinct images in 56 of 300 runs, mean of the four 0.699
+  best-of-4: div_pix 0.358, fewer than four distinct images in 0 of 300 runs, mean of the four 0.244

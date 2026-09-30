@@ -158,6 +158,9 @@ gaps = {a: abs(resume[a][0] - (resume[a][2] if par[a][next(iter(par[a]))].get("r
         for a in steered}
 print(f"   over the {len(steered)} steered arms (lam0, which never resamples, is exact by construction): "
       f"max |mean observed - mean predicted| {max(gaps.values()):.2f}, {sum(v <= 0.05 for v in gaps.values())} within 0.05")
+print("   observed roots, standard error over prompts: " + ", ".join(
+    f"{a} {np.mean(o):.2f} +/- {np.std(o, ddof=1) / len(o) ** .5:.2f}"
+    for a in ORDRE for o in [[par[a][p]["n_lineages"] for p in par[a]]] if len(o) > 1))
 
 # --- 2. the pre-registered prediction for thr05 --------------------------------------------
 if "floor" in par:

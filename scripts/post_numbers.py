@@ -21,7 +21,7 @@ OUT = ROOT / "results" / "post_numbers"
 SCRIPTS = [f"collapse_lab/{n}.py" for n in (
     "a_step0_ess", "b_comb", "c_information", "d_forms", "e_variants", "f_probe", "h_invariances",
     "i_root100", "j_decomposition", "l_target_ess", "n_coalescence", "p_two_rewards", "r_solutions",
-    "t_sessionC", "u_determinism", "v_ess_check", "y_sessionD", "z_sessionG")] + [
+    "t_sessionC", "u_determinism", "v_ess_check", "y_sessionD", "z_sessionG", "z_sessionH")] + [
     "collapse_lab/ref/parse_authors.py", "scripts/compare_sd_variants.py", "scripts/make_table_sd.py",
     "scripts/select_visual_prompts.py",   # deterministic: rewrites data/visual_selection.json identically
     "scripts/fig_three_scales.py"]        # F8's values; redraws figures/f8_three_scales identically

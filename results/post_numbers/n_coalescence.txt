@@ -31,6 +31,7 @@ N. The coalescence model: can the final lineages be read from the weights alone?
    * = the column of the resampler the arm actually used (|err| and corr are read on it).
    |err| run = mean absolute gap between predicted E[roots] and the observed value, run by run (the observed value is one draw).
    over the 18 steered arms (lam0, which never resamples, is exact by construction): max |mean observed - mean predicted| 0.09, 14 within 0.05
+   observed roots, standard error over prompts: ctl 1.06 +/- 0.04, late 1.00 +/- 0.00, adapt 1.40 +/- 0.08, floor 1.73 +/- 0.19, lam2 1.82 +/- 0.11, fadapt 2.12 +/- 0.16, floor2 2.94 +/- 0.15, lam0 4.00 +/- 0.00, stat0 1.75 +/- 0.18, multi 1.00 +/- 0.00, vae 1.05 +/- 0.03, idx 1.00 +/- 0.00, R1 1.19 +/- 0.04, thr05 2.00 +/- 0.22, rise 1.95 +/- 0.21, ctl_C 1.07 +/- 0.03, floor2_C 3.03 +/- 0.09, lam0_C 4.00 +/- 0.00, ctl_D 1.04 +/- 0.02, floor2_D 2.96 +/- 0.09, lam0_D 4.00 +/- 0.00
 
 2. thr05 predicted from the weights of floor (40 prompts), rule ESS < k/2: E[roots] 1.84, P(1 root) 61%, resamplings 1.12
    thr05 observed (40 prompts): 2.00 +/- 0.22 roots (0.7 standard errors from the forecast), P(1) 62%, resamplings 0.97
