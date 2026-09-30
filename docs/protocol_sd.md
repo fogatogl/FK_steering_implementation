@@ -871,3 +871,75 @@ venv, not to the pinned versions, which return the 23/09 reward to the fourth de
 scheduler and its 100 timesteps are equal (held). Their best-of-4 on 3 prompts differs by up to 0.088
 on a slot between the two venvs (predicted more than 1e-3: held), as between two machines. Two prompts
 of FK ran in the pinned venv (83.5 to 83.7 s per run), so H2 runs there (held).
+
+*Amendment, 29/09, 17h50 UTC, after H1 and before any run of H1-bis.* H1's screen holds
+(`collapse_lab/z_sessionH.py`): `d200`'s `div_pix` in one-root runs reads 0.148 against this session's
+`ctl` + 0.05 = 0.132, `d200` minus `ctl` +0.063 +/- 0.005 (n = 36, 35 won), bootstrap interval
+[+0.053, +0.073], and the gain of `d200` over `free200` minus that of `ctl` over `lam0` reads -0.056 +/-
+0.076, within one standard error. H1-bis is the test the decision announces, on prompts 41 to 100
+(`probe.py --limit 100 --prompt-ids`, the file's index keeps x_T), seed 2024, images saved, into
+`collapse_lab/out/session_H/probe_H1bis.json`. The amendment of 07h00 pairs every arm with this
+session's controls, and this build has `ctl` and `lam0` on the first 40 prompts only: H1-bis runs `ctl`,
+`lam0`, `free200` and `d200` (240 runs, about 9 h, after H2). The test reads the 100 prompts, H1's 40
+and these 60, with the decision of the 07h00 amendment unchanged, and the predictions of H1 stand for
+it. At the screen's per-prompt spread, the standard error of the price difference at n = 100 is about
+0.048, and the screen's point (-0.056) would fall outside the rule: the screen leaves the price open.
+H1-bis runs from `collapse_lab/queue_H.sh`, which stops if the GPU or the torch build differs from this
+session's (NVIDIA A2, `2.14.0+cu132`; the pinned venv `2.4.0+cu124` for H2). The same queue finishes H2
+after an interruption: a seed-once pass does not resume, so a partial pass is set aside in
+`collapse_lab/out/session_H/` and rerun from its first prompt. In the pinned venv on this GPU the stream
+reproduces: the two prompts of the H3 smoke test and the first two of H2's FK pass at seed 42 agree on
+all eight rewards.
+
+*Outcome of H1, 29/09 16h20 UTC (`collapse_lab/z_sessionH.py`, `collapse_lab/out/session_H/probe_H.json`).*
+240 of 240 runs in one process on the NVIDIA A2 (`2.14.0+cu132`), 07:13 to 16:20 (predicted about 8.7 h:
+9.1 h). The 200-step arms 165 to 166 s per run (predicted 165 to 185: held), `pos100` 87 s (85 to 92:
+held). H0's two `ctl` prompts come back in H1 to the fourth decimal, roots included. Controls: `ctl` on
+one root in 37 runs of 40 (34 or more: held), `div_pix` 0.082 in its one-root runs (within +/- 0.03 of
+0.083: held); `lam0` 0.344 (held); `ctl` minus `lam0` on `ir_max` +0.088 +/- 0.053, 25 won (within 0.055
+of +0.127: held). Roots: `d200`, `st200` and `pos100` on one root in 39, 38 and 39 runs of 40 (32 or
+more: held). First step: the median first-step ESS of `d200` reads 2.56 and that of `pos100` 2.94
+(between 1.0 and 1.6: **missed**), `st200` 1.11 and `ctl` 1.19; the weaker first selection leaves no
+extra root at the end. Primary, `div_pix` in one-root runs paired by prompt with `ctl`: `d200` 0.148,
++0.063 +/- 0.005 (n = 36, 35 won), bootstrap interval [+0.053, +0.073] (0.05 or more above `ctl`: held);
+`pos100` 0.135, +0.050 +/- 0.005 (n = 36, 34 won), 0.013 from `d200` (within +/- 0.03: held); `st200`
++0.003 +/- 0.008 (n = 35, 17 won), [-0.012, +0.019] (within +/- 0.03 of `ctl`: held). The position of the
+last resampling carries the effect and the step count does not (held); the appendix's wording, `st200`
+above `ctl` by as much as `d200`, does not hold. `free200` 0.350 (within +/- 0.03 of `lam0`: held). Price:
+`d200` minus `free200` on `ir_max` +0.033 +/- 0.070, 22 won (between -0.05 and +0.10: held), below `ctl`
+minus `lam0` on the point estimates (held); the mean of the four `ir` under `d200` 0.721, below `ctl`'s
+0.803 (held). Decision: holds, the gain of `d200` minus that of `ctl` at -0.056 +/- 0.076. `d200` keeps
+one root and diversifies its descendants; it does not keep roots. H1-bis follows the amendment of 17h50.
+
+*Outcome of H2, 30/09 05h38 UTC (`collapse_lab/z_sessionH.py`, `results/sd_authors_once.json`).* 600 of
+600 runs in the pinned venv (`2.4.0+cu124`, diffusers 0.31.0.dev0, `6726324`) on the NVIDIA A2, 16:20 to
+05:38 (predicted about 14 h: 13.3 h, held). FK 83.5 s per run (predicted 86 to 92: **missed**),
+best-of-4 74.4 s (75 to 90: **missed**). Best-of-4's three-pass mean 0.798, from 0.857, 0.738 and 0.799
+(between 0.71 and 0.83: held). FK minus best-of-4, each prompt averaged over the three passes: -0.016
++/- 0.035, 45 won (within +/- 0.08 of +0.074: **missed**, 0.010 below; below +0.12: held). The gap rule
+reads not closed, and the launcher's seeding does not explain the gap: the paper's +0.161 sits 5.0
+standard errors above (held). FK's pass means 0.791, 0.793 and 0.762 (within 0.10: held). Per pass, FK
+minus best-of-4 reads -0.066, +0.055 and -0.037, standard errors 0.051 to 0.058: the two passes of a
+seed share no noise after the first prompt. Against session G's +0.074 +/- 0.023 for the same commit,
+H2 changes four things at once, the seeding, the baseline (the released pipeline without FK, against
+`run_sd_baseline.py`'s best-of-4), the versions and the pairing by noise; the 0.09 between the two
+readings is about two combined standard errors and is assigned to none of them. Not predicted: the
+released code's four finals read `div_pix` 0.064 against 0.358 for its best-of-4, and 56 of the 300 FK
+runs return fewer than four distinct images at 32 px, the terminal resampling's copies.
+
+*Outcome of H1-bis, 30/09 14h44 UTC (`collapse_lab/z_sessionH.py`, `collapse_lab/out/session_H/probe_H1bis.json`).*
+240 of 240 runs in one process on the NVIDIA A2 (`2.14.0+cu132`, cudnn 92400, H1's build), 05:38 to 14:44,
+about 9.1 h (predicted about 9 h: held), read with H1's 40 on the 100 prompts. The decision of 07h00
+holds: `d200`'s `div_pix` in one-root runs reads 0.151 against `ctl` + 0.05 = 0.141, `d200` minus `ctl`
++0.059 +/- 0.004 (n = 88, 83 won), bootstrap interval [+0.050, +0.067], and the gain of `d200` over
+`free200` minus that of `ctl` over `lam0` reads -0.024 +/- 0.055, within one standard error (the screen's
+-0.056 +/- 0.076 was projected to miss at a standard error of 0.048; the spread grew instead). H1's
+predictions on 100 prompts: `d200` on one root in 94 runs of 100 (80 % or more: held); first-step ESS
+median 1.91 (between 1.0 and 1.6: **missed**); `free200` 0.363 against `lam0`'s 0.354 (within +/- 0.03:
+held); `d200` minus `free200` on `ir_max` +0.005 +/- 0.044, 50 won (between -0.05 and +0.10: held), below
+`ctl` minus `lam0` (held on the points); the mean of the four under `d200` 0.579 against `ctl`'s 0.670
+(below: held). The controls: `ctl` on one root in 93 runs of 100 (85 % or more: held), `div_pix` 0.091 in
+its one-root runs (within +/- 0.03 of 0.083: held), `lam0` 0.354 (held), `ctl` minus `lam0` +0.029 +/-
+0.037, 49 won (within 0.055 of +0.127: **missed**). Neither gain on the best image is distinguishable from
+zero at this one seed, so the rule holds without settling the price: at seed 2024 FK gains least over
+best-of-4 on either machine (+0.030 on the T4, section 3 of the post; +0.043 for session D's `ctl` on the A2).

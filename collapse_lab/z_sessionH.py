@@ -71,6 +71,49 @@ if H:
               f"lower bound of d200 - ctl {lo:+.3f} (> 0), gain of d200 minus gain of ctl {m:+.3f} +/- {s:.3f} "
               f"(>= -1 se): {'holds' if dp1 >= bar and lo > 0 and m >= -s else 'does not hold'}")
 
+# H1-bis (amendment of 17h50): the same four arms on prompts 41 to 100, read with H1's 40 by the rule of
+# 07h00; printed only once the 240 runs are on disk
+B = arms(OUT / "session_H" / "probe_H1bis.json")
+if H and sum(len(v) for v in B.values()) == 240:
+    four = ("ctl", "lam0", "free200", "d200")
+    A = {a: {**H[a], **B[a]} for a in four}
+    ids = [pid for pid in A["ctl"] if all(pid in A[a] for a in four)]
+    print(f"\nH1-bis with H1, {len(ids)} prompts in every arm ({', '.join(four)})")
+    for a in four:
+        R = [A[a][pid] for pid in ids]
+        one = [r["n_lineages"] == 1 for r in R]
+        dp1 = [r["div_pix"] for r, o in zip(R, one) if o]
+        print(f"  {a:8s} one root {wilson(sum(one), len(R))}, div_pix {np.mean([r['div_pix'] for r in R]):.3f}, "
+              f"one-root {np.mean(dp1) if dp1 else float('nan'):.3f}, first ESS {np.median([r['ess_at_schedule'][0] for r in R]):.2f}, "
+              f"ir_max {np.mean([r['ir_max'] for r in R]):.3f}, mean of four {np.mean([np.mean(r['ir']) for r in R]):.3f}")
+    d = [A["d200"][p]["div_pix"] - A["ctl"][p]["div_pix"] for p in ids
+         if A["d200"][p]["n_lineages"] == 1 and A["ctl"][p]["n_lineages"] == 1]
+    print(f"  div_pix in one-root runs, d200 minus ctl: {se(d)} {boot(d)}")
+    g1 = np.array([A["d200"][p]["ir_max"] - A["free200"][p]["ir_max"] for p in ids])
+    g0 = np.array([A["ctl"][p]["ir_max"] - A["lam0"][p]["ir_max"] for p in ids])
+    print(f"  ir_max, d200 minus free200 {se(g1)}; ctl minus lam0 {se(g0)}")
+    x = g1 - g0
+    m, s = x.mean(), x.std(ddof=1) / len(x) ** .5
+    dp1 = np.mean([A["d200"][p]["div_pix"] for p in ids if A["d200"][p]["n_lineages"] == 1])
+    bar = np.mean([A["ctl"][p]["div_pix"] for p in ids if A["ctl"][p]["n_lineages"] == 1]) + 0.05
+    lo = np.quantile(rng.choice(np.asarray(d), (10000, len(d))).mean(1), .025)
+    print(f"  decision on {len(ids)} prompts: d200 one-root div_pix {dp1:.3f} (>= ctl + 0.05 = {bar:.3f}), lower bound "
+          f"of d200 - ctl {lo:+.3f} (> 0), gain of d200 minus gain of ctl {m:+.3f} +/- {s:.3f} (>= -1 se): "
+          f"{'holds' if dp1 >= bar and lo > 0 and m >= -s else 'does not hold'}")
+    print(f"  mean of the four, d200 minus ctl, paired: {se([np.mean(A['d200'][p]['ir']) - np.mean(A['ctl'][p]['ir']) for p in ids])}")
+    # the 100 include the screen's 40: the same rule on the 60 new prompts alone
+    new = [pid for pid in ids if pid in B["ctl"]]
+    d = [A["d200"][p]["div_pix"] - A["ctl"][p]["div_pix"] for p in new
+         if A["d200"][p]["n_lineages"] == 1 and A["ctl"][p]["n_lineages"] == 1]
+    x = np.array([(A["d200"][p]["ir_max"] - A["free200"][p]["ir_max"]) - (A["ctl"][p]["ir_max"] - A["lam0"][p]["ir_max"]) for p in new])
+    m, s = x.mean(), x.std(ddof=1) / len(x) ** .5
+    dp1 = np.mean([A["d200"][p]["div_pix"] for p in new if A["d200"][p]["n_lineages"] == 1])
+    bar = np.mean([A["ctl"][p]["div_pix"] for p in new if A["ctl"][p]["n_lineages"] == 1]) + 0.05
+    lo = np.quantile(rng.choice(np.asarray(d), (10000, len(d))).mean(1), .025)
+    print(f"  the {len(new)} new prompts alone: d200 one-root div_pix {dp1:.3f} (ctl + 0.05 = {bar:.3f}), d200 - ctl {se(d)}, "
+          f"lower bound {lo:+.3f}, gain difference {m:+.3f} +/- {s:.3f}: "
+          f"{'holds' if dp1 >= bar and lo > 0 and m >= -s else 'does not hold'}")
+
 once = ROOT / "results" / "sd_authors_once.json"
 if once.exists():
     runs = json.loads(once.read_text())["runs"]
@@ -87,4 +130,14 @@ if once.exists():
         ids = list(P[(fk, seeds[0])])
         x = [np.mean([P[(fk, s)][p]["ir_max"] - P[(bo, s)][p]["ir_max"] for s in seeds]) for p in ids]
         print(f"  FK minus best-of-4 on seeds {seeds}, each prompt averaged over the passes: {se(x)}, paper +0.161")
-        print(f"  FK pass means {[round(np.mean([r['ir_max'] for r in P[(fk, s)].values()]), 3) for s in seeds]}")
+        print(f"  FK pass means {[round(float(np.mean([r['ir_max'] for r in P[(fk, s)].values()])), 3) for s in seeds]}")
+        for s in seeds:
+            print(f"  seed {s}, FK minus best-of-4: {se([P[(fk, s)][p]['ir_max'] - P[(bo, s)][p]['ir_max'] for p in ids])}")
+        m, s = np.mean(x), np.std(x, ddof=1) / len(x) ** .5
+        print(f"  three-pass means: best-of-4 {np.mean([r['ir_max'] for t in seeds for r in P[(bo, t)].values()]):.3f}, "
+              f"FK {np.mean([r['ir_max'] for t in seeds for r in P[(fk, t)].values()]):.3f}; "
+              f"the paper's +0.161 is {(0.161 - m) / s:.1f} standard errors above")
+        for name, smp in (("FK", fk), ("best-of-4", bo)):
+            R = [r for t in seeds for r in P[(smp, t)].values()]
+            print(f"  {name}: div_pix {np.mean([r['div_pix'] for r in R]):.3f}, fewer than four distinct images in "
+                  f"{sum(r['n_distinct_images'] < 4 for r in R)} of {len(R)} runs, mean of the four {np.mean([r['ir_mean'] for r in R]):.3f}")

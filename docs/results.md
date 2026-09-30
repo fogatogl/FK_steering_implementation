@@ -969,3 +969,66 @@ seed 2024 (-0.030 +/- 0.044), sits 0.083 +/- 0.026 under it on three seeds, and 
 the fix, +0.047 at seed 2024, is level with FK (-0.006 +/- 0.020). Seed and machine are not separated:
 seed 2024 is the only T4 seed, and the two A2 seeds carry the larger FK gains (+0.119 and +0.092 against
 +0.089 and +0.068 for FK on the T4 at the same seeds, paired by prompt only). `R1` stays at one seed.
+
+## 21. Session H: the paper's step advice on the collapse, and the released launcher's seeding (29/09 06:59 to 30/09 05:38)
+
+**Files.** `collapse_lab/out/session_H/probe_H.json` (H1: `probe.py`, arms `ctl`, `lam0`, `free200`,
+`d200`, `st200` and `pos100`, seed 2024, the first 40 prompts, images saved) and `results/sd_authors_once.json`
+(H2: the released code at `6726324` through `run_authors.py --seed-once`, paper configuration, sampler
+`authors_paper_once_prefix`, and the same pipeline without FK, `authors_free_once_prefix`, at seeds 42, 43
+and 44 on the 100 prompts, in a venv with the versions the released repository pins). The checks H0 and
+H3 in `collapse_lab/out/session_H/`. Launchers `collapse_lab/nuitH.sh`, then `collapse_lab/queue_H.sh`;
+readout `collapse_lab/z_sessionH.py`; predictions and outcomes in `docs/protocol_sd.md`, "Pre-registration
+of session H". Records written after the freeze; `docs/data_freeze.md` lists them.
+
+**Tested.** H1: whether the setting of the paper's diversity appendix (200 steps, the last resampling at
+s = t / steps = 0.6) diversifies FK's four images at Table 1's setting, and whether the step count or the
+position of the last resampling does it. H2: whether the released launcher's seeding, once per pass at 42,
+43 and 44, with the pinned versions, brings the code from before the fix to the paper's gain.
+
+**Cost.** H1 9.1 h of an NVIDIA A2 (87 to 88 s per 100-step run, 165 s per 200-step run); H2 13.3 h (83.5 s
+per FK run, 74.4 s per best-of-4 run); H0 and H3 about 15 min.
+
+**Result.** H0: `ctl` on two prompts matches session D on 1 slot of 8; the pod's torch had moved from
+`2.14.0+cu130` to `2.14.0+cu132`, a change of machine group, so `ctl` and `lam0` were rerun in the session.
+H3: in the pinned venv session D's saved finals rescore to the rewards session D recorded, and best-of-4's
+slots differ from the current venv's by up to 0.088, as between two machines; H2 ran in the pinned venv.
+H1, 40 prompts, a screen:
+
+| arm | steps | last resampling | one root | `div_pix`, one-root runs | minus `ctl`, paired | median first ESS |
+|---|---|---|---|---|---|---|
+| `ctl` | 100 | s = 0.2 | 37/40 | 0.082 | | 1.19 |
+| `st200` | 200 | s = 0.2 | 38/40 | 0.090 | +0.003 +/- 0.008 (n = 35) | 1.11 |
+| `pos100` | 100 | s = 0.6 | 39/40 | 0.135 | +0.050 +/- 0.005 (n = 36) | 2.94 |
+| `d200` | 200 | s = 0.6 | 39/40 | 0.148 | **+0.063 +/- 0.005** (n = 36, 35 won) | 2.56 |
+| `lam0`, `free200` | 100, 200 | none | 0/40 | 0.344, 0.350 (all runs) | | 4.00 |
+
+On the best image, `d200` minus `free200` reads +0.033 +/- 0.070 (22 won) and `ctl` minus `lam0` +0.088
++/- 0.053 (25 won), a difference of -0.056 +/- 0.076. H2, n = 100, each prompt averaged over the passes:
+
+| | seed 42 | seed 43 | seed 44 | three passes |
+|---|---|---|---|---|
+| best-of-4, the pipeline without FK | 0.857 | 0.738 | 0.799 | 0.798 |
+| FK, before the fix | 0.791 | 0.793 | 0.762 | 0.782 |
+| FK minus best-of-4 | -0.066 | +0.055 | -0.037 | **-0.016 +/- 0.035** (45 won) |
+
+The paper's +0.161 is 5.0 standard errors above. FK's four finals read `div_pix` 0.064 against 0.358 for
+best-of-4, and 56 of the 300 FK runs return fewer than four distinct images.
+
+**What it changed.** The diversity the appendix reports comes from the position of the last resampling,
+not the step count: at s = 0.6, `div_pix` in one-root runs reads 0.148 at 200 steps and 0.135 at 100,
+against 0.082 at s = 0.2, where 200 steps give 0.090. The runs still end on one root: the setting varies the
+descendants of one root and keeps none of the others, unlike floor + lambda = 2 (block 18). Its price on the
+best image is not settled on 40 prompts; H1-bis, prompts 41 to 100 with the controls, is the test. Under
+the launcher's seeding and the pinned versions the code from before the fix gains nothing over the same
+pipeline without FK. The passes of a seed share no noise after the first prompt and the baseline is not
+`run_sd_baseline.py`'s best-of-4, so this -0.016 and block 20's +0.074 for the same commit do not pair.
+
+**H1-bis (30/09 05:38 to 14:44, `collapse_lab/out/session_H/probe_H1bis.json`).** `ctl`, `lam0`, `free200` and
+`d200` on prompts 41 to 100, under H1's build, read with H1's 40 as the pre-registered test
+(amendment of 17h50): `ctl` and `d200` on one root in 93 and 94 runs of 100; `div_pix` in one-root runs
+0.091 and 0.151, `d200` minus `ctl` **+0.059 +/- 0.004** (n = 88, 83 won), bootstrap [+0.050, +0.067]; the free
+samplers 0.354 (100 steps) and 0.363 (200); median first-step ESS 1.25 and 1.91. On the best image
+`d200` minus `free200` +0.005 +/- 0.044 (50 won), `ctl` minus `lam0` +0.029 +/- 0.037 (49 won), a difference
+of -0.024 +/- 0.055: the rule of 07h00 holds, and neither gain is distinguishable from zero at this seed.
+The test confirms the screen on the diversity of the one image and leaves its price unmeasured.

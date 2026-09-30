@@ -16,7 +16,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 GLOBS = ["results/*.json", "results/sd_variants/*.json", "collapse_lab/out/*.json",
-         "collapse_lab/out/session_D/*.json",
+         "collapse_lab/out/session_D/*.json", "collapse_lab/out/session_H/probe_H.json",
+         "collapse_lab/out/session_H/probe_H1bis.json",
          "collapse_lab/out/session_E/*.json", "data/*.json"]
 
 

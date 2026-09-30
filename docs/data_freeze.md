@@ -114,3 +114,28 @@ ran on the NVIDIA A2; the frozen seed-2024 records are unchanged, and so are the
 | `results/sd_seeds_bon4.json` | `4a6437146496aa61362026fec1936af0a5a4325586c3ef999bb756d5682c7573` | 187863 | 200 |
 | `results/sd_seeds_authors.json` | `3f23096732c99da000bf837033120329c79fb447f12e4633627d83eb8939c0bf` | 277311 | 400 |
 | `results/sd_seeds_fk4.json` | `4f112ec9a3e8e449344269a18480ef5ee6874cd0c6d6044f147bd2e33ddc9cc2` | 451741 | 200 |
+
+## Amendment, 30/09/2026, after H1 and H2 of session H
+
+Two records written after the freeze, pre-registered in `docs/protocol_sd.md` ("Pre-registration of
+session H", its amendments and outcomes). H1 adds four arms to the probe (`free200`, `d200`, `st200`,
+`pos100`) and reruns `ctl` and `lam0` on the NVIDIA A2 under `2.14.0+cu132`; H2 reruns the released code
+from before its fix under its launcher's seeding, with the versions its repository pins. The freeze does
+not allow new arms: the author asked on 29/09 for the paper's step advice and the launcher's seeding. The
+other frozen files are unchanged. H1-bis (`collapse_lab/out/session_H/probe_H1bis.json`) is still running
+and is not frozen.
+
+| file | sha256 | bytes | runs |
+|---|---|---|---|
+| `collapse_lab/out/session_H/probe_H.json` | `af6b16865221fc72f1b61c48c463beaaa4118d3b7a0a6f8055a16830074cf444` | 735544 | 240 |
+| `results/sd_authors_once.json` | `d325feec22a9055beba7d213fc94cbf7ad2674d04c579c21b50128f33321fc53` | 420418 | 600 |
+
+## Amendment, 30/09/2026, after H1-bis of session H
+
+One record written after the freeze, pre-registered in `docs/protocol_sd.md` (amendment of 29/09 17h50):
+`ctl`, `lam0`, `free200` and `d200` on prompts 41 to 100, the test the H1 screen announced, on the NVIDIA
+A2 under H1's build. The other frozen files are unchanged.
+
+| file | sha256 | bytes | runs |
+|---|---|---|---|
+| `collapse_lab/out/session_H/probe_H1bis.json` | `35a5dffe20c92e3745b92a5606744668db071831f36becda5b21e1fcc01be340` | 722265 | 240 |
