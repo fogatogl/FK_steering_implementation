@@ -22,7 +22,7 @@ TITLE = "Four particles, one image: reproducing FK Steering on Stable Diffusion,
 DESCRIPTION = ("I reimplement FK Steering (ICML 2025) from its equations and rerun its Stable Diffusion "
                "experiment. Best-of-4 lands on the paper, and the steering gain over it is about 40 % of the published "
                "one, while the four images a run returns descend from a single initial noise in 93 to 96 runs out of "
-               "100. Replaying the recorded weights through the resampler recovers that count, and the post measures "
+               "100. A replay of the recorded weights is consistent with that count, and the post measures "
                "what keeping the lineages costs.")
 
 

@@ -90,3 +90,15 @@ for k in ("bon4", "fk4", "post", "pre"):
     seeds = [s for s in arms if len(arms[s][k]) == 100]
     if len(seeds) > 1:
         print(f"   {k}: ir_max {np.mean([np.mean([r['ir_max'] for r in arms[s][k].values()]) for s in seeds]):.3f} over seeds {seeds}")
+
+print("\nMachine effect on FK's gain over best-of-4: A2 minus T4, seeds 2025 and 2026, per prompt, paired by prompt only")
+for s_ in (2025, 2026):
+    a = arms[s_]
+    ps = sorted(set(a["fk4"]) & set(a["bon4"]) & set(a["fk4_T4"]) & set(a["bon4_T4"]))
+    if ps:
+        d = [(a["fk4"][q]["ir_max"] - a["bon4"][q]["ir_max"]) - (a["fk4_T4"][q]["ir_max"] - a["bon4_T4"][q]["ir_max"]) for q in ps]
+        print(f"   seed {s_}: {se(d)}")
+ps = sorted(set.intersection(*[set(arms[s_]["fk4"]) & set(arms[s_]["bon4"]) & set(arms[s_]["fk4_T4"]) & set(arms[s_]["bon4_T4"]) for s_ in (2025, 2026)]))
+if ps:
+    d = [np.mean([(arms[s_]["fk4"][q]["ir_max"] - arms[s_]["bon4"][q]["ir_max"]) - (arms[s_]["fk4_T4"][q]["ir_max"] - arms[s_]["bon4_T4"][q]["ir_max"]) for s_ in (2025, 2026)]) for q in ps]
+    print(f"   both seeds, each prompt averaged: {se(d)}")

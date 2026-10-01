@@ -57,3 +57,8 @@ Over the seeds, each prompt averaged first (seeds complete at 100 prompts only)
    fk4: ir_max 0.850 over seeds [2024, 2025, 2026]
    post: ir_max 0.767 over seeds [2024, 2025, 2026]
    pre: ir_max 0.844 over seeds [2024, 2025, 2026]
+
+Machine effect on FK's gain over best-of-4: A2 minus T4, seeds 2025 and 2026, per prompt, paired by prompt only
+   seed 2025: +0.030 +/- 0.047 (n=100, 51 won)
+   seed 2026: +0.025 +/- 0.059 (n=100, 53 won)
+   both seeds, each prompt averaged: +0.028 +/- 0.042 (n=100, 55 won)
