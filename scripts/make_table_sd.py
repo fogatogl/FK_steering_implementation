@@ -141,6 +141,8 @@ def main():
         print(f"fk4 - bon4, the paper's rows unpaired: one-seed spread {u1:.3f}; the gap is "
               f"{gap / np.hypot(s3, u1):.1f} of its standard deviation if Table 1 is one seed, "
               f"{gap / np.hypot(s3, u1 / n_seeds ** .5):.1f} if it averages {n_seeds}")
+        print(f"fk4 - bon4, the paper's rows unpaired: the unit is {np.hypot(s3, u1):.3f} if Table 1 is one seed, "
+              f"{np.hypot(s3, u1 / n_seeds ** .5):.3f} if it averages {n_seeds}")
     for sd in sorted({r["seed"] for r in runs}):
         f = {r["prompt_id"]: r["ir_max"] for r in runs if r["sampler"] == "fk4" and r["seed"] == sd}
         b = {r["prompt_id"]: r["ir_max"] for r in runs if r["sampler"] == "bon4" and r["seed"] == sd}
