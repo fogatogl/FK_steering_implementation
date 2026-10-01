@@ -23,7 +23,7 @@ target. On the best image the runs cannot separate it from FK, and the average o
 
 On the same three seeds, two of them rerun on another GPU, where a seed draws other images, my
 implementation gains +0.080 ± 0.023 over best-of-4. The authors' released code gains +0.074 ± 0.023 there
-before a June 2025 fix, and -0.003 ± 0.025 after it. None of the three reaches +0.12, the gain I fixed in advance for the released code as closing the gap.
+before a June 2025 fix, and -0.003 ± 0.025 after it. None of the three reaches +0.12, the gain I fixed in advance as closing the gap for the released code.
 
 ## 1. What inference-time steering does to an image
 
@@ -87,8 +87,7 @@ benchmark, four particles, $\lambda = 10$, MAX, scheduled steps at $t = 80, 60, 
 Two choices depart from the paper's text. I apply MAX as increments, each step's $G_t$ divided by its
 value at the step before. They multiply to the same product and target the same $\pi$; on 20 prompts
 the paper's form reads +0.015 ± 0.009 above mine (A.4). I resample with the comb, a systematic
-resampler, where the paper's Algorithm 1 draws at random (section 7). The paper does not name the decoder that turns the guide into an image; I use
-`sd-vae-ft-mse`, and the released code the pipeline's own (section 7).
+resampler, where the paper's Algorithm 1 draws at random (section 7). The decoder that turns the guide into an image differs too (section 7).
 
 An FK run and the best-of-4 run of the same prompt and seed start from the same four noises, so they
 pair prompt by prompt. HPS v2.1 [@wu2023hpsv2], a second preference score that nothing here steers
@@ -155,10 +154,11 @@ Each later pass of the comb drops the particles whose weight falls well below 1/
 collapse: FK still ends on one root in 84 runs of 100 (one seed, A2). Nor does adaptive tempering
 [@chopin2020smc], which lowers $\lambda$ on the fly to keep the ESS at 2 or above. It ends on 1.40 ± 0.08 roots over 40 runs.
 
-Replaying each run's recorded weights through the resampler returns the observed mean root counts within 0.09 on eighteen sets of steered runs (F6, A.2). That is a consistency check, conditional on each
-run's own weights; it explains nothing the reward spread does not. Its one forecast, for a variant
+Replaying each run's recorded weights through the resampler returns the observed mean root counts within 0.09 on eighteen sets of steered runs (F6). That is a consistency check, conditional on each run's own weights. Its one forecast, for a variant
 that resamples only when ESS $< k/2$, from another variant's weights, gave 1.84 roots, where 40 runs
 returned 2.00 ± 0.22.
+
+![F6. Mean final roots replayed from the recorded weights (x) against observed (y): one point per variant, a square per 100-prompt rerun, standard errors over prompts.](../figures/f6_coalescence.png)
 
 ## 6. Four draws against the target, and the variants that keep roots
 
@@ -175,8 +175,7 @@ the weights equal, and the tilt is flat, the target equal to the model, wherever
 step in 90 % of runs, but the collapse resumes: 1.73 ± 0.19 roots over 40 runs.
 
 With a milder tilt as well, $\lambda = 2$, the floor keeps 3.03 ± 0.09 roots of 4 in the 100-prompt T4
-rerun, and only 4 % of its runs end on one root. Both changes alter the target, and in 17 prompts it
-never resamples at all.
+rerun, and only 4 % of its runs end on one root. Both changes alter the target, and in 17 prompts it never resamples.
 
 ![F7. Each variant of A.2 minus FK on the same machine, on the best image's ImageReward (left) and the mean of the four (right), sorted by roots kept; normal 95 % intervals over 17 to 100 prompts. In colour: floor + λ = 2 (its 100-prompt T4 rerun), adaptive λ and no step at t = 80. Only adaptive λ's left interval excludes zero, about what fourteen intervals give by chance.](../figures/f7_two_rewards.png)
 
@@ -190,8 +189,7 @@ The paper's appendix, on SDXL with adaptive resampling at $\lambda = 2$ and $k =
 "diversity can be increased by increasing the number of sampling steps from 100 to 200". It adds that
 "even if the samples $x_0$ share the same particle as parent, there is diversity in the final samples".
 Its 200-step schedule also copies earlier in the run, at steps 180 to 120 of 200, where Table 1 copies
-at 80 to 20 of 100. At Table 1's $\lambda = 10$ and $k = 4$, on the A2, I separated the two by reading
-`div_pix` within the runs that end on one root (A.7 names the three schedules).
+at 80 to 20 of 100. At Table 1's $\lambda = 10$ and $k = 4$, on the A2, I separated the two by reading `div_pix` within the runs that end on one root (A.7).
 
 On 100 prompts the appendix's full schedule (200 steps, copies at 180 to 120) raises `div_pix` by
 +0.059 [+0.050, +0.067] over the 88 prompts where both end on one root, and its runs still
@@ -226,24 +224,25 @@ seed, the one where FK gains least (A.7).
 
 ## 7. The released code and the published gain
 
-I ran the authors' code [@fkd_code] through this repository's launcher under the paper's configuration
-(A.4). It differs from this repository in seven choices:
+I ran the authors' code [@fkd_code] through this repository's launcher under the paper's
+configuration (A.4). The three implementations differ in six choices:
 
-- it weights each step by $G_t$ itself, as the text does;
-- it draws at random, as the paper's Algorithm 1 does;
-- it floors the running maximum at 0, which the text does not state;
-- it resamples the final population when ESS $< k/2$, even with adaptive resampling off;
-- it decodes the guide with the pipeline's decoder;
-- it sets its first four steps one index later;
-- after its June 2025 fix, it closes the product on the floored running maximum, where this repository closes on $r(x_0)$ (A.4).
+| choice | the paper's text | the authors' released code | my implementation |
+|---|---|---|---|
+| weight of a step | $G_t$ itself | $G_t$ itself | $G_t$ over its value at the step before |
+| resampler | multinomial draw | multinomial draw | systematic comb |
+| reward floor | not stated | running maximum floored at 0 | none |
+| final population | closed on $r(x_0)$ | resampled if ESS $< k/2$, even with adaptive resampling off; after the June 2025 fix closed on the floored running maximum | closed on $r(x_0)$, never resampled |
+| guide decoder | not named | the pipeline's own | `sd-vae-ft-mse` |
+| scheduled steps | 80, 60, 40, 20, 0 | 20, 40, 60, 80, 99 | 19, 39, 59, 79, 99 |
 
-My code with five of these choices (`R1` in A.2, without the final resampling and the floored closing) reads 0.011 ± 0.009 under the released code on the same noises. It lands -0.040 ± 0.043 from my FK, so these choices do not close the gap to the paper.
+`R1` (in A.2) is my implementation with five of the released code's choices: its weights, its draws,
+its floor, its decoder and its steps, but not its final population. At
+seed 2024 the gains over best-of-4 are +0.030 ± 0.037 for my FK, 0.000 ± 0.041 for the released code
+and -0.011 ± 0.041 for `R1`. Copying the released code's choices makes my FK gain as little as the released code does, not more.
 
-A fix to the released code in June 2025 changed its MAX potential. Before it, MAX
-took the larger of each reward and the previous step's raw reward; after it, the larger of the reward
-and the floored running maximum, last step included (A.4). I ran both versions at three seeds on the
-noises of best-of-4, which reads 0.770 there. Seed 2024 is section 3's T4 run; seeds 2025 and 2026 ran
-on the A2.
+A fix to the released code in June 2025 changed its MAX potential (A.4). I ran both versions at three seeds on the
+noises of best-of-4, which reads 0.770 there. Seed 2024 is section 3's T4 run; seeds 2025 and 2026 ran on the A2.
 
 | | gain over best-of-4 |
 |---|---|
@@ -257,6 +256,11 @@ the paper's +0.161, as closing the gap. Neither released version reaches it, tho
 interval ends at +0.120; nor does my FK. Against my FK, the released code sits 0.083 ± 0.026 under: -0.030 ± 0.044 at the T4 seed, -0.109 ± 0.045 and
 -0.110 ± 0.041 at the two A2 seeds (A.4). Its earlier version is level (-0.006 ± 0.020).
 
+The GPU is a possible contributor to these differences. The two GPUs return different images from the same noise, and the gains move with them: at seeds 2025 and 2026, FK gains +0.089 and +0.068 over
+best-of-4 on the T4 and +0.119 and +0.092 on the A2 (A.4). The paper states neither its GPU nor its
+library versions, so hardware and software may also contribute to the gap with its +0.161, though every value here, the
+A2's included, stays under it.
+
 Seeded as the released launcher seeds, the version before the fix reads -0.016 ± 0.035 against its own
 best-of-4 (A2, 45 of 100 prompts won), with the versions that launcher pins. That run draws
 other noises, so it does not pair with the table (A.4). On 28 September I asked the authors which command, seeds and settings produced
@@ -264,9 +268,11 @@ Table 1 (A.4); they have not replied yet.
 
 ## 8. The same collapse on two smaller models
 
-On CIFAR-10 and CelebA-HQ, with a classifier as reward, the DIFFERENCE potential (which weights a step by the change in reward) and sixteen particles (A.6), the minimum ESS falls toward one particle as $\lambda$ grows (F8, A.6). At $\lambda = 2$ on
+On CIFAR-10 and CelebA-HQ, with a classifier as reward, sixteen particles and the DIFFERENCE potential (which weights a step by the change in reward), the minimum ESS falls toward one particle as $\lambda$ grows (F8; A.6). At $\lambda = 2$ on
 CelebA-HQ, the sixteen finals of one seed are copies of one blurred face that the guiding classifier
 scores as wearing glasses and a second classifier does not (A.6).
+
+![F8. Minimum ESS over a run divided by k, against λ (symmetric-log axis): CIFAR-10 and CelebA-HQ 256 (k = 16, three seeds) and SD v1.5 (k = 4, 17 prompts, A2). The dashed line, 1/k, is one particle carrying all the weight.](../figures/f8_three_scales.png)
 
 ## 9. Limitations and open questions
 
@@ -413,8 +419,6 @@ Sessions C and D, one process each, 100 prompts:
 | best-of-4 of the process - section 3's best-of-4 at seed 2024 (0.770) | +0.009 ± 0.006 (0.779) | |
 | `floor2` never resamples, the free sampler's four images | 17 prompts | 20 prompts |
 | `lam0`: roots, `div_pix` | 4, 0.355 | 4, 0.354 |
-
-![F6. Mean final roots replayed from the recorded weights and the resampler (x) against observed (y), one point per variant, a square per 100-prompt rerun in its variant's colour, standard errors over prompts.](../figures/f6_coalescence.png)
 
 ### A.3 The prompts shown as images
 
@@ -720,8 +724,6 @@ faces:
 At λ = 2 the sixteen finals of seed 2024 are copies of one blurred face that the guide $A$ scores as
 wearing glasses and the judge $B$ does not. The reference point for FID is the CIFAR DDPM fine-tuned on
 the cat class: 51.4 against 80.2 for the base model.
-
-![F8. Minimum ESS over a run divided by k, against λ (symmetric-log axis): CIFAR-10 and CelebA-HQ 256 (k = 16, three seeds) and SD v1.5 (k = 4, 17 prompts, A2). The dashed line, 1/k, is one particle carrying all the weight: CelebA reaches it, SD ends at 1.2 of 4.](../figures/f8_three_scales.png)
 
 ### A.7 The numbers behind the main text, section by section
 
