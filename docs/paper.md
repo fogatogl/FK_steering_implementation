@@ -336,7 +336,7 @@ seed-42 runs of A.4) are paired by prompt only. A slot or root comparison is mad
 machine.
 
 **Bar.** The gain of +0.12 over best-of-4 (section 7) is the one criterion of the main text fixed before
-its runs; the other comparisons are reported as measured. A.5 lists every prediction written before a run.
+its runs; the other comparisons are reported as measured.
 
 **Intervals.** [a, b] is a 95 % interval: a bootstrap over prompts for a difference, normal in F7,
 Wilson for a proportion (those in A.7).
