@@ -47,6 +47,11 @@ def convert(md, slug, img_dir):
         keys.update(ks)
         return '<d-cite key="' + ",".join(ks) + '"></d-cite>'
     body = re.sub(r"\[(@[^\]]+)\]", cite, body)
+    # kramdown only protects $$...$$ (inline when inside a line): outside it, _ * and \ in $...$ get eaten.
+    # Figure captions are HTML after Liquid, where MathJax reads $...$ itself and $$ would mean display.
+    inline = r"(?<![$\\])\$(?!\$)((?:[^$\n]|\n(?!\n))+?)(?<!\\)\$(?!\$)"   # a span may wrap over one line break
+    body = "".join(part if part.startswith("{%") else re.sub(inline, r"$$\1$$", part)
+                   for part in re.split(r"(\{%.*?%\})", body, flags=re.S))
     body = body.replace("## Appendix\n", "## Appendix\n\n*The reviewers are not asked to read past this point.*\n")
     toc = [re.sub(r"^#+\s*", "", l) for l in body.splitlines() if l.startswith("## ")]
     front = ["---", "layout: distill", f"title: \"{TITLE}\"", f"description: \"{DESCRIPTION}\"",

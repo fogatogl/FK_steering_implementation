@@ -173,6 +173,7 @@ def main():
         print(f"mean of the four, fk4 - bon4 paired: {d.mean():+.3f} +/- {d.std(ddof=1) / len(d) ** .5:.3f} ({len(d)} prompts)")
     # HPS as the released evaluation reads it (fks_utils.do_eval): the best HPS of the k images, not
     # the HPS of the image ImageReward picks; per prompt, seeds averaged first
+    hps_pick = {}
     for x in xs:
         g, a = {}, {}
         for r in runs:
@@ -181,12 +182,18 @@ def main():
                 a.setdefault(r["prompt_id"], []).append(r["hps_at_ir_max"])
         v = np.array([np.mean(h) for h in g.values()])
         w = np.array([np.mean(h) for h in a.values()])
+        hps_pick[x] = {q: float(np.mean(h)) for q, h in a.items()}
         print(f"{x}: HPS at the image ImageReward picks {w.mean():.3f} +/- {w.std(ddof=1) / len(w) ** .5:.3f} "
               f"(standard error, {len(w)} prompts)")
         ref = paper.get(x)
         spread = sigma_seeds([dict(r, hps_max=max(r["hps"])) for r in runs if r["sampler"] == x], "hps_max")
         print(f"{x}: HPS best of k {v.mean():.4f} +/- {v.std(ddof=1) / len(v) ** .5:.4f} (standard error, {len(v)} prompts),"
               f" seed spread {spread:.4f}" + (f", paper {ref[1]:.3f}, diff {v.mean() - ref[1]:+.4f}" if ref else ""))
+    if "fk4" in hps_pick and "bon4" in hps_pick:
+        q = sorted(set(hps_pick["fk4"]) & set(hps_pick["bon4"]))
+        d = np.array([hps_pick["fk4"][c] - hps_pick["bon4"][c] for c in q])
+        print(f"HPS at the image ImageReward picks, fk4 - bon4 paired: {d.mean():+.4f} +/- {d.std(ddof=1) / len(d) ** .5:.4f} "
+              f"({len(d)} prompts, seeds averaged first)")
     if args.out:
         Path(args.out).write_text(text)
         print(args.out)

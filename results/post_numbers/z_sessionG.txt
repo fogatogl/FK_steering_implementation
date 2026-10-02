@@ -61,4 +61,4 @@ Over the seeds, each prompt averaged first (seeds complete at 100 prompts only)
 Machine effect on FK's gain over best-of-4: A2 minus T4, seeds 2025 and 2026, per prompt, paired by prompt only
    seed 2025: +0.030 +/- 0.047 (n=100, 51 won)
    seed 2026: +0.025 +/- 0.059 (n=100, 53 won)
-   both seeds, each prompt averaged: +0.028 +/- 0.042 (n=100, 55 won)
+   both seeds, each prompt averaged: +0.028 +/- 0.042 (n=100, 55 won), bootstrap 95 % [-0.053, +0.112]

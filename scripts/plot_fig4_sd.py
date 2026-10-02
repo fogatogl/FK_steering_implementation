@@ -4,8 +4,8 @@ Left panel ImageReward of the best image, right panel the best HPS v2.1 of the k
 statistic the released evaluation, fks_utils.do_eval, reports), one bar per sampler (one sample, best-of-4,
 FK at the paper setting) read from results/sd_baseline.json rows k1, bon4, fk4. Each bar is
 the mean over the 100 prompts of the prompt's value averaged over its three seeds first, the
-error bar the spread of a one-seed, 100-prompt mean from seed to seed (make_table_sd.pooled), the
-unit in which the post compares a row with the paper. The short grey line across each bar is the paper's value from
+error bar plus and minus the spread of a one-seed, 100-prompt mean from seed to seed (make_table_sd.pooled);
+the unit in which the post compares a row with the paper is this spread scaled by sqrt(4/3) or sqrt(2/3). The short grey line across each bar is the paper's value from
 results/paper_table1_sd15.json. Both panels start at 0: a zoomed HPS axis would turn a
 0.01 difference, inside the paper's own spread, into a visible effect.
 

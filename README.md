@@ -95,8 +95,9 @@ A.6 and in `docs/results.md`.
 I wrote the filter and its model wrappers (`smc/`), the tests of its mathematical properties, the
 CIFAR-10 DDPM and its training (`notebooks/demo_DDPM.ipynb`), the classifiers used as rewards and
 judges (`smc/classifier.py`, `experiments/train_classifier.py`), and the analysis of the collapse.
-An AI assistant (Claude, Anthropic) wrote the launch scripts, the figure scripts and the
-documentation, and drafted the post, which I reread and corrected.
+An AI assistant (Claude, Anthropic) wrote the scripts that launch the experimental runs, the
+figure scripts and the documentation, and drafted the post, which I reread and corrected; it wrote
+none of the code of the models themselves.
 
 ## Citation
 
@@ -115,4 +116,5 @@ The reproduced paper:
 
 ## License
 
-MIT, see `LICENSE`.
+The code is under the MIT license (`LICENSE`). The text of the post and the documentation (`docs/`) and
+the figures (`figures/`) are under CC BY 4.0 (`LICENSE-CC-BY-4.0`).

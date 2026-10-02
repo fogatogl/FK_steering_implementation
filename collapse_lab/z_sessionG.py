@@ -101,4 +101,5 @@ for s_ in (2025, 2026):
 ps = sorted(set.intersection(*[set(arms[s_]["fk4"]) & set(arms[s_]["bon4"]) & set(arms[s_]["fk4_T4"]) & set(arms[s_]["bon4_T4"]) for s_ in (2025, 2026)]))
 if ps:
     d = [np.mean([(arms[s_]["fk4"][q]["ir_max"] - arms[s_]["bon4"][q]["ir_max"]) - (arms[s_]["fk4_T4"][q]["ir_max"] - arms[s_]["bon4_T4"][q]["ir_max"]) for s_ in (2025, 2026)]) for q in ps]
-    print(f"   both seeds, each prompt averaged: {se(d)}")
+    b = np.random.default_rng(0).choice(d, (20000, len(d))).mean(1)
+    print(f"   both seeds, each prompt averaged: {se(d)}, bootstrap 95 % [{np.percentile(b, 2.5):+.3f}, {np.percentile(b, 97.5):+.3f}]")

@@ -32,3 +32,4 @@ fk4: HPS at the image ImageReward picks 0.259 +/- 0.003 (standard error, 100 pro
 fk4: HPS best of k 0.2649 +/- 0.0031 (standard error, 100 prompts), seed spread 0.0010, paper 0.263, diff +0.0019
 k1: HPS at the image ImageReward picks 0.245 +/- 0.003 (standard error, 100 prompts)
 k1: HPS best of k 0.2453 +/- 0.0032 (standard error, 100 prompts), seed spread 0.0036, paper 0.245, diff +0.0003
+HPS at the image ImageReward picks, fk4 - bon4 paired: +0.0015 +/- 0.0011 (100 prompts, seeds averaged first)
